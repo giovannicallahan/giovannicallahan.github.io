@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the static pages of callgio.github.io from one shared header and footer.
+"""Build the static pages of giovannicallahan.github.io from one shared header and footer.
 
 Run from the repository root:  python3 build.py
 Edit the copy in this file, then re-run; the .html files are generated.
@@ -7,10 +7,10 @@ Edit the copy in this file, then re-run; the .html files are generated.
 from pathlib import Path
 
 ROOT = Path(__file__).parent
-SITE = "https://callgio.github.io"
-NEUROAPP = "https://callgio.github.io/neuroapp/"
+SITE = "https://giovannicallahan.github.io"
+NEUROAPP = "https://giovannicallahan.github.io/neuroapp/"
 COGVIZ = "https://cogviz-research-studio.streamlit.app/"
-GITHUB = "https://github.com/callGio"
+GITHUB = "https://github.com/giovannicallahan"
 
 CSP = ("default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; "
        "font-src 'self'; connect-src https://formspree.io; form-action https://formspree.io; "
@@ -235,7 +235,7 @@ page("projects/neuroapp.html", "NeuroApp — explore the human brain in 3D",
       <li><strong>Cited lessons</strong><span>Every point in a lesson links to its source, mostly peer-reviewed StatPearls chapters and OpenStax textbooks.</span></li>
       <li><strong>Learning science</strong><span>Quizzes use retrieval practice and a Leitner spaced-review schedule, and they ask how confident you were.</span></li>
       <li><strong>Private by design</strong><span>No accounts, cookies or trackers. Your progress stays in your own browser.</span></li>
-      <li><strong>Open source</strong><span>Built with AI assistance. The source is <a href="https://github.com/callGio/neuroapp" {EXT}>open on GitHub</a>.</span></li>
+      <li><strong>Open source</strong><span>Built with AI assistance. The source is <a href="https://github.com/giovannicallahan/neuroapp" {EXT}>open on GitHub</a>.</span></li>
     </ul>
   </div>
 </section>
@@ -247,7 +247,7 @@ page("projects/neuroapp.html", "NeuroApp — explore the human brain in 3D",
       <img src="/img/qr-brain.svg" width="132" height="132" alt="QR code that opens NeuroApp">
       <div>
         <p>Scan the code with a phone camera, or share the short link:</p>
-        <p><code>callgio.github.io/brain</code> <button class="btn btn-ghost copy-btn" data-copy="https://callgio.github.io/brain/">Copy link</button></p>
+        <p><code>giovannicallahan.github.io/brain</code> <button class="btn btn-ghost copy-btn" data-copy="https://giovannicallahan.github.io/brain/">Copy link</button></p>
       </div>
     </div>
   </div>
@@ -314,7 +314,7 @@ page("projects/cogviz.html", "CogViz Research Studio — plan psychology experim
       <img src="/img/qr-cogviz.svg" width="132" height="132" alt="QR code that opens CogViz Research Studio">
       <div>
         <p>Scan the code with a phone camera, or share the short link:</p>
-        <p><code>callgio.github.io/cogviz</code> <button class="btn btn-ghost copy-btn" data-copy="https://callgio.github.io/cogviz/">Copy link</button></p>
+        <p><code>giovannicallahan.github.io/cogviz</code> <button class="btn btn-ghost copy-btn" data-copy="https://giovannicallahan.github.io/cogviz/">Copy link</button></p>
       </div>
     </div>
   </div>
@@ -353,7 +353,7 @@ page("contact.html", "Contact — Giovanni Callahan",
     <aside class="aside-box">
       <h2 class="h-small">Other ways</h2>
       <ul>
-        <li>Code and projects: <a href="https://github.com/callGio" rel="noopener noreferrer" target="_blank">GitHub</a></li>
+        <li>Code and projects: <a href="https://github.com/giovannicallahan" rel="noopener noreferrer" target="_blank">GitHub</a></li>
         <li>Found a bug or have an idea for an app? Use the <a href="/feedback.html">feedback form</a>.</li>
       </ul>
       <p class="note">Messages go to my inbox through Formspree, a form service. Your address is used only so I
@@ -422,7 +422,7 @@ page("404.html", "Page not found — Giovanni Callahan", "This page does not exi
     <p class="lede">The link may be mistyped or out of date. These are the places you can go from here:</p>
     <div class="actions">
       <a class="btn btn-primary" href="/">Go to the home page</a>
-      <a class="btn btn-ghost" href="https://callgio.github.io/neuroapp/">Open NeuroApp</a>
+      <a class="btn btn-ghost" href="https://giovannicallahan.github.io/neuroapp/">Open NeuroApp</a>
       <a class="btn btn-ghost" href="/projects/cogviz.html">About CogViz</a>
     </div>
   </div>

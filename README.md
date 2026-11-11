@@ -1,10 +1,10 @@
-# callgio.github.io
+# giovannicallahan.github.io
 
 Personal website of Giovanni Callahan: who I am, my research, and my two apps,
-[NeuroApp](https://callgio.github.io/neuroapp/) and
+[NeuroApp](https://giovannicallahan.github.io/neuroapp/) and
 [CogViz Research Studio](https://cogviz-research-studio.streamlit.app/).
 
-Live at **https://callgio.github.io**. Short links: `/brain` opens NeuroApp, `/cogviz` opens CogViz.
+Live at **https://giovannicallahan.github.io**. Short links: `/brain` opens NeuroApp, `/cogviz` opens CogViz.
 
 ## Editing
 
