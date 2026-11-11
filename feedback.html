@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src https://formspree.io; form-action https://formspree.io; object-src 'none'; base-uri 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Feedback — Giovanni Callahan</title>
+<meta name="description" content="Tell Giovanni Callahan what works and what gets in your way in NeuroApp, CogViz or this website.">
+<link rel="canonical" href="https://callgio.github.io/feedback.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Feedback — Giovanni Callahan">
+<meta property="og:description" content="Tell Giovanni Callahan what works and what gets in your way in NeuroApp, CogViz or this website.">
+<meta property="og:url" content="https://callgio.github.io/feedback.html">
+<meta property="og:image" content="https://callgio.github.io/img/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#eef3f2">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/instrument-sans-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/site.css">
+<script src="/js/site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-nav">
+  <nav class="wrap" aria-label="Main">
+    <a class="wordmark" href="/"><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 18.5 C10 18.5, 9.5 7.5, 21.5 7.5" fill="none" stroke="#14a3a1" stroke-width="2.2" stroke-linecap="round"/><path d="M13 1.5v3M13 21.5v3M1.5 13h3M21.5 13h3" stroke="currentColor" stroke-width="1.6"/></svg>Giovanni Callahan</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/projects/neuroapp.html">NeuroApp</a></li>
+      <li><a href="/projects/cogviz.html">CogViz</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li><a href="/feedback.html" aria-current="page">Feedback</a></li>
+    </ul>
+  </nav>
+</header>
+<main id="main">
+
+<section class="page-hero">
+  <div class="wrap contact-grid">
+    <div>
+      <h1>Feedback</h1>
+      <p class="lede">Found a bug, got stuck, or have an idea? Tell me what happened. Every note gets read,
+      and the apps change because of them.</p>
+      <form class="form" data-form="feedback" novalidate>
+        <input type="hidden" name="_subject" value="New feedback from your website">
+        <fieldset class="field"><legend>Which one is it about?</legend>
+          <div class="choices">
+            <label><input type="radio" name="app" value="NeuroApp" required> NeuroApp</label>
+            <label><input type="radio" name="app" value="CogViz"> CogViz</label>
+            <label><input type="radio" name="app" value="Website"> This website</label>
+          </div></fieldset>
+        <fieldset class="field"><legend>How was it to use?</legend>
+          <div class="choices scale">
+            <label><input type="radio" name="rating" value="1"><b>1</b>Frustrating</label>
+            <label><input type="radio" name="rating" value="2"><b>2</b></label>
+            <label><input type="radio" name="rating" value="3"><b>3</b>Okay</label>
+            <label><input type="radio" name="rating" value="4"><b>4</b></label>
+            <label><input type="radio" name="rating" value="5"><b>5</b>Great</label>
+          </div></fieldset>
+        <div class="field"><label for="f-bad">What got in your way?</label><p class="hint" id="f-bad-hint">Describe what you tried and what happened instead.</p>
+          <textarea id="f-bad" name="problem" aria-describedby="f-bad-hint"></textarea></div>
+        <div class="field"><label for="f-good">What worked well, or what would you add?</label><textarea id="f-good" name="ideas"></textarea></div>
+        <div class="field"><label for="f-device">What were you using?</label>
+          <select id="f-device" name="device"><option value="">Choose one</option><option>Phone</option><option>Tablet</option><option>Laptop or desktop</option></select></div>
+        <div class="field"><label for="f-email">Your email (optional)</label><p class="hint" id="f-email-hint">Add it only if you would like a reply.</p>
+          <input id="f-email" name="email" type="email" autocomplete="email" aria-describedby="f-email-hint"></div>
+        <div class="hp" aria-hidden="true"><label>Leave this empty <input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
+        <p class="status-msg" role="status" hidden></p>
+        <div><button class="btn btn-primary" type="submit">Send feedback</button></div>
+      </form>
+    </div>
+    <aside class="aside-box">
+      <h2 class="h-small">Helpful details</h2>
+      <ul>
+        <li>The page or structure you were on</li>
+        <li>What you expected, and what you saw</li>
+        <li>For NeuroApp, whether it happened on a phone or a computer</li>
+      </ul>
+      <p class="note">Want a conversation instead? <a href="/contact.html">Send a message</a>.</p>
+    </aside>
+  </div>
+</section>
+
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <p>© 2026 Giovanni Callahan. This site uses no cookies or trackers.</p>
+    <ul>
+      <li><a href="https://github.com/callGio" rel="noopener noreferrer" target="_blank">GitHub</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li><a href="/feedback.html">Feedback</a></li>
+    </ul>
+  </div>
+</footer>
+</body>
+</html>

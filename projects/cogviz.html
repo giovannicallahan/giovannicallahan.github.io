@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src https://formspree.io; form-action https://formspree.io; object-src 'none'; base-uri 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>CogViz Research Studio — plan psychology experiments</title>
+<meta name="description" content="A free browser-based planner for psychology experiments: compare designs, plan analyses, simulate what a prediction implies and export a preregistration draft.">
+<link rel="canonical" href="https://callgio.github.io/projects/cogviz.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="CogViz Research Studio — plan psychology experiments">
+<meta property="og:description" content="A free browser-based planner for psychology experiments: compare designs, plan analyses, simulate what a prediction implies and export a preregistration draft.">
+<meta property="og:url" content="https://callgio.github.io/projects/cogviz.html">
+<meta property="og:image" content="https://callgio.github.io/img/og-cogviz.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#eef3f2">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/instrument-sans-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/site.css">
+<script src="/js/site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-nav">
+  <nav class="wrap" aria-label="Main">
+    <a class="wordmark" href="/"><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 18.5 C10 18.5, 9.5 7.5, 21.5 7.5" fill="none" stroke="#14a3a1" stroke-width="2.2" stroke-linecap="round"/><path d="M13 1.5v3M13 21.5v3M1.5 13h3M21.5 13h3" stroke="currentColor" stroke-width="1.6"/></svg>Giovanni Callahan</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/projects/neuroapp.html">NeuroApp</a></li>
+      <li><a href="/projects/cogviz.html" aria-current="page">CogViz</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li><a href="/feedback.html">Feedback</a></li>
+    </ul>
+  </nav>
+</header>
+<main id="main">
+
+<section class="page-hero">
+  <div class="wrap split">
+    <div>
+      <h1>CogViz Research Studio</h1>
+      <p class="lede">A planner for psychology experiments. Compare research designs, plan the analysis,
+      see what your prediction implies and export the whole plan.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://cogviz-research-studio.streamlit.app/" rel="noopener noreferrer" target="_blank">Open CogViz</a>
+        <a class="btn btn-ghost" href="#steps">See the steps</a>
+      </div>
+      <p class="note">Hosted free on Streamlit. If nobody has used it for a while, it can take about a minute
+      to wake up.</p>
+    </div>
+    <figure class="plot flush">
+      <canvas class="power" role="img" aria-label="Animated power curve: dots show the share of simulated studies that detect an effect at each sample size, and a curve through them crosses the 80 percent line."></canvas>
+      <figcaption><span>Simulation-based power: the share of simulated studies of each size that detect an
+      effect of d = 0.5. An illustration of one CogViz tool.</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="section" id="steps" aria-labelledby="steps-h">
+  <div class="wrap">
+    <div class="section-head"><h2 id="steps-h">Five steps from question to plan</h2>
+      <p>A check mark appears on each step once it holds what the next step needs.</p></div>
+    <ol class="steps">
+      <li><strong>Question</strong><span>State what you want to find out. A worked example fills every field if you want to see one first.</span></li>
+      <li><strong>Design</strong><span>Compare designs side by side, with what each gains and costs.</span></li>
+      <li><strong>Analysis</strong><span>Plan the test, and check it fits your variables.</span></li>
+      <li><strong>Predictions</strong><span>Simulate data from your predicted means and estimate power.</span></li>
+      <li><strong>Plan</strong><span>Export a Markdown plan and a preregistration draft.</span></li>
+    </ol>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="feat-h">
+  <div class="wrap">
+    <h2 id="feat-h">What's inside</h2>
+    <ul class="feature-list">
+      <li><strong>Power by simulation</strong><span>From predicted means, a spread and a sample size, CogViz simulates 1,000 studies and reports how often the test reaches p &lt; .05 (Lakens &amp; Caldwell, 2021).</span></li>
+      <li><strong>Preregistration draft</strong><span>The plan follows the section order of the OSF Preregistration template, with every missing field marked "To complete".</span></li>
+      <li><strong>Sources you can check</strong><span>Each built-in design, analysis and model cites the work it comes from, in APA 7 style with DOI links.</span></li>
+      <li><strong>A model library</strong><span>21 models of perception, choice, response time, effort, learning and memory, including signal detection and the drift-diffusion model.</span></li>
+      <li><strong>A plan check</strong><span>Each step flags gaps and mismatches, such as a binary outcome paired with a t-test.</span></li>
+      <li><strong>Your files, not a server's</strong><span>Save the study as a small file and open it later; the server stores nothing.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="share-c">
+  <div class="wrap">
+    <h2 id="share-c">Share it</h2>
+    <div class="share">
+      <img src="/img/qr-cogviz.svg" width="132" height="132" alt="QR code that opens CogViz Research Studio">
+      <div>
+        <p>Scan the code with a phone camera, or share the short link:</p>
+        <p><code>callgio.github.io/cogviz</code> <button class="btn btn-ghost copy-btn" data-copy="https://callgio.github.io/cogviz/">Copy link</button></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <p>© 2026 Giovanni Callahan. This site uses no cookies or trackers.</p>
+    <ul>
+      <li><a href="https://github.com/callGio" rel="noopener noreferrer" target="_blank">GitHub</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li><a href="/feedback.html">Feedback</a></li>
+    </ul>
+  </div>
+</footer>
+</body>
+</html>
