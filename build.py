@@ -22,6 +22,7 @@ MARK = ('<svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="
         'stroke="currentColor" stroke-width="1.6"/></svg>')
 
 NAV = [("Home", "/"), ("NeuroApp", "/projects/neuroapp.html"), ("CogViz", "/projects/cogviz.html"),
+       ("CV", "/Giovanni_Callahan_CV.pdf"),
        ("Contact", "/contact.html"), ("Feedback", "/feedback.html")]
 
 EXT = 'rel="noopener noreferrer" target="_blank"'
@@ -99,6 +100,7 @@ page("index.html", "Giovanni Callahan — psychology, decisions and the brain",
     brain and planning experiments.</p>
     <div class="actions">
       <a class="btn btn-primary" href="#apps">See my apps</a>
+      <a class="btn btn-ghost" href="/Giovanni_Callahan_CV.pdf">Download CV (PDF)</a>
       <a class="btn btn-ghost" href="/contact.html">Get in touch</a>
     </div>
     <figure class="plot">
