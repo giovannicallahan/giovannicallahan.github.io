@@ -1,7 +1,7 @@
 # giovannicallahan.github.io
 
 Personal website of Giovanni Callahan: who I am, my research, and my two apps,
-[Gyrafold](https://giovannicallahan.github.io/gyrafold/) and
+[Gyrafold](https://gyrafold.com/) and
 [CogViz Research Studio](https://cogviz-research-studio.streamlit.app/).
 
 Live at **https://giovannicallahan.github.io**. Short links: `/brain` opens Gyrafold, `/cogviz` opens CogViz.

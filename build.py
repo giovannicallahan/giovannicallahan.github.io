@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 SITE = "https://giovannicallahan.github.io"
-NEUROAPP = "https://giovannicallahan.github.io/gyrafold/"
+NEUROAPP = "https://gyrafold.com/"
 COGVIZ = "https://cogviz-research-studio.streamlit.app/"
 GITHUB = "https://github.com/giovannicallahan"
 
@@ -424,7 +424,7 @@ page("404.html", "Page not found — Giovanni Callahan", "This page does not exi
     <p class="lede">The link may be mistyped or out of date. These are the places you can go from here:</p>
     <div class="actions">
       <a class="btn btn-primary" href="/">Go to the home page</a>
-      <a class="btn btn-ghost" href="https://giovannicallahan.github.io/gyrafold/">Open Gyrafold</a>
+      <a class="btn btn-ghost" href="https://gyrafold.com/">Open Gyrafold</a>
       <a class="btn btn-ghost" href="/projects/cogviz.html">About CogViz</a>
     </div>
   </div>
