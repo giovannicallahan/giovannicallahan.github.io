@@ -1,10 +1,10 @@
 # giovannicallahan.github.io
 
 Personal website of Giovanni Callahan: who I am, my research, and my two apps,
-[NeuroApp](https://giovannicallahan.github.io/neuroapp/) and
+[Gyrafold](https://giovannicallahan.github.io/gyrafold/) and
 [CogViz Research Studio](https://cogviz-research-studio.streamlit.app/).
 
-Live at **https://giovannicallahan.github.io**. Short links: `/brain` opens NeuroApp, `/cogviz` opens CogViz.
+Live at **https://giovannicallahan.github.io**. Short links: `/brain` opens Gyrafold, `/cogviz` opens CogViz.
 
 ## Editing
 
@@ -29,4 +29,4 @@ Until then, both forms say they are not connected and the Send button stays disa
 ## Credits
 
 Fonts: Instrument Sans and Space Grotesk, SIL Open Font License (see `fonts/`).
-Brain images are renders of the SPL/NAC Brain Atlas (Halle et al., 2017) from NeuroApp.
+Brain images are renders of the SPL/NAC Brain Atlas (Halle et al., 2017) from Gyrafold.

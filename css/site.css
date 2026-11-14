@@ -223,7 +223,7 @@ p { margin: 0 0 1em; max-width: var(--measure); text-wrap: pretty; }
 .share code { font-family: inherit; font-weight: 600; font-size: var(--step-1); }
 .copy-btn { margin-left: 0.25rem; }
 
-/* NeuroApp page: the neuroscience theme */
+/* Gyrafold page: the neuroscience theme */
 body.neuro {
   --paper: #10153a; --paper-2: #1a2152; --grid: #2b3470; --ink: #eceffb; --ink-2: #b4bbdc;
   --signal: #9d84ff; --signal-bright: #a993ff; --marker-bright: #44d7e9; --line: #2b3470; --muted: #b4bbdc;

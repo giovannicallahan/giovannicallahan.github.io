@@ -237,7 +237,7 @@
     animate(canvas, draw, 9);
   });
 
-  /* ── Spike raster (NeuroApp page) ────────────────────────
+  /* ── Spike raster (Gyrafold page) ────────────────────────
      Each row is a model neuron firing at random; at each stimulus the population
      fires together, the pattern a raster plot is used to show. */
   const raster = document.getElementById('raster');

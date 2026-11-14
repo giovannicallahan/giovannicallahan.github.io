@@ -8,7 +8,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 SITE = "https://giovannicallahan.github.io"
-NEUROAPP = "https://giovannicallahan.github.io/neuroapp/"
+NEUROAPP = "https://giovannicallahan.github.io/gyrafold/"
 COGVIZ = "https://cogviz-research-studio.streamlit.app/"
 GITHUB = "https://github.com/giovannicallahan"
 
@@ -21,7 +21,7 @@ MARK = ('<svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="
         'stroke="#14a3a1" stroke-width="2.2" stroke-linecap="round"/><path d="M13 1.5v3M13 21.5v3M1.5 13h3M21.5 13h3" '
         'stroke="currentColor" stroke-width="1.6"/></svg>')
 
-NAV = [("Home", "/"), ("NeuroApp", "/projects/neuroapp.html"), ("CogViz", "/projects/cogviz.html"),
+NAV = [("Home", "/"), ("Gyrafold", "/projects/gyrafold.html"), ("CogViz", "/projects/cogviz.html"),
        ("CV", "/Giovanni_Callahan_CV.pdf"),
        ("Contact", "/contact.html"), ("Feedback", "/feedback.html")]
 
@@ -152,15 +152,15 @@ page("index.html", "Giovanni Callahan — psychology, decisions and the brain",
     <div class="apps">
       <article class="app-row neuro">
         <div class="copy">
-          <h3>NeuroApp</h3>
+          <h3>Gyrafold</h3>
           <p>A 3D atlas of the human brain. Spin it, slice it and tap any of 300+ structures to see what it
           does, then quiz yourself until the names stick.</p>
           <div class="actions">
-            <a class="btn btn-primary" href="{NEUROAPP}">Open NeuroApp</a>
-            <a class="btn btn-ghost" href="/projects/neuroapp.html">How it works</a>
+            <a class="btn btn-primary" href="{NEUROAPP}">Open Gyrafold</a>
+            <a class="btn btn-ghost" href="/projects/gyrafold.html">How it works</a>
           </div>
         </div>
-        <div class="visual"><img src="/img/brain-oblique.webp" width="900" height="603" alt="Colour-coded 3D model of the human brain from NeuroApp" loading="lazy"></div>
+        <div class="visual"><img src="/img/brain-oblique.webp" width="900" height="603" alt="Colour-coded 3D model of the human brain from Gyrafold" loading="lazy"></div>
       </article>
       <article class="app-row paper">
         <div class="copy">
@@ -181,18 +181,18 @@ page("index.html", "Giovanni Callahan — psychology, decisions and the brain",
 </section>
 """)
 
-# ── NeuroApp ─────────────────────────────────────────────────────────────────
-page("projects/neuroapp.html", "NeuroApp — explore the human brain in 3D",
+# ── Gyrafold ─────────────────────────────────────────────────────────────────
+page("projects/gyrafold.html", "Gyrafold — explore the human brain in 3D",
      "A free 3D brain atlas that runs in your browser: spin and slice the brain, tap any of 300+ structures to learn what it does, and quiz yourself with spaced review.",
-     active="NeuroApp", theme="neuro", og_image="/img/og-neuroapp.png", body=f"""
+     active="Gyrafold", theme="neuro", og_image="/img/og-neuroapp.png", body=f"""
 <section class="page-hero">
   <div class="wrap split">
     <div>
-      <h1>NeuroApp</h1>
+      <h1>Gyrafold</h1>
       <p class="lede">Explore the human brain in 3D, right in your browser. Tap a structure to see what it
       does and what it connects to, then quiz yourself until the names stick.</p>
       <div class="actions">
-        <a class="btn btn-primary" href="{NEUROAPP}">Open NeuroApp</a>
+        <a class="btn btn-primary" href="{NEUROAPP}">Open Gyrafold</a>
         <a class="btn btn-ghost" href="{NEUROAPP}atlas-viewer.html?start=tour">Take the 5-minute tour</a>
       </div>
       <p class="note">Free. No account. Works on a phone.</p>
@@ -225,7 +225,7 @@ page("projects/neuroapp.html", "NeuroApp — explore the human brain in 3D",
         <li><strong>Use it anywhere</strong><span>On a phone the panel becomes a sheet you drag up; one finger rotates, two fingers zoom.</span></li>
       </ul>
     </div>
-    <div><img class="phone-shot" src="/img/neuroapp-phone.webp" width="390" height="664" alt="NeuroApp on a phone: the brain at the top and a structure page for the left superior frontal gyrus in a sheet below" loading="lazy"></div>
+    <div><img class="phone-shot" src="/img/neuroapp-phone.webp" width="390" height="664" alt="Gyrafold on a phone: the brain at the top and a structure page for the left superior frontal gyrus in a sheet below" loading="lazy"></div>
   </div>
 </section>
 
@@ -237,7 +237,7 @@ page("projects/neuroapp.html", "NeuroApp — explore the human brain in 3D",
       <li><strong>Cited lessons</strong><span>Every point in a lesson links to its source, mostly peer-reviewed StatPearls chapters and OpenStax textbooks.</span></li>
       <li><strong>Learning science</strong><span>Quizzes use retrieval practice and a Leitner spaced-review schedule, and they ask how confident you were.</span></li>
       <li><strong>Private by design</strong><span>No accounts, cookies or trackers. Your progress stays in your own browser.</span></li>
-      <li><strong>Open source</strong><span>Built with AI assistance. The source is <a href="https://github.com/giovannicallahan/neuroapp" {EXT}>open on GitHub</a>.</span></li>
+      <li><strong>Open source</strong><span>Built with AI assistance. The source is <a href="https://github.com/giovannicallahan/gyrafold" {EXT}>open on GitHub</a>.</span></li>
     </ul>
   </div>
 </section>
@@ -246,7 +246,7 @@ page("projects/neuroapp.html", "NeuroApp — explore the human brain in 3D",
   <div class="wrap">
     <h2 id="share-n">Share it</h2>
     <div class="share">
-      <img src="/img/qr-brain.svg" width="132" height="132" alt="QR code that opens NeuroApp">
+      <img src="/img/qr-brain.svg" width="132" height="132" alt="QR code that opens Gyrafold">
       <div>
         <p>Scan the code with a phone camera, or share the short link:</p>
         <p><code>giovannicallahan.github.io/brain</code> <button class="btn btn-ghost copy-btn" data-copy="https://giovannicallahan.github.io/brain/">Copy link</button></p>
@@ -367,7 +367,7 @@ page("contact.html", "Contact — Giovanni Callahan",
 
 # ── Feedback ─────────────────────────────────────────────────────────────────
 page("feedback.html", "Feedback — Giovanni Callahan",
-     "Tell Giovanni Callahan what works and what gets in your way in NeuroApp, CogViz or this website.",
+     "Tell Giovanni Callahan what works and what gets in your way in Gyrafold, CogViz or this website.",
      active="Feedback", body="""
 <section class="page-hero">
   <div class="wrap contact-grid">
@@ -379,7 +379,7 @@ page("feedback.html", "Feedback — Giovanni Callahan",
         <input type="hidden" name="_subject" value="New feedback from your website">
         <fieldset class="field"><legend>Which one is it about?</legend>
           <div class="choices">
-            <label><input type="radio" name="app" value="NeuroApp" required> NeuroApp</label>
+            <label><input type="radio" name="app" value="Gyrafold" required> Gyrafold</label>
             <label><input type="radio" name="app" value="CogViz"> CogViz</label>
             <label><input type="radio" name="app" value="Website"> This website</label>
           </div></fieldset>
@@ -408,7 +408,7 @@ page("feedback.html", "Feedback — Giovanni Callahan",
       <ul>
         <li>The page or structure you were on</li>
         <li>What you expected, and what you saw</li>
-        <li>For NeuroApp, whether it happened on a phone or a computer</li>
+        <li>For Gyrafold, whether it happened on a phone or a computer</li>
       </ul>
       <p class="note">Want a conversation instead? <a href="/contact.html">Send a message</a>.</p>
     </aside>
@@ -424,7 +424,7 @@ page("404.html", "Page not found — Giovanni Callahan", "This page does not exi
     <p class="lede">The link may be mistyped or out of date. These are the places you can go from here:</p>
     <div class="actions">
       <a class="btn btn-primary" href="/">Go to the home page</a>
-      <a class="btn btn-ghost" href="https://giovannicallahan.github.io/neuroapp/">Open NeuroApp</a>
+      <a class="btn btn-ghost" href="https://giovannicallahan.github.io/gyrafold/">Open Gyrafold</a>
       <a class="btn btn-ghost" href="/projects/cogviz.html">About CogViz</a>
     </div>
   </div>
@@ -449,11 +449,15 @@ def redirect(path, target, label):
     print("wrote", path)
 
 
-redirect("brain/index.html", NEUROAPP, "NeuroApp")
+redirect("brain/index.html", NEUROAPP, "Gyrafold")
+redirect("projects/neuroapp.html", "/projects/gyrafold.html", "Gyrafold")
+# Old NeuroApp addresses (the app was renamed Gyrafold)
+for _old in ("index.html", "atlas-viewer.html", "neuron.html", "imaging.html"):
+    redirect("neuroapp/" + _old, NEUROAPP + ("" if _old == "index.html" else _old), "Gyrafold")
 redirect("cogviz/index.html", COGVIZ, "CogViz Research Studio")
 
 (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE}/sitemap.xml\n")
-urls = ["/", "/projects/neuroapp.html", "/projects/cogviz.html", "/contact.html", "/feedback.html"]
+urls = ["/", "/projects/gyrafold.html", "/projects/cogviz.html", "/contact.html", "/feedback.html"]
 (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                                   + "".join(f"  <url><loc>{SITE}{u}</loc></url>\n" for u in urls) + "</urlset>\n")
 print("wrote robots.txt, sitemap.xml")

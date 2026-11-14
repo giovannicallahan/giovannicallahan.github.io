@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src https://formspree.io; form-action https://formspree.io; object-src 'none'; base-uri 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Gyrafold — explore the human brain in 3D</title>
+<meta name="description" content="A free 3D brain atlas that runs in your browser: spin and slice the brain, tap any of 300+ structures to learn what it does, and quiz yourself with spaced review.">
+<link rel="canonical" href="https://giovannicallahan.github.io/projects/gyrafold.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Gyrafold — explore the human brain in 3D">
+<meta property="og:description" content="A free 3D brain atlas that runs in your browser: spin and slice the brain, tap any of 300+ structures to learn what it does, and quiz yourself with spaced review.">
+<meta property="og:url" content="https://giovannicallahan.github.io/projects/gyrafold.html">
+<meta property="og:image" content="https://giovannicallahan.github.io/img/og-neuroapp.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#10153a">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/instrument-sans-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/site.css">
+<script src="/js/site.js" defer></script>
+</head>
+<body class="neuro">
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-nav">
+  <nav class="wrap" aria-label="Main">
+    <a class="wordmark" href="/"><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 18.5 C10 18.5, 9.5 7.5, 21.5 7.5" fill="none" stroke="#14a3a1" stroke-width="2.2" stroke-linecap="round"/><path d="M13 1.5v3M13 21.5v3M1.5 13h3M21.5 13h3" stroke="currentColor" stroke-width="1.6"/></svg>Giovanni Callahan</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/projects/gyrafold.html" aria-current="page">Gyrafold</a></li>
+      <li><a href="/projects/cogviz.html">CogViz</a></li>
+      <li><a href="/Giovanni_Callahan_CV.pdf">CV</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li><a href="/feedback.html">Feedback</a></li>
+    </ul>
+  </nav>
+</header>
+<main id="main">
+
+<section class="page-hero">
+  <div class="wrap split">
+    <div>
+      <h1>Gyrafold</h1>
+      <p class="lede">Explore the human brain in 3D, right in your browser. Tap a structure to see what it
+      does and what it connects to, then quiz yourself until the names stick.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="https://giovannicallahan.github.io/gyrafold/">Open Gyrafold</a>
+        <a class="btn btn-ghost" href="https://giovannicallahan.github.io/gyrafold/atlas-viewer.html?start=tour">Take the 5-minute tour</a>
+      </div>
+      <p class="note">Free. No account. Works on a phone.</p>
+    </div>
+    <div class="brain-shot"><img src="/img/brain-oblique.webp" width="900" height="603" alt="Colour-coded 3D model of the human brain, seen from the left and slightly above"></div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="raster-h">
+  <div class="wrap">
+    <h2 id="raster-h">How a brain signals</h2>
+    <figure class="raster">
+      <canvas id="raster" role="img" aria-label="Animated spike raster: rows of tick marks show model neurons firing; at each stimulus, highlighted in cyan, most neurons fire together."></canvas>
+      <figcaption>Each row is a model neuron and each tick is a spike. Most of the time the neurons fire at
+      random; when a stimulus arrives (the cyan band), many fire together. This is a simulation for
+      illustration, not recorded data.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="what-h">
+  <div class="wrap split">
+    <div>
+      <h2 id="what-h">What you can do</h2>
+      <ul class="feature-list">
+        <li><strong>Explore in 3D</strong><span>Rotate, zoom and cut through the brain on three planes. Isolate any region to see it alone.</span></li>
+        <li><strong>Drill into the parts</strong><span>Open a region such as the thalamus and step into each of its nuclei, with what each one does.</span></li>
+        <li><strong>Learn at your level</strong><span>Beginner and expert lessons for each structure, with every claim linked to its source.</span></li>
+        <li><strong>Practice that sticks</strong><span>Find-it and name-it quizzes with spaced review bring back what you are about to forget.</span></li>
+        <li><strong>Use it anywhere</strong><span>On a phone the panel becomes a sheet you drag up; one finger rotates, two fingers zoom.</span></li>
+      </ul>
+    </div>
+    <div><img class="phone-shot" src="/img/neuroapp-phone.webp" width="390" height="664" alt="Gyrafold on a phone: the brain at the top and a structure page for the left superior frontal gyrus in a sheet below" loading="lazy"></div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="made-h">
+  <div class="wrap">
+    <h2 id="made-h">How it's made</h2>
+    <ul class="feature-list">
+      <li><strong>Real anatomy</strong><span>The 3D models come from the SPL/NAC Brain Atlas (Halle et al., 2017). A Python and VTK pipeline converts its 359 source files into 328 web-ready models.</span></li>
+      <li><strong>Cited lessons</strong><span>Every point in a lesson links to its source, mostly peer-reviewed StatPearls chapters and OpenStax textbooks.</span></li>
+      <li><strong>Learning science</strong><span>Quizzes use retrieval practice and a Leitner spaced-review schedule, and they ask how confident you were.</span></li>
+      <li><strong>Private by design</strong><span>No accounts, cookies or trackers. Your progress stays in your own browser.</span></li>
+      <li><strong>Open source</strong><span>Built with AI assistance. The source is <a href="https://github.com/giovannicallahan/gyrafold" rel="noopener noreferrer" target="_blank">open on GitHub</a>.</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="share-n">
+  <div class="wrap">
+    <h2 id="share-n">Share it</h2>
+    <div class="share">
+      <img src="/img/qr-brain.svg" width="132" height="132" alt="QR code that opens Gyrafold">
+      <div>
+        <p>Scan the code with a phone camera, or share the short link:</p>
+        <p><code>giovannicallahan.github.io/brain</code> <button class="btn btn-ghost copy-btn" data-copy="https://giovannicallahan.github.io/brain/">Copy link</button></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <p>© 2026 Giovanni Callahan. This site uses no cookies or trackers.</p>
+    <ul>
+      <li><a href="https://github.com/giovannicallahan" rel="noopener noreferrer" target="_blank">GitHub</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li><a href="/feedback.html">Feedback</a></li>
+    </ul>
+  </div>
+</footer>
+</body>
+</html>
