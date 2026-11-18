@@ -369,7 +369,8 @@ async function main(){
       <p>${msg}</p>
       <p>You chose the best value on ${acc}% of trials.</p>
       <h2>About this study</h2>
-      <p>This study examines how people choose when they are also holding information in mind. On some trials the best value was also the cheapest pasta; on others it was not. We are interested in whether remembering more digits changes how people make these choices.</p>
+      <p>This study examines when people shift from deliberate thinking to a quicker, “good enough” rule of thumb. Weighing price and health for every pasta is the deliberate approach. Picking the cheapest or the familiar one is a shortcut that is usually right. On some trials the shortcut led to the best value; on others it did not, which lets us see which approach was used.</p>
+      <p>Remembering digits was the mental demand. We are testing whether a heavier demand makes people rely on the shortcut more often.</p>
       <p>Questions: ${CONFIG.CONTACT_STUDENT}.</p>
       <div class="actions">${status === "failed" ? '<button class="btn" id="retry">Try sending again</button>' : ""}<button class="btn ghost" id="dl">Download my data (CSV)</button></div>`, true);
     $("dl").onclick = downloadCSV;
