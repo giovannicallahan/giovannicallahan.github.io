@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pasta choice study</title>
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<style>
+:root{--bg:#fafaf8;--card:#fff;--ink:#1d1d1b;--ink2:#55534e;--muted:#8a8882;--line:#e2e0d9;--accent:#2a78d6;--good:#1b8a4b;--bad:#c23b3b;--tile:#f3f2ee;--fam:#6d4fc2}
+@media (prefers-color-scheme:dark){:root{--bg:#1a1a19;--card:#232321;--ink:#f0efec;--ink2:#c3c2b7;--muted:#8f8d86;--line:#3a3936;--accent:#5a9cf0;--good:#3fb36f;--bad:#e06464;--tile:#2c2c2a;--fam:#b9a5f5}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+main{max-width:720px;margin:0 auto;padding:20px 14px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 18px;min-height:420px;display:flex;flex-direction:column;justify-content:center}
+.card.top{justify-content:flex-start}
+h1{font-size:23px;font-weight:600;margin:0 0 10px}h2{font-size:17px;font-weight:600;margin:18px 0 4px}
+p,li{color:var(--ink2)}p{margin:6px 0 10px}ul{margin:6px 0 10px;padding-left:22px}
+.center{text-align:center}.muted{color:var(--muted);font-size:14px}
+button{font:inherit}
+.btn{display:inline-block;padding:11px 22px;border-radius:10px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);cursor:pointer;font-size:16px}
+.btn:disabled{opacity:.4;cursor:default}.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.actions{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.big{font-size:44px;font-weight:600;letter-spacing:.14em;text-align:center;font-variant-numeric:tabular-nums}
+.q{font-size:19px;text-align:center;color:var(--ink);margin-bottom:6px}
+.timer{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:8px 0 12px}.timer>div{height:100%;width:100%;background:var(--accent)}
+.grid{display:grid;grid-template-columns:54px repeat(4,minmax(0,1fr));gap:6px;align-items:center}
+.grid .h{font-weight:600;text-align:center;font-size:15px;overflow-wrap:anywhere}.grid .rl{color:var(--muted);font-size:13px}
+.tile{height:48px;border-radius:8px;border:1px solid var(--line);background:var(--tile);font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.tag{font-size:12px;color:var(--fam);text-align:center;min-height:18px;line-height:1.2}
+.choose{padding:11px 2px;border-radius:8px;border:1px solid var(--ink);background:var(--card);color:var(--ink);font-size:15px;cursor:pointer}
+.choose:hover{background:var(--tile)}
+.col-best .tile{border-color:var(--good);border-width:2px}
+input[type=text]{font:inherit;font-size:24px;text-align:center;width:200px;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);letter-spacing:.1em}
+.scale{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:8px 0}
+.scale button{width:42px;height:42px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.scale button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.ends{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);width:100%;max-width:330px;margin:0 auto}
+input[type=range]{width:100%;max-width:330px}
+.consent{max-height:52vh;overflow:auto;border:1px solid var(--line);border-radius:10px;padding:4px 14px;font-size:15px}
+.draft{background:#fff4d6;color:#5c4300;border:1px solid #e6c463;border-radius:8px;padding:8px 12px;font-size:14px;margin:8px 0}
+label.check{display:flex;gap:10px;align-items:flex-start;margin-top:14px;color:var(--ink);cursor:pointer}
+label.check input{width:20px;height:20px;margin-top:3px;flex:0 0 auto}
+.prog{font-size:13px;color:var(--muted);text-align:right;min-height:20px;margin-bottom:6px}
+.scale{flex-wrap:nowrap}
+@media (max-width:480px){.card{padding:18px 12px}.grid{grid-template-columns:40px repeat(4,minmax(0,1fr));gap:5px}.grid .h{font-size:13px}.grid .rl{font-size:12px}.tile{font-size:15px}.choose{font-size:14px}.scale button{width:36px;height:40px}.big{font-size:38px}}
+.ok{color:var(--good);font-weight:600}.no{color:var(--bad);font-weight:600}
+</style>
+</head>
+<body>
+<main>
+<div class="prog" id="prog"></div>
+<div class="card" id="card"></div>
+</main>
+
+<script>
+"use strict";
+/* ============================================================================
+   PASTA CHOICE: ONLINE COGNITIVE-LOAD PILOT
+   Dual-Depletion Project, Feghhi Lab, Arizona State University
+
+   One self-contained page. Upload it to any website as-is.
+
+   Design: within-subjects, two blocks.
+     Low load  = remember 2 digits during each choice.
+     High load = remember 6 digits during each choice.
+   Block order is randomised per participant (or forced with ?order=low or
+   ?order=high). Both blocks use the same 40 items (16 conflict, 24 agree),
+   reshuffled, so the item mix is identical across conditions.
+
+   Quick test: add ?debug=1 to the address for a 1-minute version (not saved).
+   ========================================================================== */
+
+const CONFIG = {
+  // ---- Data storage (Supabase). Leave blank to offer a CSV download only. ----
+  SUPABASE_URL: "https://enzsrlwojvmnwbsadvlk.supabase.co",            // e.g. "https://abcdefgh.supabase.co"
+  SUPABASE_KEY: "sb_publishable_kTphJJBRW5Iu8RKxJk5K-A_k7atiw6-",            // the project's PUBLISHABLE key (never the secret key)
+  SUPABASE_TABLE: "pilot_sessions",
+
+  // ---- Task ----
+  TRIALS_PER_BLOCK: 40,
+  CONFLICT_PROPORTION: 0.4,
+  PRACTICE_TRIALS: 6,
+  DEADLINE_S: 12,              // time allowed for each choice
+  DIGITS_MS: 1500,             // how long the digits stay on screen
+  FIXATION_MS: 500,
+  LOW_DIGITS: 2,
+  HIGH_DIGITS: 6,
+  ITEM_SEED: 20261117,         // fixed seed: every participant sees the same item set
+  MINUTES: 15,
+
+  // ---- Consent screen ----
+  CONSENT_IS_DRAFT: true,      // set to false once the IRB has approved the wording below
+  CONTACT_STUDENT: "Giovanni Callahan (gcallah2@asu.edu)",
+  CONTACT_FACULTY: "Dr. Iman Feghhi (ifeghhi@asu.edu)"
+};
+
+const PASTA = ["Rotini", "Penne", "Spaghetti", "Farfalle"];
+const Q = new URLSearchParams(location.search);
+const DEBUG = Q.get("debug") === "1";
+if (DEBUG) Object.assign(CONFIG, {TRIALS_PER_BLOCK: 5, PRACTICE_TRIALS: 2, DEADLINE_S: 5, DIGITS_MS: 400, FIXATION_MS: 150});
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const card = $("card");
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const money = p => "$" + p.toFixed(2);
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function shuffle(arr, rnd){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function show(html, top){card.className = "card" + (top ? " top" : "");card.innerHTML = html;window.scrollTo(0,0)}
+function waitClick(id){return new Promise(r => {$(id).onclick = () => r()})}
+
+/* ---------- items ----------
+   value = health/10 + (1 - (price - 1)/3): price ($1.00 to $4.00) and health (1 to 10)
+   count equally, so $1 is worth about 3 health points.
+   Agree item:    the best value is also the cheapest and the "bought before" pasta.
+   Conflict item: the best value is neither; cheapest and "bought before" are two other pastas. */
+function makeItem(conflict, rnd){
+  const ri = (lo, hi) => lo + Math.floor(rnd()*(hi-lo+1));
+  for(;;){
+    const opts = [0,1,2,3].map(() => ({price: 1 + 0.25*ri(0,12), health: ri(1,10)}));
+    opts.forEach(o => o.value = o.health/10 + (1 - (o.price-1)/3));
+    const byV = [0,1,2,3].sort((a,b) => opts[b].value - opts[a].value);
+    if (opts[byV[0]].value - opts[byV[1]].value < 0.15) continue;      // a clear best option
+    const minP = Math.min(...opts.map(o => o.price));
+    const cheapest = [0,1,2,3].filter(i => opts[i].price === minP);
+    if (cheapest.length > 1) continue;                                  // one cheapest option
+    const best = byV[0], cheap = cheapest[0];
+    let fam;
+    if (!conflict){ if (cheap !== best) continue; fam = best; }
+    else { if (cheap === best) continue; const rest = [0,1,2,3].filter(i => i !== best && i !== cheap); fam = rest[ri(0, rest.length-1)]; }
+    return {opts, best, cheap, fam, conflict};
+  }
+}
+function makeItemSet(n, seed){
+  const rnd = mulberry32(seed), nConf = Math.round(n * CONFIG.CONFLICT_PROPORTION), items = [];
+  for (let i = 0; i < n; i++){ const it = makeItem(i < nConf, rnd); it.id = (seed === CONFIG.ITEM_SEED ? "M" : "P") + String(i+1).padStart(2,"0"); items.push(it); }
+  return items;
+}
+function makeDigits(n){const d=[];while(d.length<n){const x=Math.floor(Math.random()*10);if(d.length&&d[d.length-1]===x)continue;d.push(x)}return d.join("")}
+
+/* ---------- session state ---------- */
+const S = {
+  participant_id: "P" + Math.random().toString(36).slice(2,8).toUpperCase() + Date.now().toString(36).slice(-4).toUpperCase(),
+  started_at: new Date().toISOString(),
+  order_group: (Q.get("order") === "low" || Q.get("order") === "high") ? Q.get("order") + "_first" : (Math.random() < 0.5 ? "low_first" : "high_first"),
+  device: {viewport_w: window.innerWidth, viewport_h: window.innerHeight, touch: matchMedia("(pointer:coarse)").matches},
+  trials: [], blocks: [], hidden: 0, running: false
+};
+document.addEventListener("visibilitychange", () => { if (document.hidden) S.hidden++; });
+window.addEventListener("beforeunload", e => { if (S.running){ e.preventDefault(); e.returnValue = ""; } });
+
+/* ---------- one trial ---------- */
+function gridHTML(it, perm, reveal){
+  const cols = perm.map(i => it.opts[i]);
+  const cls = c => (reveal && perm[c] === it.best) ? " col-best" : "";
+  let h = '<div class="grid"><div></div>' + PASTA.map(n => `<div class="h">${n}</div>`).join("");
+  h += '<div class="rl">Price</div>' + cols.map((o,c) => `<div class="${cls(c).trim()}"><div class="tile">${money(o.price)}</div></div>`).join("");
+  h += '<div class="rl">Health</div>' + cols.map((o,c) => `<div class="${cls(c).trim()}"><div class="tile">${o.health}/10</div></div>`).join("");
+  h += '<div></div>' + perm.map(i => `<div class="tag">${i === it.fam ? "✓ bought before" : ""}</div>`).join("");
+  if (!reveal) h += '<div></div>' + [0,1,2,3].map(c => `<button class="choose" data-c="${c}">Pick</button>`).join("");
+  return h + "</div>";
+}
+async function runTrial(it, nDigits, info){
+  const digits = makeDigits(nDigits), perm = shuffle([0,1,2,3], Math.random), hidden0 = S.hidden;
+  show(`<div class="q">Remember these digits</div><div class="big">${digits}</div>`);
+  await sleep(CONFIG.DIGITS_MS);
+  show('<div class="big">+</div>');
+  await sleep(CONFIG.FIXATION_MS);
+
+  show(`<div class="q">Which pasta is the best value?</div><div class="timer"><div id="bar"></div></div>${gridHTML(it, perm, false)}
+        <p class="muted center" style="margin-top:12px">Lower price and higher health are better. They count equally: $1 ≈ 3 health points.</p>`);
+  const t0 = performance.now();
+  requestAnimationFrame(() => requestAnimationFrame(() => { const b = $("bar"); if (b){ b.style.transition = `width ${CONFIG.DEADLINE_S}s linear`; b.style.width = "0%"; } }));
+  const col = await new Promise(resolve => {
+    let done = false;
+    const finish = v => { if (done) return; done = true; clearTimeout(to); resolve(v); };
+    const to = setTimeout(() => finish(null), CONFIG.DEADLINE_S * 1000);
+    card.querySelectorAll(".choose").forEach(b => b.onclick = () => finish(+b.dataset.c));
+  });
+  const rt = Math.round(performance.now() - t0), timedOut = col === null, chosen = timedOut ? null : perm[col];
+
+  show(`<div class="q">Type the digits you were remembering</div>
+        <div class="center" style="margin-top:12px"><input type="text" id="rec" inputmode="numeric" autocomplete="off" maxlength="${nDigits + 2}"></div>
+        <div class="actions"><button class="btn" id="go">Done</button></div>`);
+  const tR = performance.now(); $("rec").focus();
+  const typed = await new Promise(resolve => { const ok = () => resolve($("rec").value.replace(/\D/g, "")); $("go").onclick = ok; $("rec").onkeydown = e => { if (e.key === "Enter") ok(); }; });
+  const recallRt = Math.round(performance.now() - tR);
+
+  const choiceType = timedOut ? "timeout" : chosen === it.best ? "best" : chosen === it.cheap ? "cheapest" : chosen === it.fam ? "familiar" : "other";
+  const pos = i => perm.indexOf(i) + 1;                       // screen column, 1 to 4
+  const row = Object.assign({participant_id: S.participant_id, order_group: S.order_group}, info, {
+    item_id: it.id, item_type: it.conflict ? "conflict" : "agree",
+    n_digits: nDigits, digits_shown: digits, digits_typed: typed, recall_correct: typed === digits ? 1 : 0, recall_rt_ms: recallRt,
+    choice_col: timedOut ? "" : col + 1, choice_type: choiceType, correct: chosen === it.best ? 1 : 0, timed_out: timedOut ? 1 : 0, rt_ms: rt,
+    best_col: pos(it.best), cheapest_col: pos(it.cheap), familiar_col: pos(it.fam),
+    tab_hidden: S.hidden - hidden0
+  });
+  perm.forEach((i, c) => { row["price_" + (c+1)] = it.opts[i].price; row["health_" + (c+1)] = it.opts[i].health; });
+  S.trials.push(row);
+
+  if (info.phase === "practice"){
+    const b = it.opts[it.best], name = PASTA[perm.indexOf(it.best)];
+    const head = timedOut ? '<span class="no">Time ran out.</span>' : chosen === it.best ? '<span class="ok">Best value.</span>' : '<span class="no">Not the best value.</span>';
+    const why = it.conflict ? "Here the cheapest pasta was not the best value: its health score was too low to make up for the price." : "Here the best value was also the cheapest.";
+    show(`<p class="center" style="font-size:18px">${head} The best was ${name} (${money(b.price)}, ${b.health}/10).</p>${gridHTML(it, perm, true)}
+          <p class="center" style="margin-top:12px">${why}</p>
+          <p class="center">Digits: ${typed === digits ? '<span class="ok">correct</span>' : `<span class="no">they were ${digits}</span>`}</p>
+          <div class="actions"><button class="btn" id="go">Continue</button></div>`);
+    await waitClick("go");
+  } else { show(""); await sleep(350); }
+}
+
+/* ---------- blocks ---------- */
+async function runBlock(cond, blockIndex, items){
+  const n = cond === "low" ? CONFIG.LOW_DIGITS : CONFIG.HIGH_DIGITS;
+  show(`<h1>Part ${blockIndex} of 2</h1>
+        <p>In this part you will remember <b>${n} digits</b> on each trial.</p>
+        <p>There are ${items.length} trials and no feedback. Find the best value each time, and keep the digits in mind until you are asked to type them.</p>
+        <div class="actions"><button class="btn" id="go">Start part ${blockIndex}</button></div>`);
+  await waitClick("go");
+  const order = shuffle(items, Math.random);
+  for (let t = 0; t < order.length; t++){
+    $("prog").textContent = `Part ${blockIndex} of 2 · trial ${t+1} of ${order.length}`;
+    await runTrial(order[t], n, {phase: "main", block: blockIndex, condition: cond, trial: t + 1});
+  }
+  $("prog").textContent = "";
+  const r = await ratings(blockIndex);
+  S.blocks.push(Object.assign({block: blockIndex, condition: cond}, r));
+}
+async function ratings(blockIndex){
+  show(`<h1>About part ${blockIndex}</h1>
+        <h2>How much mental effort did that part take?</h2>
+        <div class="scale" id="eff">${[1,2,3,4,5,6,7].map(v => `<button data-v="${v}">${v}</button>`).join("")}</div>
+        <div class="ends"><span>Very little</span><span>A great deal</span></div>
+        <h2 style="margin-top:22px">On what share of trials did you compare both price and health for every pasta?</h2>
+        <div class="center"><input type="range" id="strat" min="0" max="100" step="5" value="50"><div id="stratO" class="muted">Move the slider</div></div>
+        <div class="ends"><span>None of them</span><span>All of them</span></div>
+        <div class="actions"><button class="btn" id="go" disabled>Continue</button></div>`, true);
+  let effort = null, moved = false;
+  const check = () => { $("go").disabled = !(effort && moved); };
+  card.querySelectorAll("#eff button").forEach(b => b.onclick = () => { effort = +b.dataset.v; card.querySelectorAll("#eff button").forEach(x => x.classList.toggle("on", x === b)); check(); });
+  const upd = () => { moved = true; $("stratO").textContent = $("strat").value + "% of trials"; check(); };
+  $("strat").addEventListener("input", upd); $("strat").addEventListener("change", upd);
+  await waitClick("go");
+  return {effort_1to7: effort, self_report_compare_pct: +$("strat").value};
+}
+
+/* ---------- data out ---------- */
+const COLS = ["participant_id","order_group","phase","block","condition","trial","item_id","item_type","n_digits","digits_shown","digits_typed","recall_correct","recall_rt_ms",
+  "choice_col","choice_type","correct","timed_out","rt_ms","best_col","cheapest_col","familiar_col",
+  "price_1","health_1","price_2","health_2","price_3","health_3","price_4","health_4","tab_hidden","effort_1to7","self_report_compare_pct"];
+function rowsOut(){
+  return S.trials.map(r => { const b = S.blocks.find(x => x.block === r.block) || {}; return Object.assign({}, r, {effort_1to7: b.effort_1to7 ?? "", self_report_compare_pct: b.self_report_compare_pct ?? ""}); });
+}
+function toCSV(){
+  const esc = v => { const s = String(v ?? ""); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  return [COLS.join(",")].concat(rowsOut().map(r => COLS.map(c => esc(r[c])).join(","))).join("\n");
+}
+function downloadCSV(){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([toCSV()], {type: "text/csv"}));
+  a.download = `pasta_pilot_${S.participant_id}.csv`; document.body.appendChild(a); a.click(); a.remove();
+}
+async function saveRemote(){
+  if (DEBUG) return "debug";
+  if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_KEY) return "off";
+  const body = {participant_id: S.participant_id, order_group: S.order_group, started_at: S.started_at,
+    n_trials: S.trials.filter(r => r.phase === "main").length,
+    payload: {config: {trials_per_block: CONFIG.TRIALS_PER_BLOCK, conflict_proportion: CONFIG.CONFLICT_PROPORTION, deadline_s: CONFIG.DEADLINE_S, digits_ms: CONFIG.DIGITS_MS, item_seed: CONFIG.ITEM_SEED},
+              device: S.device, blocks: S.blocks, trials: rowsOut()}};
+  for (let attempt = 0; attempt < 3; attempt++){
+    try {
+      const res = await fetch(`${CONFIG.SUPABASE_URL.replace(/\/$/, "")}/rest/v1/${CONFIG.SUPABASE_TABLE}`, {method: "POST",
+        headers: {"Content-Type": "application/json", apikey: CONFIG.SUPABASE_KEY, Authorization: "Bearer " + CONFIG.SUPABASE_KEY, Prefer: "return=minimal"},
+        body: JSON.stringify(body)});
+      if (res.ok) return "saved";
+    } catch (e) {}
+    await sleep(1200);
+  }
+  return "failed";
+}
+
+/* ---------- screens ---------- */
+function consentHTML(){
+  return `${CONFIG.CONSENT_IS_DRAFT ? '<div class="draft"><b>Draft consent text.</b> Not yet approved by the ASU IRB. Do not collect data from the public until it is approved and CONSENT_IS_DRAFT is set to false.</div>' : ""}
+  <div class="consent">
+  <h2>Informed Consent Statement</h2>
+  <p><b>Study Title:</b> Dual-Depletion Performance Study: Online Decision Task<br>
+  <b>Student Researcher:</b> Giovanni Callahan, School of Social and Behavioral Sciences, Arizona State University<br>
+  <b>Faculty Investigator:</b> Dr. Iman Feghhi</p>
+  <h2>Purpose of the Study</h2>
+  <p>We are conducting a research study to understand how people make decisions while managing a mental demand. You must be at least 18 years old to participate.</p>
+  <h2>What You Will Do</h2>
+  <p>If you choose to participate, the task takes about ${CONFIG.MINUTES} minutes and is completed in your web browser. You will be asked to:</p>
+  <ul>
+  <li>Read brief instructions and complete a short practice set with feedback.</li>
+  <li>Complete two parts of ${CONFIG.TRIALS_PER_BLOCK} trials each. On each trial you briefly see ${CONFIG.LOW_DIGITS} or ${CONFIG.HIGH_DIGITS} digits to remember, choose the best value among four pastas shown with a price and a health score, and then type the digits back.</li>
+  <li>After each part, answer two short questions about your effort and how you made your choices.</li>
+  </ul>
+  <p>The page records your choices, your typed digits, and their timing.</p>
+  <h2>Risks and Benefits</h2>
+  <p>The risks associated with this study are expected to be minimal. You may experience temporary mental fatigue, frustration, or boredom. There may be no direct personal benefit. Your participation may help researchers understand decision-making under mental demand.</p>
+  <h2>Voluntary Participation and Withdrawal</h2>
+  <p>Participation is voluntary. You may stop at any time without penalty by closing this page. Responses are sent to the research team only when you reach the end of the task, so nothing is saved if you leave early.</p>
+  <h2>Confidentiality and Data Management</h2>
+  <p>Your confidentiality will be protected to the extent permitted by law. This task does not ask for your name, email address, or other directly identifying information, and no audio or video is recorded. Your responses are labeled with a random code created by this page.</p>
+  <p>Responses are stored in a secured online database with access restricted to authorized research-team members, and may be transferred to secure Arizona State University storage.</p>
+  <p>Results may appear in research reports, presentations, academic assignments, conference materials, or publications, in de-identified or aggregate form. De-identified data may be retained and used in future research. Because responses are not linked to your identity, the research team cannot identify and remove your data after you submit it.</p>
+  <h2>Questions and Contact Information</h2>
+  <p>Student Researcher: ${CONFIG.CONTACT_STUDENT}<br>Faculty Investigator: ${CONFIG.CONTACT_FACULTY}</p>
+  <p>For questions or concerns about your rights as a research participant, or if you believe that you have been placed at risk, you may contact the Chair of the Human Subjects Institutional Review Board through the Arizona State University Office of Research Integrity and Assurance at (480) 965-6788.</p>
+  </div>
+  <label class="check"><input type="checkbox" id="agree"><span>I am at least 18 years old, I have read and understood this information, and I voluntarily agree to participate.</span></label>
+  <div class="actions"><button class="btn" id="go" disabled>Continue</button></div>`;
+}
+function exampleHTML(){
+  const it = {opts: [{price: 1.25, health: 3}, {price: 1.75, health: 9}, {price: 3.5, health: 10}, {price: 2.5, health: 4}], best: 1, cheap: 0, fam: 3};
+  return gridHTML(it, [0,1,2,3], true);
+}
+async function main(){
+  show(`<h1>Pasta choice study</h1>${consentHTML()}`, true);
+  $("agree").onchange = () => { $("go").disabled = !$("agree").checked; };
+  await waitClick("go");
+  S.consented_at = new Date().toISOString(); S.running = true;
+
+  show(`<h1>Your task</h1>
+    <p>Imagine you are shopping for pasta. On each trial you will see four pastas, each with a <b>price</b> and a <b>health score</b> out of 10.</p>
+    <p>Choose the <b>best overall value</b>. A lower price is better and a higher health score is better. They count equally: <b>$1 is worth about 3 health points</b>.</p>
+    ${exampleHTML()}
+    <p style="margin-top:12px">In this example, Penne (outlined) is the best value. Rotini is 50 cents cheaper, but Penne is 6 health points healthier, which is worth far more than 50 cents.</p>
+    <p>One pasta in each set is marked “bought before.” The best value depends only on price and health.</p>
+    <div class="actions"><button class="btn" id="go">Next</button></div>`, true);
+  await waitClick("go");
+
+  show(`<h1>Remembering digits</h1>
+    <p>Each trial starts with a few digits to remember. Keep them in mind while you choose a pasta. After your choice you will type them back.</p>
+    <p>Please do not write the digits down.</p>
+    <p>You have <b>${CONFIG.DEADLINE_S} seconds</b> for each choice. A bar shows the time left.</p>
+    <p>Please complete the task in one sitting, somewhere without distractions. First, ${CONFIG.PRACTICE_TRIALS} practice trials with feedback.</p>
+    <div class="actions"><button class="btn" id="go">Start practice</button></div>`, true);
+  await waitClick("go");
+
+  const nP = CONFIG.PRACTICE_TRIALS, pItems = makeItemSet(nP, CONFIG.ITEM_SEED + 1);
+  const pOrder = shuffle(pItems, mulberry32(7));
+  for (let t = 0; t < nP; t++){
+    $("prog").textContent = `Practice ${t+1} of ${nP}`;
+    const n = t >= nP - Math.max(1, Math.floor(nP/3)) ? CONFIG.HIGH_DIGITS : CONFIG.LOW_DIGITS;   // last third uses the long digit string
+    await runTrial(pOrder[t], n, {phase: "practice", block: 0, condition: n === CONFIG.LOW_DIGITS ? "low" : "high", trial: t + 1});
+  }
+  $("prog").textContent = "";
+
+  const items = makeItemSet(CONFIG.TRIALS_PER_BLOCK, CONFIG.ITEM_SEED);
+  const conds = S.order_group === "low_first" ? ["low", "high"] : ["high", "low"];
+  await runBlock(conds[0], 1, items);
+  show(`<h1>Short break</h1><p>Part 1 is done. Rest for a moment, then continue when you are ready.</p><div class="actions"><button class="btn" id="go">Continue</button></div>`);
+  await waitClick("go");
+  await runBlock(conds[1], 2, items);
+
+  S.finished_at = new Date().toISOString(); S.running = false;
+  show('<p class="center">Saving your responses…</p>');
+  let status = await saveRemote();
+  const mainT = S.trials.filter(r => r.phase === "main"), acc = Math.round(100 * mainT.filter(r => r.correct).length / Math.max(1, mainT.length));
+  const render = () => {
+    const msg = {saved: "Your responses were saved.", debug: "Test mode: nothing was sent to the database.",
+      off: "Online saving is not set up for this page. Please download your data and send the file to the researcher.",
+      failed: '<span class="no">Your responses could not be sent.</span> Please try again, or download your data and email the file to the researcher.'}[status];
+    show(`<h1 id="done">Thank you</h1>
+      <p>${msg}</p>
+      <p>You chose the best value on ${acc}% of trials.</p>
+      <h2>About this study</h2>
+      <p>This study examines how people choose when they are also holding information in mind. On some trials the best value was also the cheapest pasta; on others it was not. We are interested in whether remembering more digits changes how people make these choices.</p>
+      <p>Questions: ${CONFIG.CONTACT_STUDENT}.</p>
+      <div class="actions">${status === "failed" ? '<button class="btn" id="retry">Try sending again</button>' : ""}<button class="btn ghost" id="dl">Download my data (CSV)</button></div>`, true);
+    $("dl").onclick = downloadCSV;
+    if ($("retry")) $("retry").onclick = async () => { $("retry").disabled = true; status = await saveRemote(); render(); };
+  };
+  render();
+}
+window.__pilot = {S, toCSV, makeItemSet, CONFIG};
+main();
+</script>
+</body>
+</html>
