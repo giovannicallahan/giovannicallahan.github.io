@@ -288,3 +288,95 @@ fieldset { border: 0; padding: 0; margin: 0; }
 .lost { min-height: 60vh; display: grid; align-content: center; }
 .h-small { font-size: var(--step-2); }
 .plot.flush { margin: 0; }
+
+/* ═══ Night theme (site-wide, 2026-11-18) ═══════════════════ */
+/* ── Shared structure ───────────────────────────────────── */
+.exp { padding: clamp(3rem, 7vw, 5rem) 0; }
+.exp .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+.exp h2 { font-size: var(--step-4); max-width: 12ch; }
+.exp p { font-size: var(--step-1); line-height: 1.5; }
+.pasta { width: 100%; border-collapse: separate; border-spacing: 6px; font-variant-numeric: tabular-nums; }
+.pasta caption { caption-side: bottom; text-align: left; font-size: var(--step--1); padding-top: 0.6rem; }
+.pasta th { font-weight: 600; font-size: var(--step--1); text-align: center; padding: 0.3rem; }
+.pasta tbody th { text-align: left; font-weight: 500; }
+.pasta td { text-align: center; font-weight: 650; font-size: var(--step-1); padding: 0.8rem 0.3rem; border-radius: 8px; border: 1.5px solid transparent; }
+@media (max-width: 860px) { .exp .wrap { grid-template-columns: 1fr; } .pasta td { font-size: var(--step-0); padding: 0.6rem 0.1rem; } }
+
+/* ═══ Option B: bold dark ═══════════════════════════════════
+   An instrument at night. Deep navy, one amber control, the name set
+   very large, and a teal band for the experiment. */
+body {
+  --paper: #071523; --paper-2: #0e2236; --grid: #1d3a52; --ink: #edf4f2; --ink-2: #a8bccb;
+  --signal: #56d6cf; --signal-bright: #56d6cf; --marker: #f2a53a; --marker-bright: #f6b24c; --error: #ff8a7a; --ok: #5fd39a;
+  background: #071523;
+}
+h1, h2, h3, .wordmark { font-family: "Space Grotesk", "Instrument Sans", sans-serif; font-stretch: 100%; font-weight: 600; letter-spacing: -0.035em; }
+.site-nav { background: color-mix(in srgb, #071523 86%, transparent); }
+.nav-links a:hover { background: var(--paper-2); }
+.nav-links a[aria-current="page"] { box-shadow: inset 0 -2px 0 var(--marker); }
+.hero { padding: clamp(2.5rem, 6vw, 5rem) 0 clamp(3rem, 6vw, 5rem); }
+.hero h1 { font-size: clamp(3.3rem, 12.4vw, 10rem); max-width: none; line-height: 0.92; letter-spacing: -0.055em; margin-bottom: 0.35em; }
+.hero-copy { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1rem 3rem; align-items: start; }
+.hero-copy h1 { grid-column: 1 / -1; }
+.hero .lede { margin: 0; }
+.hero .actions { margin-top: 0; flex-direction: column; align-items: stretch; min-width: 15rem; }
+.hero .actions .btn { justify-content: center; }
+@media (max-width: 860px) { .hero-copy { grid-template-columns: 1fr; } }
+.btn { border-radius: 999px; border-color: var(--grid); }
+.btn-primary { background: var(--marker); border-color: var(--marker); color: #071523; font-weight: 700; min-height: 54px; padding-inline: 1.75rem; }
+.btn-primary:hover { background: #ffc871; border-color: #ffc871; }
+.btn-ghost { color: var(--ink); }
+.btn-ghost:hover { background: var(--paper-2); }
+.plot { background: #0a1b2c; border-color: var(--grid); border-radius: 18px; box-shadow: 0 0 0 1px rgba(86, 214, 207, 0.08), 0 30px 80px -30px rgba(86, 214, 207, 0.25); }
+.plot canvas { height: clamp(280px, 40vw, 480px); }
+.exp { background: #0b7574; color: #fff; }
+.exp h2 { font-size: clamp(2.4rem, 6vw, 4.5rem); max-width: 11ch; line-height: 0.98; }
+.exp .btn-primary { background: #071523; border-color: #071523; color: #fff; }
+.exp .btn-primary:hover { background: #0e2236; border-color: #0e2236; }
+.exp .btn-ghost { color: #fff; border-color: rgba(255, 255, 255, 0.6); }
+.exp .btn-ghost:hover { background: rgba(255, 255, 255, 0.12); }
+.pasta td { background: #071523; color: #edf4f2; }
+.pasta td.best { background: var(--marker); color: #071523; }
+.pasta caption, .pasta th { color: #e3f4f2; }
+.section + .section { border-top-color: var(--grid); }
+.facts { border-top-color: var(--marker); }
+.tags li { background: var(--paper-2); }
+.app-row { border-radius: 18px; }
+.app-row.neuro .btn-primary { background: #e9ecf8; border-color: #e9ecf8; color: #141a3c; min-height: 46px; }
+.app-row.paper { background: var(--paper-2); border-color: var(--grid); }
+.app-row.paper .visual { background-color: #0a1b2c; border-left-color: var(--grid); }
+.app-row.paper .btn-primary { background: var(--ink); border-color: var(--ink); color: #071523; min-height: 46px; }
+.site-foot { border-top-color: var(--grid); }
+
+/* ── Short version: about two screens on a desktop ──────── */
+.section { padding: clamp(2.25rem, 5vw, 3.5rem) 0; }
+.exp { padding: clamp(2rem, 4.5vw, 3.25rem) 0; }
+.section-head { margin-bottom: 1.25rem; }
+.about { align-items: start; }
+.apps { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.app-row { grid-template-columns: 1fr; }
+.app-row .copy { padding: clamp(1.25rem, 3vw, 2rem); }
+.app-row h3 { font-size: var(--step-2); }
+@media (max-width: 760px) { .apps { grid-template-columns: 1fr; } }
+.hero { padding: clamp(2rem, 4vw, 3.5rem) 0 clamp(2rem, 4vw, 3.5rem); }
+.hero h1 { font-size: clamp(3rem, 9.5vw, 7.5rem); }
+.plot canvas { height: clamp(200px, 22vw, 300px); }
+.exp h2 { font-size: clamp(2rem, 4.6vw, 3.5rem); }
+
+/* Three cards: Gyrafold, CogViz, Vector Guild */
+.apps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 980px) { .apps { grid-template-columns: 1fr; } }
+.app-row .copy { justify-content: flex-start; }
+.app-row .actions { margin-top: auto; padding-top: 1rem; }
+.app-row.guild { background: #101b20; color: #e8efe6; border-color: #101b20; }
+.app-row.guild .btn-primary, .app-row.guild .btn-primary { background: #d2ee5a; border-color: #d2ee5a; color: #101b20; min-height: 46px; }
+.app-row.guild .btn-primary:hover { background: #e4f78f; border-color: #e4f78f; }
+.app-row.guild { border-color: #2a3b33; }
+
+/* Forms and small parts on the dark theme */
+input[type="text"], input[type="email"], select, textarea { background: var(--paper-2); border-color: var(--grid); color: var(--ink); }
+.btn-primary { min-height: 46px; }
+.hero .btn-primary { min-height: 54px; }
+body.neuro { background: radial-gradient(ellipse 80% 60% at 70% 0%, #1d2563 0%, #10153a 60%) fixed, #10153a; }
+.choices label { background: var(--paper-2); border-color: var(--grid); }
+.choices label:has(input:checked) { border-color: var(--signal); background: #123a4a; }

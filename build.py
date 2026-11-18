@@ -49,7 +49,7 @@ def page(path, title, description, body, active=None, theme="", og_image="/img/o
 <meta property="og:url" content="{canonical}">
 <meta property="og:image" content="{SITE}{og_image}">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="{'#10153a' if theme == 'neuro' else '#eef3f2'}">
+<meta name="theme-color" content="{'#10153a' if theme == 'neuro' else '#071523'}">
 <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/fonts/instrument-sans-var.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/css/site.css">
@@ -94,14 +94,16 @@ page("index.html", "Giovanni Callahan — psychology, decisions and the brain",
      active="Home", body=f"""
 <section class="hero">
   <div class="wrap">
+    <div class="hero-copy">
     <h1>Giovanni Callahan</h1>
     <p class="lede">Psychology student at Arizona State University and Marine Corps veteran. I study how
     people decide where to spend mental and physical effort, and I build free tools for learning about the
     brain and planning experiments.</p>
     <div class="actions">
-      <a class="btn btn-primary" href="#apps">See my apps</a>
+      <a class="btn btn-primary" href="/study/">Try my experiment</a>
+      <a class="btn btn-ghost" href="#apps">See my apps</a>
       <a class="btn btn-ghost" href="/Giovanni_Callahan_CV.pdf">Download CV (PDF)</a>
-      <a class="btn btn-ghost" href="/contact.html">Get in touch</a>
+    </div>
     </div>
     <figure class="plot">
       <canvas id="calibration" role="img" aria-label="Animated plot: a noisy signal settles, trial results accumulate into proportions at nine stimulus strengths, and an S-shaped psychometric curve is fitted through them, marking the detection threshold."></canvas>
@@ -115,30 +117,42 @@ page("index.html", "Giovanni Callahan — psychology, decisions and the brain",
   </div>
 </section>
 
+
+<section class="exp" id="experiment" aria-labelledby="exp-h">
+  <div class="wrap">
+    <div class="exp-copy">
+      <h2 id="exp-h">Which pasta is the best value?</h2>
+      <p>My current experiment asks when people stop weighing their options and reach for a rule of thumb. It takes about 15 minutes in your browser.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="/study/">Try the experiment</a>
+        <a class="btn btn-ghost" href="/study/?debug=1">One-minute demo</a>
+      </div>
+    </div>
+    <table class="pasta" aria-label="Example trial: four pastas with price and health score">
+      <thead><tr><th></th><th>Rotini</th><th>Penne</th><th>Spaghetti</th><th>Farfalle</th></tr></thead>
+      <tbody>
+        <tr><th>Price</th><td>$1.25</td><td class="best">$1.75</td><td>$3.50</td><td>$2.50</td></tr>
+        <tr><th>Health</th><td>3/10</td><td class="best">9/10</td><td>10/10</td><td>4/10</td></tr>
+      </tbody>
+      <caption>An example trial. The cheapest pasta is not the best value here.</caption>
+    </table>
+  </div>
+</section>
+
 <section class="section" id="about" aria-labelledby="about-h">
   <div class="wrap about">
     <div>
       <h2 id="about-h">About me</h2>
-      <p>From 2017 to 2022 I served in the U.S. Marine Corps as a Navigational Aids Technician. My team set
-      up, aligned and calibrated navigation systems in demanding conditions, and as an instructor I trained
-      other Marines to do the same. That work was about turning noisy signals into readings you can trust.
-      Psychology asks a version of the same question about people.</p>
-      <p>Now I study psychology at Arizona State University, where I hold a 4.0 GPA and expect to finish my
-      B.S. in spring 2027. I will be the first person in my family to earn a bachelor's degree.</p>
-      <p>As an undergraduate researcher in Dr. Iman Feghhi's lab, I lead the development of a study on what
-      happens when people face cognitive and physical demands at the same time. I programmed the experiment
-      in PsychoPy and help train the research assistants who run it.</p>
-      <p>I am working toward a Ph.D. in cognitive or computational neuroscience, and I am looking for research
+      <p>I served in the U.S. Marine Corps from 2017 to 2022 as a Navigational Aids Technician and
+      instructor. Now I study psychology at Arizona State University and lead the development of a study
+      in Dr. Iman Feghhi's lab on combined cognitive and physical demands. I am looking for research
       assistant and post-baccalaureate positions that begin in 2027.</p>
+      <p><a href="/Giovanni_Callahan_CV.pdf">Read my CV</a></p>
     </div>
     <dl class="facts">
       <div><dt>Studying</dt><dd>B.S. Psychology, Arizona State University (expected 2027)</dd></div>
       <div><dt>Research</dt><dd>Combined cognitive and physical load, Feghhi lab</dd></div>
       <div><dt>Before</dt><dd>U.S. Marine Corps, 2017–2022; Navigational Aids Technician and instructor</dd></div>
-      <div><dt>Tools</dt><dd>Python, pandas, SciPy, statsmodels, matplotlib, PsychoPy</dd></div>
-      <div><dt>Interests</dt><dd><ul class="tags">
-        <li>Decision-making</li><li>Resource rationality</li><li>Effort</li>
-        <li>Perception and action</li><li>Computational models</li><li>Neural networks</li></ul></dd></div>
     </dl>
   </div>
 </section>
@@ -146,8 +160,7 @@ page("index.html", "Giovanni Callahan — psychology, decisions and the brain",
 <section class="section" id="apps" aria-labelledby="apps-h">
   <div class="wrap">
     <div class="section-head">
-      <h2 id="apps-h">Apps I've built</h2>
-      <p>Both are free, run in a web browser and work on phones.</p>
+      <h2 id="apps-h">Apps and games I've built</h2>
     </div>
     <div class="apps">
       <article class="app-row neuro">
@@ -156,11 +169,10 @@ page("index.html", "Giovanni Callahan — psychology, decisions and the brain",
           <p>A 3D atlas of the human brain. Spin it, slice it and tap any of 300+ structures to see what it
           does, then quiz yourself until the names stick.</p>
           <div class="actions">
-            <a class="btn btn-primary" href="{NEUROAPP}">Open Gyrafold</a>
+            <a class="btn btn-primary" href="https://gyrafold.com/">Open Gyrafold</a>
             <a class="btn btn-ghost" href="/projects/gyrafold.html">How it works</a>
           </div>
         </div>
-        <div class="visual"><img src="/img/brain-oblique.webp" width="900" height="603" alt="Colour-coded 3D model of the human brain from Gyrafold" loading="lazy"></div>
       </article>
       <article class="app-row paper">
         <div class="copy">
@@ -168,13 +180,20 @@ page("index.html", "Giovanni Callahan — psychology, decisions and the brain",
           <p>A planner for psychology experiments. Choose a design, plan the analysis, simulate the data your
           prediction implies and export a preregistration draft.</p>
           <div class="actions">
-            <a class="btn btn-primary" href="{COGVIZ}" {EXT}>Open CogViz</a>
+            <a class="btn btn-primary" href="https://cogviz-research-studio.streamlit.app/" rel="noopener noreferrer" target="_blank">Open CogViz</a>
             <a class="btn btn-ghost" href="/projects/cogviz.html">How it works</a>
           </div>
-          <p class="note">CogViz is hosted free on Streamlit. If nobody has used it for a while, it can take
-          about a minute to wake up.</p>
         </div>
-        <div class="visual"><canvas class="power" role="img" aria-label="Animated power curve: dots show simulated detection rates for growing sample sizes, and a curve through them crosses the 80 percent line."></canvas></div>
+      </article>
+      <article class="app-row guild">
+        <div class="copy">
+          <h3>Vector Guild</h3>
+          <p>A linear algebra adventure. Work through 68 engineering missions, and every first solve
+          builds another part of your outpost.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="/vector-guild/">Play Vector Guild</a>
+          </div>
+        </div>
       </article>
     </div>
   </div>
@@ -457,7 +476,7 @@ for _old in ("index.html", "atlas-viewer.html", "neuron.html", "imaging.html"):
 redirect("cogviz/index.html", COGVIZ, "CogViz Research Studio")
 
 (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE}/sitemap.xml\n")
-urls = ["/", "/projects/gyrafold.html", "/projects/cogviz.html", "/contact.html", "/feedback.html"]
+urls = ["/", "/projects/gyrafold.html", "/projects/cogviz.html", "/vector-guild/", "/contact.html", "/feedback.html"]
 (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                                   + "".join(f"  <url><loc>{SITE}{u}</loc></url>\n" for u in urls) + "</urlset>\n")
 print("wrote robots.txt, sitemap.xml")
