@@ -22,7 +22,7 @@ MARK = ('<svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="
         'stroke="currentColor" stroke-width="1.6"/></svg>')
 
 NAV = [("Home", "/"), ("Gyrafold", "/projects/gyrafold.html"), ("CogViz", "/projects/cogviz.html"),
-       ("Study", "/study/"), ("CV", "/Giovanni_Callahan_CV.pdf"),
+       ("Experiment", "/study/"), ("CV", "/Giovanni_Callahan_CV.pdf"),
        ("Contact", "/contact.html"), ("Feedback", "/feedback.html")]
 
 EXT = 'rel="noopener noreferrer" target="_blank"'
