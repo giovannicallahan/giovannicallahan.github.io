@@ -109,6 +109,10 @@ const PASTA = ["Rotini", "Penne", "Spaghetti", "Farfalle"];
 const Q = new URLSearchParams(location.search);
 const DEBUG = Q.get("debug") === "1";
 if (DEBUG) Object.assign(CONFIG, {TRIALS_PER_BLOCK: 5, CHECK_TRIALS_PER_BLOCK: 1, PRACTICE_TRIALS: 3, DEADLINE_S: 5, DIGITS_MS: 400, FIXATION_MS: 150});
+// Lab-meeting options: ?limit=8 sets the seconds per choice (3 to 60), ?limit=none removes the time limit,
+// and ?ratio=off hides the stated price-health ratio so participants form their own trade-off.
+CONFIG.SHOW_RATIO = Q.get("ratio") !== "off";
+{ const L = Q.get("limit"); if (L === "none") CONFIG.DEADLINE_S = 0; else if (+L >= 3 && +L <= 60) CONFIG.DEADLINE_S = +L; }
 
 /* ---------- helpers ---------- */
 const $ = id => document.getElementById(id);
@@ -181,14 +185,14 @@ document.addEventListener("visibilitychange", () => { if (document.hidden) S.hid
 window.addEventListener("beforeunload", e => { if (S.running){ e.preventDefault(); e.returnValue = ""; } });
 
 /* ---------- one trial ---------- */
-function gridHTML(it, perm, reveal){
+function gridHTML(it, perm, reveal, bare){
   const cols = perm.map(i => it.opts[i]);
   const cls = c => (reveal && perm[c] === it.best) ? " col-best" : "";
   let h = '<div class="grid"><div></div>' + PASTA.map(n => `<div class="h">${n}</div>`).join("");
   h += '<div class="rl">Price</div>' + cols.map((o,c) => `<div class="${cls(c).trim()}"><div class="tile">${money(o.price)}</div></div>`).join("");
   h += '<div class="rl">Health</div>' + cols.map((o,c) => `<div class="${cls(c).trim()}"><div class="tile">${o.health}/10</div></div>`).join("");
   h += '<div></div>' + perm.map(i => `<div class="tag">${i === it.fam ? "★ Best seller" : ""}</div>`).join("");
-  if (!reveal) h += '<div></div>' + [0,1,2,3].map(c => `<button class="choose" data-c="${c}">Pick</button>`).join("");
+  if (!reveal && !bare) h += '<div></div>' + [0,1,2,3].map(c => `<button class="choose" data-c="${c}">Pick</button>`).join("");
   return h + "</div>";
 }
 async function runTrial(it, nDigits, info){
@@ -199,14 +203,14 @@ async function runTrial(it, nDigits, info){
   show('<div class="big">+</div>');
   await sleep(CONFIG.FIXATION_MS);
 
-  show(`<div class="q">Which pasta is the best value?</div><div class="timer"><div id="bar"></div></div>${gridHTML(it, perm, false)}
-        <p class="muted center" style="margin-top:12px">Lower price and higher health are better. They count equally: $1 ≈ 3 health points.</p>`);
+  show(`<div class="q">${CONFIG.SHOW_RATIO ? "Which pasta is the best value?" : "Which pasta would you buy?"}</div>${CONFIG.DEADLINE_S ? '<div class="timer"><div id="bar"></div></div>' : '<div style="height:28px"></div>'}${gridHTML(it, perm, false)}
+        <p class="muted center" style="margin-top:12px">Lower price and higher health are better.${CONFIG.SHOW_RATIO ? " They count equally: $1 ≈ 3 health points." : ""}</p>`);
   const t0 = performance.now();
   requestAnimationFrame(() => requestAnimationFrame(() => { const b = $("bar"); if (b){ b.style.transition = `width ${CONFIG.DEADLINE_S}s linear`; b.style.width = "0%"; } }));
   const col = await new Promise(resolve => {
     let done = false;
     const finish = v => { if (done) return; done = true; clearTimeout(to); resolve(v); };
-    const to = setTimeout(() => finish(null), CONFIG.DEADLINE_S * 1000);
+    const to = CONFIG.DEADLINE_S ? setTimeout(() => finish(null), CONFIG.DEADLINE_S * 1000) : null;
     card.querySelectorAll(".choose").forEach(b => b.onclick = () => finish(+b.dataset.c));
   });
   const rt = Math.round(performance.now() - t0), timedOut = col === null, chosen = timedOut ? null : perm[col];
@@ -232,7 +236,7 @@ async function runTrial(it, nDigits, info){
     load_type: S.load_type, load_size: nDigits, load_shown: digits, load_reported: typed, recall_correct: typed === digits ? 1 : 0, recall_hits: recallHits(digits, typed, isPat), recall_rt_ms: recallRt,
     choice_col: timedOut ? "" : col + 1, choice_type: choiceType, correct: chosen === it.best ? 1 : 0, timed_out: timedOut ? 1 : 0, rt_ms: rt,
     best_col: pos(it.best), cheapest_col: pos(it.cheap), bestseller_col: pos(it.fam),
-    tab_hidden: S.hidden - hidden0
+    tab_hidden: S.hidden - hidden0, deadline_s: CONFIG.DEADLINE_S, ratio_shown: CONFIG.SHOW_RATIO ? 1 : 0
   });
   perm.forEach((i, c) => { row["price_" + (c+1)] = it.opts[i].price; row["health_" + (c+1)] = it.opts[i].health; });
   S.trials.push(row);
@@ -241,8 +245,9 @@ async function runTrial(it, nDigits, info){
     const b = it.opts[it.best], name = PASTA[perm.indexOf(it.best)];
     const head = timedOut ? '<span class="no">Time ran out.</span>' : chosen === it.best ? '<span class="ok">Best value.</span>' : '<span class="no">Not the best value.</span>';
     const why = it.kind === "check" ? "Here one pasta was both the cheapest and the healthiest, so it is the best value however you weigh price and health. The best-seller tag was on a different pasta." : it.conflict ? "Here the cheapest pasta was not the best value: its health score was too low to make up for the price." : "Here the best value was also the cheapest.";
-    show(`<p class="center" style="font-size:18px">${head} The best was ${name} (${money(b.price)}, ${b.health}/10).</p>${gridHTML(it, perm, true)}
-          <p class="center" style="margin-top:12px">${why}</p>
+    const top = CONFIG.SHOW_RATIO ? `<p class="center" style="font-size:18px">${head} The best was ${name} (${money(b.price)}, ${b.health}/10).</p>${gridHTML(it, perm, true)}
+          <p class="center" style="margin-top:12px">${why}</p>` : `<p class="center" style="font-size:18px">${timedOut ? '<span class="no">Time ran out.</span>' : "Choice recorded. There are no right or wrong answers in this version."}</p>`;
+    show(`${top}
           <p class="center">${isPat ? "Pattern" : "Digits"}: ${typed === digits ? '<span class="ok">correct</span>' : isPat ? '<span class="no">not quite. It was:</span>' : `<span class="no">they were ${digits}</span>`}</p>
           ${isPat && typed !== digits ? patHTML(digits, false, true) : ""}
           <div class="actions"><button class="btn" id="go">Continue</button></div>`);
@@ -255,7 +260,7 @@ async function runBlock(cond, blockIndex, items){
   const n = loadSize(cond === "high"), isPat = S.load_type === "pattern";
   show(`<h1>Part ${blockIndex} of 2</h1>
         <p>In this part you will remember <b>${isPat ? "a pattern of " + n + " squares" : n + " digits"}</b> on each trial.</p>
-        <p>There are ${items.length} trials and no feedback. Find the best value each time, and keep the ${isPat ? "pattern" : "digits"} in mind until you are asked to report ${isPat ? "it" : "them"}.</p>
+        <p>There are ${items.length} trials and no feedback. ${CONFIG.SHOW_RATIO ? "Find the best value each time" : "Choose the pasta you would buy each time"}, and keep the ${isPat ? "pattern" : "digits"} in mind until you are asked to report ${isPat ? "it" : "them"}.</p>
         <div class="actions"><button class="btn" id="go">Start part ${blockIndex}</button></div>`);
   await waitClick("go");
   const order = shuffle(items, Math.random);
@@ -288,7 +293,7 @@ async function ratings(blockIndex){
 /* ---------- data out ---------- */
 const COLS = ["participant_id","order_group","phase","block","condition","trial","item_id","item_type","load_type","load_size","load_shown","load_reported","recall_correct","recall_hits","recall_rt_ms",
   "choice_col","choice_type","correct","timed_out","rt_ms","best_col","cheapest_col","bestseller_col",
-  "price_1","health_1","price_2","health_2","price_3","health_3","price_4","health_4","tab_hidden","effort_1to7","self_report_compare_pct"];
+  "price_1","health_1","price_2","health_2","price_3","health_3","price_4","health_4","tab_hidden","deadline_s","ratio_shown","effort_1to7","self_report_compare_pct"];
 function rowsOut(){
   return S.trials.map(r => { const b = S.blocks.find(x => x.block === r.block) || {}; return Object.assign({}, r, {effort_1to7: b.effort_1to7 ?? "", self_report_compare_pct: b.self_report_compare_pct ?? ""}); });
 }
@@ -306,7 +311,7 @@ async function saveRemote(){
   if (!CONFIG.SUPABASE_URL || !CONFIG.SUPABASE_KEY) return "off";
   const body = {participant_id: S.participant_id, order_group: S.order_group, started_at: S.started_at,
     n_trials: S.trials.filter(r => r.phase === "main").length,
-    payload: {config: {trials_per_block: CONFIG.TRIALS_PER_BLOCK, conflict_proportion: CONFIG.CONFLICT_PROPORTION, deadline_s: CONFIG.DEADLINE_S, digits_ms: CONFIG.DIGITS_MS, item_seed: CONFIG.ITEM_SEED, load_type: S.load_type},
+    payload: {config: {trials_per_block: CONFIG.TRIALS_PER_BLOCK, conflict_proportion: CONFIG.CONFLICT_PROPORTION, deadline_s: CONFIG.DEADLINE_S, digits_ms: CONFIG.DIGITS_MS, item_seed: CONFIG.ITEM_SEED, load_type: S.load_type, ratio_shown: CONFIG.SHOW_RATIO},
               device: S.device, blocks: S.blocks, trials: rowsOut()}};
   for (let attempt = 0; attempt < 3; attempt++){
     try {
@@ -353,9 +358,9 @@ function consentHTML(){
   <label class="check"><input type="checkbox" id="agree"><span>I am at least 18 years old, I have read and understood this information, and I voluntarily agree to participate.</span></label>
   <div class="actions"><button class="btn" id="go" disabled>Continue</button></div>`;
 }
-function exampleHTML(){
+function exampleHTML(plain){
   const it = {opts: [{price: 1.25, health: 3}, {price: 1.75, health: 9}, {price: 3.5, health: 10}, {price: 2.5, health: 4}], best: 1, cheap: 0, fam: 3};
-  return gridHTML(it, [0,1,2,3], true);
+  return gridHTML(it, [0,1,2,3], !plain, plain);
 }
 async function main(){
   show(`<h1>Pasta choice study</h1>${consentHTML()}`, true);
@@ -365,10 +370,12 @@ async function main(){
 
   show(`<h1>Your task</h1>
     <p>Imagine you are shopping for pasta. On each trial you will see four pastas, each with a <b>price</b> and a <b>health score</b> out of 10.</p>
-    <p>Choose the <b>best overall value</b>. A lower price is better and a higher health score is better. They count equally: <b>$1 is worth about 3 health points</b>.</p>
+    ${CONFIG.SHOW_RATIO ? `<p>Choose the <b>best overall value</b>. A lower price is better and a higher health score is better. They count equally: <b>$1 is worth about 3 health points</b>.</p>
     ${exampleHTML()}
     <p style="margin-top:12px">In this example, Penne (outlined) is the best value. Rotini is 50 cents cheaper, but Penne is 6 health points healthier, which is worth far more than 50 cents.</p>
-    <p>One pasta in each set is marked “Best seller.” The best value depends only on price and health.</p>
+    <p>One pasta in each set is marked “Best seller.” The best value depends only on price and health.</p>` : `<p>Choose the pasta <b>you would buy</b>. A lower price is better and a higher health score is better. How you weigh the two is up to you. There are no right or wrong answers.</p>
+    ${exampleHTML(true)}
+    <p style="margin-top:12px">One pasta in each set is marked “Best seller.”</p>`}
     <div class="actions"><button class="btn" id="go">Next</button></div>`, true);
   await waitClick("go");
 
@@ -376,7 +383,7 @@ async function main(){
   show(`<h1>${pat ? "Remembering a pattern" : "Remembering digits"}</h1>
     <p>${pat ? "Each trial starts with a grid in which a few squares are filled. Keep the pattern in mind while you choose a pasta. After your choice you will tap the squares that were filled." : "Each trial starts with a few digits to remember. Keep them in mind while you choose a pasta. After your choice you will type them back."}</p>
     <p>Please do not write ${pat ? "the pattern" : "the digits"} down.</p>
-    <p>You have <b>${CONFIG.DEADLINE_S} seconds</b> for each choice. A bar shows the time left.</p>
+    <p>${CONFIG.DEADLINE_S ? `You have <b>${CONFIG.DEADLINE_S} seconds</b> for each choice. A bar shows the time left.` : "There is no time limit for each choice."}</p>
     <p>Please complete the task in one sitting, somewhere without distractions. First, ${CONFIG.PRACTICE_TRIALS} practice trials with feedback.</p>
     <div class="actions"><button class="btn" id="go">Start practice</button></div>`, true);
   await waitClick("go");
@@ -407,7 +414,7 @@ async function main(){
       failed: '<span class="no">Your responses could not be sent.</span> Please try again, or download your data and email the file to the researcher.'}[status];
     show(`<h1 id="done">Thank you</h1>
       <p>${msg}</p>
-      <p>You chose the best value on ${acc}% of trials.</p>
+      ${CONFIG.SHOW_RATIO ? `<p>You chose the best value on ${acc}% of trials.</p>` : ""}
       <h2>About this study</h2>
       <p>This study examines when people shift from deliberate thinking to a quicker, “good enough” rule of thumb. Weighing price and health for every pasta is the deliberate approach. Picking the cheapest or the best seller is a shortcut that is usually right. On some trials the shortcut led to the best value; on others it did not, which lets us see which approach was used.</p>
       <p>Remembering the digits or the pattern was the mental demand. We are testing whether a heavier demand makes people rely on the shortcut more often.</p>

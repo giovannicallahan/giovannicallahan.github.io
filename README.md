@@ -37,6 +37,8 @@ and asks search engines not to index it.
 - Finished sessions are saved to the `pilot_sessions` table of the Supabase project
   `Cognitive_Study`. The page can add rows but cannot read them.
 - `/study/?debug=1` runs a one-minute version that saves nothing.
+- `/study/lab.html` is a launcher for lab meetings: three preset versions and a builder. It sets the page's
+  options: `load=digits|pattern`, `limit=<seconds>|none`, `ratio=off` (no stated price-health ratio).
 - The consent text shows a draft banner until `CONSENT_IS_DRAFT` is set to `false`
   (do that only after IRB approval of the online wording).
 
