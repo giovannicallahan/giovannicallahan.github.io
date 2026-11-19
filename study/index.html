@@ -27,7 +27,7 @@ button{font:inherit}
 .grid{display:grid;grid-template-columns:54px repeat(4,minmax(0,1fr));gap:6px;align-items:center}
 .grid .h{font-weight:600;text-align:center;font-size:15px;overflow-wrap:anywhere}.grid .rl{color:var(--muted);font-size:13px}
 .tile{height:48px;border-radius:8px;border:1px solid var(--line);background:var(--tile);font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
-.tag{font-size:12px;color:var(--fam);text-align:center;min-height:18px;line-height:1.2}
+.tag{font-size:12px;font-weight:700;color:var(--fam);text-align:center;min-height:18px;line-height:1.2}
 .choose{padding:11px 2px;border-radius:8px;border:1px solid var(--ink);background:var(--card);color:var(--ink);font-size:15px;cursor:pointer}
 .choose:hover{background:var(--tile)}
 .col-best .tile{border-color:var(--good);border-width:2px}
@@ -114,8 +114,8 @@ function waitClick(id){return new Promise(r => {$(id).onclick = () => r()})}
 /* ---------- items ----------
    value = health/10 + (1 - (price - 1)/3): price ($1.00 to $4.00) and health (1 to 10)
    count equally, so $1 is worth about 3 health points.
-   Agree item:    the best value is also the cheapest and the "bought before" pasta.
-   Conflict item: the best value is neither; cheapest and "bought before" are two other pastas. */
+   Agree item:    the best value is also the cheapest and the "Best seller" pasta.
+   Conflict item: the best value is neither; cheapest and "Best seller" are two other pastas. */
 function makeItem(conflict, rnd){
   const ri = (lo, hi) => lo + Math.floor(rnd()*(hi-lo+1));
   for(;;){
@@ -158,7 +158,7 @@ function gridHTML(it, perm, reveal){
   let h = '<div class="grid"><div></div>' + PASTA.map(n => `<div class="h">${n}</div>`).join("");
   h += '<div class="rl">Price</div>' + cols.map((o,c) => `<div class="${cls(c).trim()}"><div class="tile">${money(o.price)}</div></div>`).join("");
   h += '<div class="rl">Health</div>' + cols.map((o,c) => `<div class="${cls(c).trim()}"><div class="tile">${o.health}/10</div></div>`).join("");
-  h += '<div></div>' + perm.map(i => `<div class="tag">${i === it.fam ? "✓ bought before" : ""}</div>`).join("");
+  h += '<div></div>' + perm.map(i => `<div class="tag">${i === it.fam ? "★ Best seller" : ""}</div>`).join("");
   if (!reveal) h += '<div></div>' + [0,1,2,3].map(c => `<button class="choose" data-c="${c}">Pick</button>`).join("");
   return h + "</div>";
 }
@@ -188,13 +188,13 @@ async function runTrial(it, nDigits, info){
   const typed = await new Promise(resolve => { const ok = () => resolve($("rec").value.replace(/\D/g, "")); $("go").onclick = ok; $("rec").onkeydown = e => { if (e.key === "Enter") ok(); }; });
   const recallRt = Math.round(performance.now() - tR);
 
-  const choiceType = timedOut ? "timeout" : chosen === it.best ? "best" : chosen === it.cheap ? "cheapest" : chosen === it.fam ? "familiar" : "other";
+  const choiceType = timedOut ? "timeout" : chosen === it.best ? "best" : chosen === it.cheap ? "cheapest" : chosen === it.fam ? "bestseller" : "other";
   const pos = i => perm.indexOf(i) + 1;                       // screen column, 1 to 4
   const row = Object.assign({participant_id: S.participant_id, order_group: S.order_group}, info, {
     item_id: it.id, item_type: it.conflict ? "conflict" : "agree",
     n_digits: nDigits, digits_shown: digits, digits_typed: typed, recall_correct: typed === digits ? 1 : 0, recall_rt_ms: recallRt,
     choice_col: timedOut ? "" : col + 1, choice_type: choiceType, correct: chosen === it.best ? 1 : 0, timed_out: timedOut ? 1 : 0, rt_ms: rt,
-    best_col: pos(it.best), cheapest_col: pos(it.cheap), familiar_col: pos(it.fam),
+    best_col: pos(it.best), cheapest_col: pos(it.cheap), bestseller_col: pos(it.fam),
     tab_hidden: S.hidden - hidden0
   });
   perm.forEach((i, c) => { row["price_" + (c+1)] = it.opts[i].price; row["health_" + (c+1)] = it.opts[i].health; });
@@ -249,7 +249,7 @@ async function ratings(blockIndex){
 
 /* ---------- data out ---------- */
 const COLS = ["participant_id","order_group","phase","block","condition","trial","item_id","item_type","n_digits","digits_shown","digits_typed","recall_correct","recall_rt_ms",
-  "choice_col","choice_type","correct","timed_out","rt_ms","best_col","cheapest_col","familiar_col",
+  "choice_col","choice_type","correct","timed_out","rt_ms","best_col","cheapest_col","bestseller_col",
   "price_1","health_1","price_2","health_2","price_3","health_3","price_4","health_4","tab_hidden","effort_1to7","self_report_compare_pct"];
 function rowsOut(){
   return S.trials.map(r => { const b = S.blocks.find(x => x.block === r.block) || {}; return Object.assign({}, r, {effort_1to7: b.effort_1to7 ?? "", self_report_compare_pct: b.self_report_compare_pct ?? ""}); });
@@ -330,7 +330,7 @@ async function main(){
     <p>Choose the <b>best overall value</b>. A lower price is better and a higher health score is better. They count equally: <b>$1 is worth about 3 health points</b>.</p>
     ${exampleHTML()}
     <p style="margin-top:12px">In this example, Penne (outlined) is the best value. Rotini is 50 cents cheaper, but Penne is 6 health points healthier, which is worth far more than 50 cents.</p>
-    <p>One pasta in each set is marked “bought before.” The best value depends only on price and health.</p>
+    <p>One pasta in each set is marked “Best seller.” The best value depends only on price and health.</p>
     <div class="actions"><button class="btn" id="go">Next</button></div>`, true);
   await waitClick("go");
 
@@ -370,7 +370,7 @@ async function main(){
       <p>${msg}</p>
       <p>You chose the best value on ${acc}% of trials.</p>
       <h2>About this study</h2>
-      <p>This study examines when people shift from deliberate thinking to a quicker, “good enough” rule of thumb. Weighing price and health for every pasta is the deliberate approach. Picking the cheapest or the familiar one is a shortcut that is usually right. On some trials the shortcut led to the best value; on others it did not, which lets us see which approach was used.</p>
+      <p>This study examines when people shift from deliberate thinking to a quicker, “good enough” rule of thumb. Weighing price and health for every pasta is the deliberate approach. Picking the cheapest or the best seller is a shortcut that is usually right. On some trials the shortcut led to the best value; on others it did not, which lets us see which approach was used.</p>
       <p>Remembering digits was the mental demand. We are testing whether a heavier demand makes people rely on the shortcut more often.</p>
       <p>Questions: ${CONFIG.CONTACT_STUDENT}.</p>
       <div class="actions">${status === "failed" ? '<button class="btn" id="retry">Try sending again</button>' : ""}<button class="btn ghost" id="dl">Download my data (CSV)</button></div>`, true);
