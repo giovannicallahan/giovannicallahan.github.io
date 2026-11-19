@@ -66,7 +66,7 @@ label.check input{width:20px;height:20px;margin-top:3px;flex:0 0 auto}
      Low load  = remember 2 digits during each choice.
      High load = remember 6 digits during each choice.
    Block order is randomised per participant (or forced with ?order=low or
-   ?order=high). Both blocks use the same 40 items (16 conflict, 24 agree),
+   ?order=high). Both blocks use the same 44 items (16 conflict, 24 agree, 4 check),
    reshuffled, so the item mix is identical across conditions.
 
    Quick test: add ?debug=1 to the address for a 1-minute version (not saved).
@@ -80,6 +80,7 @@ const CONFIG = {
 
   // ---- Task ----
   TRIALS_PER_BLOCK: 40,
+  CHECK_TRIALS_PER_BLOCK: 4,   // extra trials where one pasta is both cheapest and healthiest
   CONFLICT_PROPORTION: 0.4,
   PRACTICE_TRIALS: 6,
   DEADLINE_S: 12,              // time allowed for each choice
@@ -99,7 +100,7 @@ const CONFIG = {
 const PASTA = ["Rotini", "Penne", "Spaghetti", "Farfalle"];
 const Q = new URLSearchParams(location.search);
 const DEBUG = Q.get("debug") === "1";
-if (DEBUG) Object.assign(CONFIG, {TRIALS_PER_BLOCK: 5, PRACTICE_TRIALS: 2, DEADLINE_S: 5, DIGITS_MS: 400, FIXATION_MS: 150});
+if (DEBUG) Object.assign(CONFIG, {TRIALS_PER_BLOCK: 5, CHECK_TRIALS_PER_BLOCK: 1, PRACTICE_TRIALS: 3, DEADLINE_S: 5, DIGITS_MS: 400, FIXATION_MS: 150});
 
 /* ---------- helpers ---------- */
 const $ = id => document.getElementById(id);
@@ -115,8 +116,11 @@ function waitClick(id){return new Promise(r => {$(id).onclick = () => r()})}
    value = health/10 + (1 - (price - 1)/3): price ($1.00 to $4.00) and health (1 to 10)
    count equally, so $1 is worth about 3 health points.
    Agree item:    the best value is also the cheapest and the "Best seller" pasta.
-   Conflict item: the best value is neither; cheapest and "Best seller" are two other pastas. */
-function makeItem(conflict, rnd){
+   Conflict item: the best value is neither; cheapest and "Best seller" are two other pastas.
+   Check item:    one pasta is both the cheapest and the healthiest, so it is the best under any
+                  weighting of price and health; "Best seller" marks a different pasta. */
+function makeItem(kind, rnd){
+  const conflict = kind === "conflict";
   const ri = (lo, hi) => lo + Math.floor(rnd()*(hi-lo+1));
   for(;;){
     const opts = [0,1,2,3].map(() => ({price: 1 + 0.25*ri(0,12), health: ri(1,10)}));
@@ -128,14 +132,20 @@ function makeItem(conflict, rnd){
     if (cheapest.length > 1) continue;                                  // one cheapest option
     const best = byV[0], cheap = cheapest[0];
     let fam;
-    if (!conflict){ if (cheap !== best) continue; fam = best; }
+    if (kind === "check"){
+      const maxH = Math.max(...opts.map(o => o.health));
+      if (cheap !== best || opts[cheap].health !== maxH || opts.filter(o => o.health === maxH).length > 1) continue;
+      const rest = [0,1,2,3].filter(i => i !== best); fam = rest[ri(0, 2)];
+    }
+    else if (!conflict){ if (cheap !== best) continue; fam = best; }
     else { if (cheap === best) continue; const rest = [0,1,2,3].filter(i => i !== best && i !== cheap); fam = rest[ri(0, rest.length-1)]; }
-    return {opts, best, cheap, fam, conflict};
+    return {opts, best, cheap, fam, conflict, kind};
   }
 }
-function makeItemSet(n, seed){
-  const rnd = mulberry32(seed), nConf = Math.round(n * CONFIG.CONFLICT_PROPORTION), items = [];
-  for (let i = 0; i < n; i++){ const it = makeItem(i < nConf, rnd); it.id = (seed === CONFIG.ITEM_SEED ? "M" : "P") + String(i+1).padStart(2,"0"); items.push(it); }
+function makeItemSet(n, seed, nCheck){
+  const rnd = mulberry32(seed), nConf = Math.round(n * CONFIG.CONFLICT_PROPORTION), items = [], pre = seed === CONFIG.ITEM_SEED ? "M" : "P";
+  for (let i = 0; i < n; i++){ const it = makeItem(i < nConf ? "conflict" : "agree", rnd); it.id = pre + String(i+1).padStart(2,"0"); items.push(it); }
+  for (let i = 0; i < (nCheck || 0); i++){ const it = makeItem("check", rnd); it.id = pre + "C" + (i+1); items.push(it); }   // made last, so the first n items never change
   return items;
 }
 function makeDigits(n){const d=[];while(d.length<n){const x=Math.floor(Math.random()*10);if(d.length&&d[d.length-1]===x)continue;d.push(x)}return d.join("")}
@@ -191,7 +201,7 @@ async function runTrial(it, nDigits, info){
   const choiceType = timedOut ? "timeout" : chosen === it.best ? "best" : chosen === it.cheap ? "cheapest" : chosen === it.fam ? "bestseller" : "other";
   const pos = i => perm.indexOf(i) + 1;                       // screen column, 1 to 4
   const row = Object.assign({participant_id: S.participant_id, order_group: S.order_group}, info, {
-    item_id: it.id, item_type: it.conflict ? "conflict" : "agree",
+    item_id: it.id, item_type: it.kind,
     n_digits: nDigits, digits_shown: digits, digits_typed: typed, recall_correct: typed === digits ? 1 : 0, recall_rt_ms: recallRt,
     choice_col: timedOut ? "" : col + 1, choice_type: choiceType, correct: chosen === it.best ? 1 : 0, timed_out: timedOut ? 1 : 0, rt_ms: rt,
     best_col: pos(it.best), cheapest_col: pos(it.cheap), bestseller_col: pos(it.fam),
@@ -203,7 +213,7 @@ async function runTrial(it, nDigits, info){
   if (info.phase === "practice"){
     const b = it.opts[it.best], name = PASTA[perm.indexOf(it.best)];
     const head = timedOut ? '<span class="no">Time ran out.</span>' : chosen === it.best ? '<span class="ok">Best value.</span>' : '<span class="no">Not the best value.</span>';
-    const why = it.conflict ? "Here the cheapest pasta was not the best value: its health score was too low to make up for the price." : "Here the best value was also the cheapest.";
+    const why = it.kind === "check" ? "Here one pasta was both the cheapest and the healthiest, so it is the best value however you weigh price and health. The best-seller tag was on a different pasta." : it.conflict ? "Here the cheapest pasta was not the best value: its health score was too low to make up for the price." : "Here the best value was also the cheapest.";
     show(`<p class="center" style="font-size:18px">${head} The best was ${name} (${money(b.price)}, ${b.health}/10).</p>${gridHTML(it, perm, true)}
           <p class="center" style="margin-top:12px">${why}</p>
           <p class="center">Digits: ${typed === digits ? '<span class="ok">correct</span>' : `<span class="no">they were ${digits}</span>`}</p>
@@ -296,7 +306,7 @@ function consentHTML(){
   <p>If you choose to participate, the task takes about ${CONFIG.MINUTES} minutes and is completed in your web browser. You will be asked to:</p>
   <ul>
   <li>Read brief instructions and complete a short practice set with feedback.</li>
-  <li>Complete two parts of ${CONFIG.TRIALS_PER_BLOCK} trials each. On each trial you briefly see ${CONFIG.LOW_DIGITS} or ${CONFIG.HIGH_DIGITS} digits to remember, choose the best value among four pastas shown with a price and a health score, and then type the digits back.</li>
+  <li>Complete two parts of ${CONFIG.TRIALS_PER_BLOCK + CONFIG.CHECK_TRIALS_PER_BLOCK} trials each. On each trial you briefly see ${CONFIG.LOW_DIGITS} or ${CONFIG.HIGH_DIGITS} digits to remember, choose the best value among four pastas shown with a price and a health score, and then type the digits back.</li>
   <li>After each part, answer two short questions about your effort and how you made your choices.</li>
   </ul>
   <p>The page records your choices, your typed digits, and their timing.</p>
@@ -342,7 +352,7 @@ async function main(){
     <div class="actions"><button class="btn" id="go">Start practice</button></div>`, true);
   await waitClick("go");
 
-  const nP = CONFIG.PRACTICE_TRIALS, pItems = makeItemSet(nP, CONFIG.ITEM_SEED + 1);
+  const nP = CONFIG.PRACTICE_TRIALS, pItems = makeItemSet(nP - 1, CONFIG.ITEM_SEED + 1, 1);   // one practice trial is a check item
   const pOrder = shuffle(pItems, mulberry32(7));
   for (let t = 0; t < nP; t++){
     $("prog").textContent = `Practice ${t+1} of ${nP}`;
@@ -351,7 +361,7 @@ async function main(){
   }
   $("prog").textContent = "";
 
-  const items = makeItemSet(CONFIG.TRIALS_PER_BLOCK, CONFIG.ITEM_SEED);
+  const items = makeItemSet(CONFIG.TRIALS_PER_BLOCK, CONFIG.ITEM_SEED, CONFIG.CHECK_TRIALS_PER_BLOCK);
   const conds = S.order_group === "low_first" ? ["low", "high"] : ["high", "low"];
   await runBlock(conds[0], 1, items);
   show(`<h1>Short break</h1><p>Part 1 is done. Rest for a moment, then continue when you are ready.</p><div class="actions"><button class="btn" id="go">Continue</button></div>`);
