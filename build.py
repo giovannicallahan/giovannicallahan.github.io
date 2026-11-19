@@ -194,14 +194,14 @@ page("about.html", "About — Giovanni Callahan",
 
 # ── Experiment (introduction; the task itself is /study/) ────────────────────
 page("experiment.html", "Experiment — which pasta is the best value?",
-     "An online decision experiment: pick the best-value pasta while holding a few digits in mind. About 15 minutes in your browser.",
+     "An online decision experiment: pick the best-value pasta while holding a few digits or a pattern in mind. About 15 minutes in your browser.",
      active="Experiment", body="""
 <section class="page-hero">
   <div class="wrap split">
     <div>
       <h1>Which pasta is the best value?</h1>
       <p class="lede">My current experiment asks when people stop weighing their options and reach for a
-      rule of thumb. You pick the best value among four pastas while holding a few digits in mind.</p>
+      rule of thumb. You pick the best value among four pastas while holding something in mind: a few digits, or a pattern of squares.</p>
       <div class="actions">
         <a class="btn btn-primary" href="/study/">Start the experiment</a>
         <a class="btn btn-ghost" href="/study/?debug=1">One-minute demo</a>
@@ -223,7 +223,7 @@ page("experiment.html", "Experiment — which pasta is the best value?",
     <div class="section-head"><h2 id="expect-h">What to expect</h2></div>
     <ul class="feature-list">
       <li><strong>A short practice first</strong><span>Six practice trials with feedback, so the rule is clear before anything counts.</span></li>
-      <li><strong>Two parts of 44 choices</strong><span>In one part you remember 2 digits on each trial; in the other, 6. You have 12 seconds per choice.</span></li>
+      <li><strong>Two parts of 44 choices</strong><span>One part has a small memory load on each trial and the other a larger one. You have 12 seconds per choice.</span></li>
       <li><strong>Anonymous responses</strong><span>The task does not ask for your name or email. Your choices and their timing are saved under a random code when you finish.</span></li>
       <li><strong>Just looking?</strong><span>The one-minute demo runs a few trials and saves nothing.</span></li>
     </ul>
