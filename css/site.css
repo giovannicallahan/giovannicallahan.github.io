@@ -108,7 +108,7 @@ p { margin: 0 0 1em; max-width: var(--measure); text-wrap: pretty; }
   display: none; background: none; border: 1px solid var(--grid); border-radius: var(--radius);
   font: inherit; font-weight: 600; color: var(--ink); padding: 0.45rem 0.8rem; cursor: pointer;
 }
-@media (max-width: 760px) {
+@media (max-width: 1020px) {
   .nav-toggle { display: block; }
   .nav-links {
     display: none; position: absolute; top: 64px; left: 0; right: 0; flex-direction: column;
@@ -380,3 +380,48 @@ input[type="text"], input[type="email"], select, textarea { background: var(--pa
 body.neuro { background: radial-gradient(ellipse 80% 60% at 70% 0%, #1d2563 0%, #10153a 60%) fixed, #10153a; }
 .choices label { background: var(--paper-2); border-color: var(--grid); }
 .choices label:has(input:checked) { border-color: var(--signal); background: #123a4a; }
+
+/* ═══ Portrait home page (2026-11-18) ═══════════════════════ */
+/* Portrait hero: serif statement on the left, photo fading into the page on the right. */
+@font-face { font-family: "Newsreader"; src: url("../fonts/newsreader.woff2") format("woff2"); font-weight: 200 800; font-style: normal; font-display: swap; }
+@font-face { font-family: "Newsreader"; src: url("../fonts/newsreader-italic.woff2") format("woff2"); font-weight: 200 800; font-style: italic; font-display: swap; }
+
+.hero.hero-portrait { position: relative; padding: 0; overflow: hidden; border-bottom: 1px solid var(--grid); }
+.hero-portrait .wrap { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); align-items: center; min-height: calc(100vh - 150px); position: static; }
+.hero-portrait .hero-copy { display: block; padding: clamp(3rem, 8vw, 6rem) 0; position: relative; z-index: 2; }
+.hero-portrait h1 { font-family: "Newsreader", Georgia, "Times New Roman", serif; font-weight: 400; font-stretch: 100%;
+  font-size: clamp(2.5rem, 5.6vw, 4.6rem); line-height: 1.08; letter-spacing: -0.015em; max-width: 15ch; margin-bottom: 0.6em; }
+.hero-portrait h1 em { font-style: italic; }
+.hero-portrait .lede { font-size: var(--step-1); line-height: 1.6; max-width: 46ch; color: var(--ink-2); margin: 0; }
+.hero-portrait .lede strong { color: var(--ink); font-weight: 650; }
+.hero-links { display: flex; flex-wrap: wrap; gap: 0.75rem 2rem; margin: 2.25rem 0 0; }
+.more { font-weight: 700; font-size: var(--step--1); letter-spacing: 0.12em; text-transform: uppercase; color: var(--marker);
+  text-decoration: none; border-bottom: 2px solid var(--marker); padding-bottom: 0.35rem; }
+.more:hover { color: var(--marker-bright); border-color: var(--marker-bright); }
+.more.quiet { color: var(--ink); border-color: var(--grid); }
+.more.quiet:hover { border-color: var(--ink); }
+/* The photo sits flush right and fades into the page colour on its left edge. */
+/* Photo is pre-tinted navy with soft left and top edges, so it melts into the page. */
+.portrait { position: absolute; top: 0; right: 0; bottom: 0; width: min(56vw, 860px); z-index: 1;
+  background: url("../img/giovanni.webp") right bottom / auto 100% no-repeat; }
+@media (max-width: 1000px) {
+  .hero-portrait .wrap { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); }
+  /* Full height and centred, so the face sits level with the headline. */
+  .portrait { width: 50vw; background-size: auto 100%; background-position: center bottom;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 32%); mask-image: linear-gradient(90deg, transparent 0%, #000 32%); }
+  .hero-portrait h1 { font-size: clamp(2rem, 5vw, 3rem); }
+}
+@media (max-width: 600px) {
+  .hero-portrait .wrap { grid-template-columns: 1fr; min-height: 0; }
+  /* On a phone the photo goes above, tall enough to show the whole face. */
+  .portrait { position: relative; right: auto; width: auto; height: 112vw; max-height: 500px; order: -1; margin: 0 calc(var(--gutter, 1.25rem) * -1);
+    background-size: cover; background-position: center top;
+    -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent 100%); mask-image: linear-gradient(180deg, #000 70%, transparent 100%); }
+  .hero-portrait .hero-copy { padding: 0.5rem 0 3rem; }
+}
+
+.page-hero .pasta { align-self: center; }
+.nav-links a { white-space: nowrap; }
+.page-hero .pasta td:not(.best) { background: var(--paper-2); }
+
+.wordmark { white-space: nowrap; }

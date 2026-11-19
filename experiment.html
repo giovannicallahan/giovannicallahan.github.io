@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src https://formspree.io; form-action https://formspree.io; object-src 'none'; base-uri 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Experiment — which pasta is the best value?</title>
+<meta name="description" content="An online decision experiment: pick the best-value pasta while holding a few digits in mind. About 15 minutes in your browser.">
+<link rel="canonical" href="https://giovannicallahan.github.io/experiment.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Experiment — which pasta is the best value?">
+<meta property="og:description" content="An online decision experiment: pick the best-value pasta while holding a few digits in mind. About 15 minutes in your browser.">
+<meta property="og:url" content="https://giovannicallahan.github.io/experiment.html">
+<meta property="og:image" content="https://giovannicallahan.github.io/img/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#071523">
+<link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="/fonts/instrument-sans-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/css/site.css">
+<script src="/js/site.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-nav">
+  <nav class="wrap" aria-label="Main">
+    <a class="wordmark" href="/"><svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.5 18.5 C10 18.5, 9.5 7.5, 21.5 7.5" fill="none" stroke="#14a3a1" stroke-width="2.2" stroke-linecap="round"/><path d="M13 1.5v3M13 21.5v3M1.5 13h3M21.5 13h3" stroke="currentColor" stroke-width="1.6"/></svg>Giovanni Callahan</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="nav-links">Menu</button>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/about.html">About</a></li>
+      <li><a href="/projects/gyrafold.html">Gyrafold</a></li>
+      <li><a href="/projects/cogviz.html">CogViz</a></li>
+      <li><a href="/projects/vector-guild.html">Vector Guild</a></li>
+      <li><a href="/experiment.html" aria-current="page">Experiment</a></li>
+      <li><a href="/Giovanni_Callahan_CV.pdf">CV</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+    </ul>
+  </nav>
+</header>
+<main id="main">
+
+<section class="page-hero">
+  <div class="wrap split">
+    <div>
+      <h1>Which pasta is the best value?</h1>
+      <p class="lede">My current experiment asks when people stop weighing their options and reach for a
+      rule of thumb. You pick the best value among four pastas while holding a few digits in mind.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="/study/">Start the experiment</a>
+        <a class="btn btn-ghost" href="/study/?debug=1">One-minute demo</a>
+      </div>
+      <p class="note">About 15 minutes. Works on a phone or a computer.</p>
+    </div>
+    <table class="pasta" aria-label="Example trial: four pastas with price and health score">
+      <thead><tr><th></th><th>Rotini</th><th>Penne</th><th>Spaghetti</th><th>Farfalle</th></tr></thead>
+      <tbody>
+        <tr><th>Price</th><td>$1.25</td><td class="best">$1.75</td><td>$3.50</td><td>$2.50</td></tr>
+        <tr><th>Health</th><td>3/10</td><td class="best">9/10</td><td>10/10</td><td>4/10</td></tr>
+      </tbody>
+      <caption>An example trial. The cheapest pasta is not the best value here.</caption>
+    </table>
+  </div>
+</section>
+<section class="section" aria-labelledby="expect-h">
+  <div class="wrap">
+    <div class="section-head"><h2 id="expect-h">What to expect</h2></div>
+    <ul class="feature-list">
+      <li><strong>A short practice first</strong><span>Six practice trials with feedback, so the rule is clear before anything counts.</span></li>
+      <li><strong>Two parts of 40 choices</strong><span>In one part you remember 2 digits on each trial; in the other, 6. You have 12 seconds per choice.</span></li>
+      <li><strong>Anonymous responses</strong><span>The task does not ask for your name or email. Your choices and their timing are saved under a random code when you finish.</span></li>
+      <li><strong>Just looking?</strong><span>The one-minute demo runs a few trials and saves nothing.</span></li>
+    </ul>
+  </div>
+</section>
+
+</main>
+<footer class="site-foot">
+  <div class="wrap">
+    <p>© 2026 Giovanni Callahan. This site uses no cookies or trackers.</p>
+    <ul>
+      <li><a href="https://github.com/giovannicallahan" rel="noopener noreferrer" target="_blank">GitHub</a></li>
+      <li><a href="/contact.html">Contact</a></li>
+      <li><a href="/feedback.html">Feedback</a></li>
+    </ul>
+  </div>
+</footer>
+</body>
+</html>
