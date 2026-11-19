@@ -112,35 +112,82 @@ page("index.html", "Giovanni Callahan — psychology, decisions and the brain",
 page("about.html", "About — Giovanni Callahan",
      "Marine Corps veteran and psychology student at Arizona State University, studying decisions under cognitive and physical demand.",
      active="About", body="""
-<section class="page-hero">
+<section class="about-hero">
   <div class="wrap">
-    <h1>About me</h1>
+    <div>
+      <h1>I spent five years making instruments tell the truth. Now I study how people decide.</h1>
+      <p class="lede">I'm Giovanni Callahan, a Marine Corps veteran and psychology student at Arizona State
+      University. I am looking for research assistant and post-baccalaureate positions that begin in 2027.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="/Giovanni_Callahan_CV.pdf">Download my CV</a>
+        <a class="btn btn-ghost" href="/contact.html">Get in touch</a>
+      </div>
+    </div>
+    <dl class="glance" aria-label="At a glance">
+      <div><dt>Degree</dt><dd>B.S. Psychology, Arizona State University, expected spring 2027</dd></div>
+      <div><dt>GPA</dt><dd>4.0</dd></div>
+      <div><dt>Research</dt><dd>Feghhi lab: decisions under cognitive and physical demand</dd></div>
+      <div><dt>Service</dt><dd>U.S. Marine Corps, 2017–2022</dd></div>
+      <div><dt>Goal</dt><dd>Ph.D. in cognitive or computational neuroscience</dd></div>
+    </dl>
   </div>
 </section>
-<section class="section">
-  <div class="wrap about">
+
+<section class="section" aria-labelledby="path-h">
+  <div class="wrap">
+    <div class="section-head"><h2 id="path-h">How I got here</h2></div>
+    <ol class="timeline">
+      <li>
+        <p class="when">2017–2022</p>
+        <div>
+          <h3>U.S. Marine Corps</h3>
+          <p>I served as a Navigational Aids Technician. My team set up, aligned and calibrated navigation
+          systems in demanding conditions, and as an instructor I trained other Marines to do the same.
+          That work was about turning noisy signals into readings you can trust.</p>
+        </div>
+      </li>
+      <li>
+        <p class="when">Now</p>
+        <div>
+          <h3>Psychology at Arizona State University</h3>
+          <p>Psychology asks a version of the same question about people. I hold a 4.0 GPA and will be the
+          first person in my family to earn a bachelor's degree.</p>
+        </div>
+      </li>
+      <li>
+        <p class="when">Now</p>
+        <div>
+          <h3>Research in Dr. Iman Feghhi's lab</h3>
+          <p>I lead the development of a study on what happens when people face cognitive and physical
+          demands at the same time. I programmed the experiment in PsychoPy and help train the research
+          assistants who run it. <a href="/experiment.html">See the online version.</a></p>
+        </div>
+      </li>
+      <li>
+        <p class="when">2027</p>
+        <div>
+          <h3>What comes next</h3>
+          <p>A research assistant or post-baccalaureate position, on the way to a Ph.D. in cognitive or
+          computational neuroscience.</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="work-h">
+  <div class="wrap about-cols">
     <div>
-      <p>From 2017 to 2022 I served in the U.S. Marine Corps as a Navigational Aids Technician. My team set
-      up, aligned and calibrated navigation systems in demanding conditions, and as an instructor I trained
-      other Marines to do the same. That work was about turning noisy signals into readings you can trust.
-      Psychology asks a version of the same question about people.</p>
-      <p>Now I study psychology at Arizona State University, where I hold a 4.0 GPA and expect to finish my
-      B.S. in spring 2027. I will be the first person in my family to earn a bachelor's degree.</p>
-      <p>As an undergraduate researcher in Dr. Iman Feghhi's lab, I lead the development of a study on what
-      happens when people face cognitive and physical demands at the same time. I programmed the experiment
-      in PsychoPy and help train the research assistants who run it.</p>
-      <p>I am working toward a Ph.D. in cognitive or computational neuroscience, and I am looking for research
-      assistant and post-baccalaureate positions that begin in 2027.</p>
-    </div>
-    <dl class="facts">
-      <div><dt>Studying</dt><dd>B.S. Psychology, Arizona State University (expected 2027)</dd></div>
-      <div><dt>Research</dt><dd>Combined cognitive and physical load, Feghhi lab</dd></div>
-      <div><dt>Before</dt><dd>U.S. Marine Corps, 2017–2022; Navigational Aids Technician and instructor</dd></div>
-      <div><dt>Tools</dt><dd>Python, pandas, SciPy, statsmodels, matplotlib, PsychoPy</dd></div>
-      <div><dt>Interests</dt><dd><ul class="tags">
+      <h2 id="work-h">What I'm interested in</h2>
+      <ul class="tags">
         <li>Decision-making</li><li>Resource rationality</li><li>Effort</li>
-        <li>Perception and action</li><li>Computational models</li><li>Neural networks</li></ul></dd></div>
-    </dl>
+        <li>Perception and action</li><li>Computational models</li><li>Neural networks</li></ul>
+    </div>
+    <div>
+      <h2>What I work with</h2>
+      <ul class="tags">
+        <li>Python</li><li>pandas</li><li>SciPy</li><li>statsmodels</li><li>matplotlib</li><li>PsychoPy</li></ul>
+    </div>
   </div>
 </section>
 """)
