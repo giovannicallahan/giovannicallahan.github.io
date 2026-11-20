@@ -193,15 +193,15 @@ page("about.html", "About — Giovanni Callahan",
 """)
 
 # ── Experiment (introduction; the task itself is /study/) ────────────────────
-page("experiment.html", "Experiment — which pasta is the best value?",
-     "An online decision experiment: pick the best-value pasta while holding a few digits or a pattern in mind. About 15 minutes in your browser.",
+page("experiment.html", "Experiment — which one is the best value?",
+     "An online decision experiment: pick the best-value brand of an everyday product while holding a few digits or a pattern in mind. About 15 minutes in your browser.",
      active="Experiment", body="""
 <section class="page-hero">
   <div class="wrap split">
     <div>
-      <h1>Which pasta is the best value?</h1>
+      <h1>Which one is the best value?</h1>
       <p class="lede">My current experiment asks when people stop weighing their options and reach for a
-      rule of thumb. You pick the best value among four pastas while holding something in mind: a few digits, or a pattern of squares.</p>
+      rule of thumb. You pick the best value among four brands of an everyday product, such as pasta, bread or laundry detergent, while holding something in mind: a few digits, or a pattern of squares.</p>
       <form class="version-form" action="/study/" method="get">
         <div class="field"><label for="v-type">Version</label>
           <select id="v-type" name="version">
@@ -223,13 +223,13 @@ page("experiment.html", "Experiment — which pasta is the best value?",
       </form>
       <p class="note">Works on a phone or a computer.</p>
     </div>
-    <table class="pasta" aria-label="Example trial: four pastas with price and health score">
-      <thead><tr><th></th><th>Rotini</th><th>Penne</th><th>Spaghetti</th><th>Farfalle</th></tr></thead>
+    <table class="pasta" aria-label="Example trial: four brands of pasta with price and quality score">
+      <thead><tr><th></th><th>Vellino</th><th>Marzetta</th><th>Corvano</th><th>Tessaro</th></tr></thead>
       <tbody>
         <tr><th>Price</th><td>$1.25</td><td class="best">$1.75</td><td>$3.50</td><td>$2.50</td></tr>
-        <tr><th>Health</th><td>3/10</td><td class="best">9/10</td><td>10/10</td><td>4/10</td></tr>
+        <tr><th>Quality</th><td>3/10</td><td class="best">9/10</td><td>10/10</td><td>4/10</td></tr>
       </tbody>
-      <caption>An example trial. The cheapest pasta is not the best value here.</caption>
+      <caption>An example pasta trial. The cheapest brand is not the best value here.</caption>
     </table>
   </div>
 </section>
@@ -238,7 +238,7 @@ page("experiment.html", "Experiment — which pasta is the best value?",
     <div class="section-head"><h2 id="expect-h">What to expect</h2></div>
     <ul class="feature-list">
       <li><strong>A short practice first</strong><span>Six practice trials with feedback, so the rule is clear before anything counts.</span></li>
-      <li><strong>Three versions</strong><span>Number memory: hold a few digits. Pattern memory: hold squares on a grid. Own trade-off: number memory with no stated rule for weighing price against health.</span></li>
+      <li><strong>Three versions</strong><span>Number memory: hold a few digits. Pattern memory: hold squares on a grid. Own trade-off: number memory with no stated rule for weighing price against quality.</span></li>
       <li><strong>Two parts of 44 choices</strong><span>One part has a small memory load on each trial and the other a larger one.</span></li>
       <li><strong>Anonymous responses</strong><span>The task does not ask for your name or email. Your choices and their timing are saved under a random code when you finish.</span></li>
       <li><strong>Just looking?</strong><span>The one-minute demo runs a few trials and saves nothing. A full session saves your responses.</span></li>
