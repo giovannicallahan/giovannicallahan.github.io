@@ -110,32 +110,38 @@ const CONFIG = {
   CONTACT_FACULTY: "Dr. Iman Feghhi (ifeghhi@asu.edu)"
 };
 
-// Product categories. Brand names are invented and carry no information: prices and quality
+// Product categories. Brand names are invented nonsense words with no meaning, so they carry no information: prices and quality
 // scores are reassigned to columns at random on every trial.
 const CATS = [
-  {name: "Pasta",             one: "pasta",             food: true,  brands: ["Vellino", "Marzetta", "Corvano", "Tessaro"]},
-  {name: "Bread",             one: "bread",             food: true,  brands: ["Hearthly", "Branwick", "Loafwell", "Crustin"]},
-  {name: "Cereal",            one: "cereal",            food: true,  brands: ["Crunchlet", "Oatsy", "Morningo", "Grainbow"]},
-  {name: "Coffee",            one: "coffee",            food: true,  brands: ["Roastline", "Javello", "Darkmoor", "Cupwell"]},
-  {name: "Yogurt",            one: "yogurt",            food: true,  brands: ["Creamora", "Dairyvale", "Yogella", "Milkwell"]},
-  {name: "Rice",              one: "rice",              food: true,  brands: ["Grainly", "Padico", "Harvello", "Longfield"]},
-  {name: "Laundry detergent", one: "laundry detergent", food: false, brands: ["Brightfold", "Suddra", "Cleanora", "Washwell"]},
-  {name: "Toothpaste",        one: "toothpaste",        food: false, brands: ["Mintora", "Dentiva", "Brushwell", "Freshlo"]},
-  {name: "Dish soap",         one: "dish soap",         food: false, brands: ["Sparkla", "Dishwell", "Lemora", "Cleanette"]},
-  {name: "Shampoo",           one: "shampoo",           food: false, brands: ["Silkara", "Lathero", "Glossa", "Rootwell"]},
-  {name: "Paper towels",      one: "paper towels",      food: false, brands: ["Absorba", "Softfold", "Wipewell", "Towelo"]},
-  {name: "Batteries",         one: "batteries",         food: false, brands: ["Voltix", "Chargeon", "Powerra", "Cellmax"]}
+  {name: "Pasta",             one: "pasta",             kind: "food",  brands: ["Velmo", "Tarsi", "Quendo", "Bafra"]},
+  {name: "Bread",             one: "bread",             kind: "food",  brands: ["Nolvi", "Dremu", "Kilvo", "Sornet"]},
+  {name: "Cereal",            one: "cereal",            kind: "food",  brands: ["Yampi", "Glindo", "Hevra", "Zuntal"]},
+  {name: "Coffee",            one: "coffee",            kind: "food",  brands: ["Plimo", "Wesko", "Jantu", "Meblo"]},
+  {name: "Yogurt",            one: "yogurt",            kind: "food",  brands: ["Fintra", "Rulvo", "Tebri", "Oskel"]},
+  {name: "Rice",              one: "rice",              kind: "food",  brands: ["Vimsa", "Corbu", "Naldi", "Ekto"]},
+  {name: "Laundry detergent", one: "laundry detergent", kind: "home",  brands: ["Brolta", "Kesmi", "Dalvu", "Trimbo"]},
+  {name: "Toothpaste",        one: "toothpaste",        kind: "home",  brands: ["Lorsa", "Pendix", "Guvra", "Halno"]},
+  {name: "Dish soap",         one: "dish soap",         kind: "home",  brands: ["Mistu", "Zerpa", "Yebra", "Fundel"]},
+  {name: "Shampoo",           one: "shampoo",           kind: "home",  brands: ["Rasko", "Twilno", "Belsu", "Norvak"]},
+  {name: "Paper towels",      one: "paper towels",      kind: "home",  brands: ["Dimpra", "Jelto", "Vasku", "Hobrin"]},
+  {name: "Batteries",         one: "batteries",         kind: "home",  brands: ["Sulda", "Kintra", "Peldo", "Umvar"]},
+  {name: "Notebooks",         one: "notebook",          kind: "other", brands: ["Arvent", "Lumso", "Crodel", "Fesni"]},
+  {name: "Pens",              one: "pen",               kind: "other", brands: ["Tolvar", "Brimsa", "Dunvel", "Kaprit"]},
+  {name: "Light bulbs",       one: "light bulb",        kind: "other", brands: ["Yolden", "Meskir", "Ravlo", "Sindra"]},
+  {name: "Phone chargers",    one: "phone charger",     kind: "other", brands: ["Gelvin", "Pontra", "Welka", "Darmin"]},
+  {name: "Umbrellas",         one: "umbrella",          kind: "other", brands: ["Jusvo", "Tilbra", "Hendix", "Osmuri"]},
+  {name: "Socks",             one: "socks",             kind: "other", brands: ["Vantel", "Culdo", "Nerbit", "Zalmo"]}
 ];
 // Which categories a session uses depends on its memory task:
-// numbers -> household (non-food) products, patterns -> food products, letters -> all twelve.
-function catIds(){ return CATS.map((c, i) => i).filter(i => S.load_type === "digits" ? !CATS[i].food : S.load_type === "pattern" ? CATS[i].food : true); }
+// numbers -> household products, patterns -> food products, letters -> other everyday goods.
+function catIds(){ const k = {digits: "home", pattern: "food", letters: "other"}[S.load_type]; return CATS.map((c, i) => i).filter(i => CATS[i].kind === k); }
 const TAG = "Most commonly purchased";
 const Q = new URLSearchParams(location.search);
 const DEBUG = Q.get("debug") === "1";
 if (DEBUG) Object.assign(CONFIG, {TRIALS_PER_BLOCK: 5, CHECK_TRIALS_PER_BLOCK: 1, PRACTICE_TRIALS: 3, DEADLINE_S: 5, DIGITS_MS: 400, FIXATION_MS: 150});
 // Lab-meeting options: ?limit=8 sets the seconds per choice (3 to 60), ?limit=none removes the time limit,
 // and ?ratio=off hides the stated price-health ratio so participants form their own trade-off.
-// ?version=A (number memory, household products), B (pattern memory, food products) or C (letter memory, all products).
+// ?version=A (number memory, household products), B (pattern memory, food products) or C (letter memory, other everyday goods).
 const VER = (Q.get("version") || "").toUpperCase();
 const LOAD = Q.get("load") || ({A: "digits", B: "pattern", C: "letters"})[VER] || "";
 CONFIG.SHOW_RATIO = Q.get("ratio") !== "off";
