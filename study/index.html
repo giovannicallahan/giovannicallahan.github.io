@@ -99,6 +99,8 @@ const CONFIG = {
   HIGH_DIGITS: 6,
   LOW_DOTS: 2,                 // filled squares on the 4 x 4 grid (first guess; calibrate in piloting)
   HIGH_DOTS: 5,
+  LOW_LETTERS: 2,              // consonant strings, such as KT or KTRNMF
+  HIGH_LETTERS: 6,
   ITEM_SEED: 20261117,         // fixed seed: every participant sees the same item set
   MINUTES: 15,
 
@@ -111,23 +113,32 @@ const CONFIG = {
 // Product categories. Brand names are invented and carry no information: prices and quality
 // scores are reassigned to columns at random on every trial.
 const CATS = [
-  {name: "Pasta",             one: "pasta",             brands: ["Vellino", "Marzetta", "Corvano", "Tessaro"]},
-  {name: "Bread",             one: "bread",             brands: ["Hearthly", "Branwick", "Loafwell", "Crustin"]},
-  {name: "Laundry detergent", one: "laundry detergent", brands: ["Brightfold", "Suddra", "Cleanora", "Washwell"]},
-  {name: "Cereal",            one: "cereal",            brands: ["Crunchlet", "Oatsy", "Morningo", "Grainbow"]},
-  {name: "Coffee",            one: "coffee",            brands: ["Roastline", "Javello", "Darkmoor", "Cupwell"]},
-  {name: "Toothpaste",        one: "toothpaste",        brands: ["Mintora", "Dentiva", "Brushwell", "Freshlo"]}
+  {name: "Pasta",             one: "pasta",             food: true,  brands: ["Vellino", "Marzetta", "Corvano", "Tessaro"]},
+  {name: "Bread",             one: "bread",             food: true,  brands: ["Hearthly", "Branwick", "Loafwell", "Crustin"]},
+  {name: "Cereal",            one: "cereal",            food: true,  brands: ["Crunchlet", "Oatsy", "Morningo", "Grainbow"]},
+  {name: "Coffee",            one: "coffee",            food: true,  brands: ["Roastline", "Javello", "Darkmoor", "Cupwell"]},
+  {name: "Yogurt",            one: "yogurt",            food: true,  brands: ["Creamora", "Dairyvale", "Yogella", "Milkwell"]},
+  {name: "Rice",              one: "rice",              food: true,  brands: ["Grainly", "Padico", "Harvello", "Longfield"]},
+  {name: "Laundry detergent", one: "laundry detergent", food: false, brands: ["Brightfold", "Suddra", "Cleanora", "Washwell"]},
+  {name: "Toothpaste",        one: "toothpaste",        food: false, brands: ["Mintora", "Dentiva", "Brushwell", "Freshlo"]},
+  {name: "Dish soap",         one: "dish soap",         food: false, brands: ["Sparkla", "Dishwell", "Lemora", "Cleanette"]},
+  {name: "Shampoo",           one: "shampoo",           food: false, brands: ["Silkara", "Lathero", "Glossa", "Rootwell"]},
+  {name: "Paper towels",      one: "paper towels",      food: false, brands: ["Absorba", "Softfold", "Wipewell", "Towelo"]},
+  {name: "Batteries",         one: "batteries",         food: false, brands: ["Voltix", "Chargeon", "Powerra", "Cellmax"]}
 ];
+// Which categories a session uses depends on its memory task:
+// numbers -> household (non-food) products, patterns -> food products, letters -> all twelve.
+function catIds(){ return CATS.map((c, i) => i).filter(i => S.load_type === "digits" ? !CATS[i].food : S.load_type === "pattern" ? CATS[i].food : true); }
 const TAG = "Most commonly purchased";
 const Q = new URLSearchParams(location.search);
 const DEBUG = Q.get("debug") === "1";
 if (DEBUG) Object.assign(CONFIG, {TRIALS_PER_BLOCK: 5, CHECK_TRIALS_PER_BLOCK: 1, PRACTICE_TRIALS: 3, DEADLINE_S: 5, DIGITS_MS: 400, FIXATION_MS: 150});
 // Lab-meeting options: ?limit=8 sets the seconds per choice (3 to 60), ?limit=none removes the time limit,
 // and ?ratio=off hides the stated price-health ratio so participants form their own trade-off.
-// ?version=A (number memory), B (pattern memory) or C (number memory, no stated ratio) is a shorthand for the above.
+// ?version=A (number memory, household products), B (pattern memory, food products) or C (letter memory, all products).
 const VER = (Q.get("version") || "").toUpperCase();
-const LOAD = Q.get("load") || ({A: "digits", B: "pattern", C: "digits"})[VER] || "";
-CONFIG.SHOW_RATIO = Q.get("ratio") !== "off" && VER !== "C";
+const LOAD = Q.get("load") || ({A: "digits", B: "pattern", C: "letters"})[VER] || "";
+CONFIG.SHOW_RATIO = Q.get("ratio") !== "off";
 { const L = Q.get("limit"); if (L === "none") CONFIG.DEADLINE_S = 0; else if (+L >= 3 && +L <= 60) CONFIG.DEADLINE_S = +L; }
 
 /* ---------- helpers ---------- */
@@ -174,7 +185,7 @@ function makeItemSet(n, seed, nCheck){
   const rnd = mulberry32(seed), nConf = Math.round(n * CONFIG.CONFLICT_PROPORTION), items = [], pre = seed === CONFIG.ITEM_SEED ? "M" : "P";
   for (let i = 0; i < n; i++){ const it = makeItem(i < nConf ? "conflict" : "agree", rnd); it.id = pre + String(i+1).padStart(2,"0"); items.push(it); }
   for (let i = 0; i < (nCheck || 0); i++){ const it = makeItem("check", rnd); it.id = pre + "C" + (i+1); items.push(it); }   // made last, so the first n items never change
-  items.forEach((it, i) => { it.cat = i % CATS.length; });   // each kind of item is spread across the categories
+  const ids = catIds(); items.forEach((it, i) => { it.cat = ids[i % ids.length]; });   // each kind of item is spread across the session's categories
   return items;
 }
 function makePattern(n){return shuffle([...Array(16).keys()], Math.random).slice(0, n).sort((a,b) => a-b).join("-")}
@@ -186,14 +197,15 @@ function recallHits(shown, got, isPat){
   if (isPat){ const s = new Set(shown.split("-")); return got.split("-").filter(x => x !== "" && s.has(x)).length; }
   let h = 0; for (let i = 0; i < shown.length; i++) if (shown[i] === got[i]) h++; return h;
 }
-function loadSize(high){ return S.load_type === "pattern" ? (high ? CONFIG.HIGH_DOTS : CONFIG.LOW_DOTS) : (high ? CONFIG.HIGH_DIGITS : CONFIG.LOW_DIGITS); }
+function loadSize(high){ return S.load_type === "pattern" ? (high ? CONFIG.HIGH_DOTS : CONFIG.LOW_DOTS) : S.load_type === "letters" ? (high ? CONFIG.HIGH_LETTERS : CONFIG.LOW_LETTERS) : (high ? CONFIG.HIGH_DIGITS : CONFIG.LOW_DIGITS); }
+function makeLetters(n){ return shuffle("BCDFGHJKLMNPQRSTVWXZ".split(""), Math.random).slice(0, n).join(""); }   // consonants only, so no words form
 function makeDigits(n){const d=[];while(d.length<n){const x=Math.floor(Math.random()*10);if(d.length&&d[d.length-1]===x)continue;d.push(x)}return d.join("")}
 
 /* ---------- session state ---------- */
 const S = {
   participant_id: "P" + Math.random().toString(36).slice(2,8).toUpperCase() + Date.now().toString(36).slice(-4).toUpperCase(),
   started_at: new Date().toISOString(),
-  load_type: (LOAD === "digits" || LOAD === "pattern") ? LOAD : (Math.random() < 0.5 ? "digits" : "pattern"),
+  load_type: ["digits", "pattern", "letters"].includes(LOAD) ? LOAD : ["digits", "pattern", "letters"][Math.floor(Math.random() * 3)],
   order_group: (Q.get("order") === "low" || Q.get("order") === "high") ? Q.get("order") + "_first" : (Math.random() < 0.5 ? "low_first" : "high_first"),
   device: {viewport_w: window.innerWidth, viewport_h: window.innerHeight, touch: matchMedia("(pointer:coarse)").matches},
   trials: [], blocks: [], hidden: 0, running: false
@@ -214,9 +226,9 @@ function gridHTML(it, perm, reveal, bare){
   return h + "</div>";
 }
 async function runTrial(it, nDigits, info){
-  const isPat = S.load_type === "pattern";
-  const digits = isPat ? makePattern(nDigits) : makeDigits(nDigits), perm = shuffle([0,1,2,3], Math.random), hidden0 = S.hidden;
-  show(isPat ? `<div class="q">Remember this pattern</div>${patHTML(digits, false)}` : `<div class="q">Remember these digits</div><div class="big">${digits}</div>`);
+  const isPat = S.load_type === "pattern", isLet = S.load_type === "letters";
+  const digits = isPat ? makePattern(nDigits) : isLet ? makeLetters(nDigits) : makeDigits(nDigits), perm = shuffle([0,1,2,3], Math.random), hidden0 = S.hidden;
+  show(isPat ? `<div class="q">Remember this pattern</div>${patHTML(digits, false)}` : `<div class="q">Remember these ${isLet ? "letters" : "digits"}</div><div class="big">${digits}</div>`);
   await sleep(CONFIG.DIGITS_MS);
   show('<div class="big">+</div>');
   await sleep(CONFIG.FIXATION_MS);
@@ -239,11 +251,11 @@ async function runTrial(it, nDigits, info){
     card.querySelectorAll(".pat button").forEach(b => b.onclick = () => b.classList.toggle("on"));
     typed = await new Promise(resolve => { $("go").onclick = () => resolve([...card.querySelectorAll(".pat button.on")].map(b => b.dataset.i).join("-")); });
   } else {
-    show(`<div class="q">Type the digits you were remembering</div>
-        <div class="center" style="margin-top:12px"><input type="text" id="rec" inputmode="numeric" autocomplete="off" maxlength="${nDigits + 2}"></div>
+    show(`<div class="q">Type the ${isLet ? "letters" : "digits"} you were remembering</div>
+        <div class="center" style="margin-top:12px"><input type="text" id="rec" inputmode="${isLet ? "text" : "numeric"}" autocapitalize="characters" autocorrect="off" spellcheck="false" autocomplete="off" maxlength="${nDigits + 2}"></div>
         <div class="actions"><button class="btn" id="go">Done</button></div>`);
     $("rec").focus();
-    typed = await new Promise(resolve => { const ok = () => resolve($("rec").value.replace(/\D/g, "")); $("go").onclick = ok; $("rec").onkeydown = e => { if (e.key === "Enter") ok(); }; });
+    typed = await new Promise(resolve => { const ok = () => resolve(isLet ? $("rec").value.toUpperCase().replace(/[^A-Z]/g, "") : $("rec").value.replace(/\D/g, "")); $("go").onclick = ok; $("rec").onkeydown = e => { if (e.key === "Enter") ok(); }; });
   }
   const recallRt = Math.round(performance.now() - tR);
 
@@ -266,7 +278,7 @@ async function runTrial(it, nDigits, info){
     const top = CONFIG.SHOW_RATIO ? `<p class="center" style="font-size:18px">${head} The best was ${name} (${money(b.price)}, ${b.health}/10).</p>${gridHTML(it, perm, true)}
           <p class="center" style="margin-top:12px">${why}</p>` : `<p class="center" style="font-size:18px">${timedOut ? '<span class="no">Time ran out.</span>' : "Choice recorded. There are no right or wrong answers in this version."}</p>`;
     show(`${top}
-          <p class="center">${isPat ? "Pattern" : "Digits"}: ${typed === digits ? '<span class="ok">correct</span>' : isPat ? '<span class="no">not quite. It was:</span>' : `<span class="no">they were ${digits}</span>`}</p>
+          <p class="center">${isPat ? "Pattern" : isLet ? "Letters" : "Digits"}: ${typed === digits ? '<span class="ok">correct</span>' : isPat ? '<span class="no">not quite. It was:</span>' : `<span class="no">they were ${digits}</span>`}</p>
           ${isPat && typed !== digits ? patHTML(digits, false, true) : ""}
           <div class="actions"><button class="btn" id="go">Continue</button></div>`);
     await waitClick("go");
@@ -275,10 +287,10 @@ async function runTrial(it, nDigits, info){
 
 /* ---------- blocks ---------- */
 async function runBlock(cond, blockIndex, items){
-  const n = loadSize(cond === "high"), isPat = S.load_type === "pattern";
+  const n = loadSize(cond === "high"), isPat = S.load_type === "pattern", isLet = S.load_type === "letters";
   show(`<h1>Part ${blockIndex} of 2</h1>
-        <p>In this part you will remember <b>${isPat ? "a pattern of " + n + " squares" : n + " digits"}</b> on each trial.</p>
-        <p>There are ${items.length} trials and no feedback. ${CONFIG.SHOW_RATIO ? "Find the best value each time" : "Choose the one you would buy each time"}, and keep the ${isPat ? "pattern" : "digits"} in mind until you are asked to report ${isPat ? "it" : "them"}.</p>
+        <p>In this part you will remember <b>${isPat ? "a pattern of " + n + " squares" : n + (isLet ? " letters" : " digits")}</b> on each trial.</p>
+        <p>There are ${items.length} trials and no feedback. ${CONFIG.SHOW_RATIO ? "Find the best value each time" : "Choose the one you would buy each time"}, and keep the ${isPat ? "pattern" : isLet ? "letters" : "digits"} in mind until you are asked to report ${isPat ? "it" : "them"}.</p>
         <div class="actions"><button class="btn" id="go">Start part ${blockIndex}</button></div>`);
   await waitClick("go");
   const order = shuffle(items, Math.random);
@@ -315,14 +327,28 @@ const COLS = ["participant_id","order_group","phase","block","condition","trial"
 function rowsOut(){
   return S.trials.map(r => { const b = S.blocks.find(x => x.block === r.block) || {}; return Object.assign({}, r, {effort_1to7: b.effort_1to7 ?? "", self_report_compare_pct: b.self_report_compare_pct ?? ""}); });
 }
+// The downloaded CSV uses plain-English headers and seconds. The database keeps the short names and milliseconds.
+const SEC = v => (v === "" || v == null) ? "" : (v / 1000).toFixed(2);
+const CHOICE = v => ({best: "best value", cheapest: "cheapest", bestseller: "most purchased", other: "other", timeout: "timed out"})[v] || v;
+const CSV_COLS = [
+  ["participant_id", "Participant ID"], ["order_group", "Part order"], ["phase", "Phase"], ["block", "Part"], ["condition", "Memory load"], ["trial", "Trial"],
+  ["item_id", "Item ID"], ["item_type", "Item type"], ["category", "Product"],
+  ["load_type", "Memory task"], ["load_size", "Items to remember"], ["load_shown", "Shown"], ["load_reported", "Reported"],
+  ["recall_correct", "Memory correct (1 = yes)"], ["recall_hits", "Memory items correct"], ["recall_rt_ms", "Memory response time (s)", SEC],
+  ["choice_col", "Chosen column"], ["choice_type", "Choice", CHOICE], ["correct", "Chose best value (1 = yes)"], ["timed_out", "Timed out (1 = yes)"], ["rt_ms", "Choice time (s)", SEC],
+  ["best_col", "Best value column"], ["cheapest_col", "Cheapest column"], ["bestseller_col", "Most purchased column"],
+  ["price_1", "Price 1 ($)"], ["quality_1", "Quality 1"], ["price_2", "Price 2 ($)"], ["quality_2", "Quality 2"], ["price_3", "Price 3 ($)"], ["quality_3", "Quality 3"], ["price_4", "Price 4 ($)"], ["quality_4", "Quality 4"],
+  ["tab_hidden", "Times tab was hidden"], ["deadline_s", "Time limit (s, 0 = none)"], ["ratio_shown", "Ratio shown (1 = yes)"],
+  ["effort_1to7", "Effort rating (1-7)"], ["self_report_compare_pct", "Self-reported careful trials (%)"]
+];
 function toCSV(){
   const esc = v => { const s = String(v ?? ""); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
-  return [COLS.join(",")].concat(rowsOut().map(r => COLS.map(c => esc(r[c])).join(","))).join("\n");
+  return [CSV_COLS.map(c => esc(c[1])).join(",")].concat(rowsOut().map(r => CSV_COLS.map(([k, h, f]) => esc(f ? f(r[k]) : r[k])).join(","))).join("\n");
 }
 function downloadCSV(){
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([toCSV()], {type: "text/csv"}));
-  a.download = `pasta_pilot_${S.participant_id}.csv`; document.body.appendChild(a); a.click(); a.remove();
+  a.download = `product_choice_${S.participant_id}.csv`; document.body.appendChild(a); a.click(); a.remove();
 }
 async function saveRemote(){
   if (DEBUG) return "debug";
@@ -357,7 +383,7 @@ function consentHTML(){
   <p>If you choose to participate, the task takes about ${CONFIG.MINUTES} minutes and is completed in your web browser. You will be asked to:</p>
   <ul>
   <li>Read brief instructions and complete a short practice set with feedback.</li>
-  <li>Complete two parts of ${CONFIG.TRIALS_PER_BLOCK + CONFIG.CHECK_TRIALS_PER_BLOCK} trials each. On each trial you briefly see something to remember (a few digits, or a pattern of squares on a grid), choose the best value among four brands of a product (such as pasta, bread or laundry detergent) shown with a price and a quality score, and then report what you were remembering.</li>
+  <li>Complete two parts of ${CONFIG.TRIALS_PER_BLOCK + CONFIG.CHECK_TRIALS_PER_BLOCK} trials each. On each trial you briefly see something to remember (a few digits or letters, or a pattern of squares on a grid), choose the best value among four brands of an everyday product shown with a price and a quality score, and then report what you were remembering.</li>
   <li>After each part, answer two short questions about your effort and how you made your choices.</li>
   </ul>
   <p>The page records your choices, what you report from memory, and their timing.</p>
@@ -377,7 +403,7 @@ function consentHTML(){
   <div class="actions"><button class="btn" id="go" disabled>Continue</button></div>`;
 }
 function exampleHTML(plain){
-  const it = {opts: [{price: 1.25, health: 3}, {price: 1.75, health: 9}, {price: 3.5, health: 10}, {price: 2.5, health: 4}], best: 1, cheap: 0, fam: 3, cat: 0};
+  const it = {opts: [{price: 1.25, health: 3}, {price: 1.75, health: 9}, {price: 3.5, health: 10}, {price: 2.5, health: 4}], best: 1, cheap: 0, fam: 3, cat: catIds()[0]};
   return gridHTML(it, [0,1,2,3], !plain, plain);
 }
 async function main(){
@@ -386,9 +412,9 @@ async function main(){
   await waitClick("go");
   S.consented_at = new Date().toISOString(); S.running = true;
 
-  const B = CATS[0].brands;
+  const ids0 = catIds(), B = CATS[ids0[0]].brands, exNames = CATS[ids0[0]].one + ", " + CATS[ids0[1]].one + " or " + CATS[ids0[2]].one;
   show(`<h1>Your task</h1>
-    <p>Imagine you are shopping for groceries and household items. On each trial you will see four brands of one product, such as pasta, bread or laundry detergent, each with a <b>price</b> and a <b>quality score</b> out of 10.</p>
+    <p>Imagine you are shopping for groceries and household items. On each trial you will see four brands of one product, such as ${exNames}, each with a <b>price</b> and a <b>quality score</b> out of 10.</p>
     ${CONFIG.SHOW_RATIO ? `<p>Choose the <b>best overall value</b>. A lower price is better and a higher quality score is better. They count equally: <b>$1 is worth about 3 quality points</b>.</p>
     ${exampleHTML()}
     <p style="margin-top:12px">In this example, ${B[1]} (outlined) is the best value. ${B[0]} is 50 cents cheaper, but ${B[1]} scores 6 points higher on quality, which is worth far more than 50 cents.</p>
@@ -398,10 +424,10 @@ async function main(){
     <div class="actions"><button class="btn" id="go">Next</button></div>`, true);
   await waitClick("go");
 
-  const pat = S.load_type === "pattern";
-  show(`<h1>${pat ? "Remembering a pattern" : "Remembering digits"}</h1>
-    <p>${pat ? "Each trial starts with a grid in which a few squares are filled. Keep the pattern in mind while you choose. After your choice you will tap the squares that were filled." : "Each trial starts with a few digits to remember. Keep them in mind while you choose. After your choice you will type them back."}</p>
-    <p>Please do not write ${pat ? "the pattern" : "the digits"} down.</p>
+  const pat = S.load_type === "pattern", w = S.load_type === "letters" ? "letters" : "digits";
+  show(`<h1>${pat ? "Remembering a pattern" : "Remembering " + w}</h1>
+    <p>${pat ? "Each trial starts with a grid in which a few squares are filled. Keep the pattern in mind while you choose. After your choice you will tap the squares that were filled." : `Each trial starts with a few ${w} to remember. Keep them in mind while you choose. After your choice you will type them back.`}</p>
+    <p>Please do not write ${pat ? "the pattern" : "the " + w} down.</p>
     <p>${CONFIG.DEADLINE_S ? `You have <b>${CONFIG.DEADLINE_S} seconds</b> for each choice. A bar shows the time left.` : "There is no time limit for each choice."}</p>
     <p>Please complete the task in one sitting, somewhere without distractions. First, ${CONFIG.PRACTICE_TRIALS} practice trials with feedback.</p>
     <div class="actions"><button class="btn" id="go">Start practice</button></div>`, true);
@@ -436,7 +462,7 @@ async function main(){
       ${CONFIG.SHOW_RATIO ? `<p>You chose the best value on ${acc}% of trials.</p>` : ""}
       <h2>About this study</h2>
       <p>This study examines when people shift from deliberate thinking to a quicker, “good enough” rule of thumb. Weighing price and quality for every option is the deliberate approach. Picking the cheapest or the most commonly purchased is a shortcut that is usually right. On some trials the shortcut led to the best value; on others it did not, which lets us see which approach was used.</p>
-      <p>Remembering the digits or the pattern was the mental demand. We are testing whether a heavier demand makes people rely on the shortcut more often.</p>
+      <p>Remembering the digits, letters or pattern was the mental demand. We are testing whether a heavier demand makes people rely on the shortcut more often.</p>
       <p>Questions: ${CONFIG.CONTACT_STUDENT}.</p>
       <div class="actions">${status === "failed" ? '<button class="btn" id="retry">Try sending again</button>' : ""}<button class="btn ghost" id="dl">Download my data (CSV)</button></div>`, true);
     $("dl").onclick = downloadCSV;
