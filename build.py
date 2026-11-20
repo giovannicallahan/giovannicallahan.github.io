@@ -21,14 +21,57 @@ MARK = ('<svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="
         'stroke="#14a3a1" stroke-width="2.2" stroke-linecap="round"/><path d="M13 1.5v3M13 21.5v3M1.5 13h3M21.5 13h3" '
         'stroke="currentColor" stroke-width="1.6"/></svg>')
 
-NAV = [("Home", "/"), ("About", "/about.html"), ("Gyrafold", "/projects/gyrafold.html"),
-       ("CogViz", "/projects/cogviz.html"), ("Vector Guild", "/projects/vector-guild.html"),
-       ("Experiment", "/experiment.html"), ("CV", "/Giovanni_Callahan_CV.pdf"), ("Contact", "/contact.html")]
+NAV = [("Experiment", "/experiment.html"), ("Tools", "/projects/"), ("About", "/about.html"),
+       ("CV", "/Giovanni_Callahan_CV.pdf"), ("Contact", "/contact.html")]
+
+# One line under each tool page, so feedback sits with the tools and not in the site footer.
+TOOL_FEEDBACK = """
+<section class="tool-feedback">
+  <div class="wrap">
+    <p>Found a bug or have an idea for a tool? <a href="/feedback.html">Send feedback</a>.</p>
+  </div>
+</section>"""
+
+# The four pieces of work shown on the home page and (tools only) on the Tools page.
+WORK = [
+    ("experiment", "/experiment.html", "Which one is the best value?",
+     "My current experiment asks when people stop weighing their options and reach for a rule of thumb.",
+     "Study in development. No results yet.", ["Behavioral experiment", "Runs in the browser"],
+     "An example trial: four pasta brands with a price and a quality score each"),
+    ("gyrafold", "/projects/gyrafold.html", "Gyrafold",
+     "A 3D atlas of 300+ brain structures. Tap a structure to see what it does, then quiz yourself.",
+     "", ["3D atlas", "Free, no account"],
+     "Colour-coded 3D model of the human brain"),
+    ("cogviz", "/projects/cogviz.html", "CogViz Research Studio",
+     "A planner for psychology experiments: compare designs, plan the analysis and export the plan.",
+     "", ["Python", "Streamlit"],
+     "CogViz Research Studio preview"),
+    ("vector-guild", "/projects/vector-guild.html", "Vector Guild",
+     "A linear algebra game. Work through 68 engineering missions and build an outpost as you solve them.",
+     "", ["JavaScript", "Free, no account"],
+     "Vector Guild campaign screen"),
+]
+
+
+def work_cards(keys):
+    out = []
+    for key, href, name, text, status, tags, alt in WORK:
+        if key not in keys:
+            continue
+        tag_html = "".join(f"<li>{t}</li>" for t in tags)
+        status_html = f'\n      <p class="work-status">{status}</p>' if status else ""
+        out.append(f"""    <li class="work-card">
+      <a href="{href}"><img src="/img/work-{key}.webp" width="800" height="500" loading="lazy" alt="{alt}"></a>
+      <h3><a href="{href}">{name}</a></h3>
+      <p>{text}</p>{status_html}
+      <ul class="tags">{tag_html}</ul>
+    </li>""")
+    return "\n".join(out)
 
 EXT = 'rel="noopener noreferrer" target="_blank"'
 
 
-def page(path, title, description, body, active=None, theme="", og_image="/img/og-home.png"):
+def page(path, title, description, body, active=None, theme="", og_image="/img/og-home.png", feedback=False):
     nav = "\n".join(
         f'      <li><a href="{href}"{" aria-current=\"page\"" if label == active else ""}>{label}</a></li>'
         for label, href in NAV)
@@ -68,7 +111,7 @@ def page(path, title, description, body, active=None, theme="", og_image="/img/o
   </nav>
 </header>
 <main id="main">
-{body}
+{body}{TOOL_FEEDBACK if feedback else ""}
 </main>
 <footer class="site-foot">
   <div class="wrap">
@@ -76,7 +119,6 @@ def page(path, title, description, body, active=None, theme="", og_image="/img/o
     <ul>
       <li><a href="{GITHUB}" {EXT}>GitHub</a></li>
       <li><a href="/contact.html">Contact</a></li>
-      <li><a href="/feedback.html">Feedback</a></li>
     </ul>
   </div>
 </footer>
@@ -91,19 +133,47 @@ def page(path, title, description, body, active=None, theme="", og_image="/img/o
 
 # ── Home ─────────────────────────────────────────────────────────────────────
 page("index.html", "Giovanni Callahan — psychology, decisions and the brain",
-     "Psychology student at Arizona State University and Marine Corps veteran. I study how people decide where to spend effort, and I build free tools for learning about the brain and planning experiments.",
-     active="Home", body="""
+     "Undergraduate researcher in the Feghhi Lab at Arizona State University and Marine Corps veteran. I study how people decide where to spend effort, and I build free tools for research and learning.",
+     body=f"""
 <section class="hero hero-portrait">
   <div class="wrap">
     <div class="hero-copy">
-      <h1>Marine veteran. Researcher. <em>Builder of learning tools.</em></h1>
-      <p class="lede"><strong>Giovanni Callahan</strong> studies how people decide where to spend mental
-      and physical effort. He builds free tools for learning: a 3D atlas of <strong>300+ brain
-      structures</strong>, a planner for psychology experiments, and a linear algebra game with
-      <strong>68 missions</strong>.</p>
-      <p class="hero-links"><a class="more" href="/about.html">Learn more about Giovanni</a></p>
+      <h1><em>Researcher.</em> Marine veteran. Builder of research and learning tools.</h1>
+      <p class="affil">Undergraduate researcher in the Feghhi Lab at Arizona State University</p>
+      <p class="lede">I study how people decide where to spend mental and physical effort. I build free
+      tools for research and learning: a 3D atlas of <strong>300+ brain structures</strong>, a planner for
+      psychology experiments, and a linear algebra game with <strong>68 missions</strong>.</p>
+      <p class="ask">I am looking for research assistant and post-baccalaureate positions that begin in 2027.</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="/experiment.html">See my current research</a>
+        <a class="btn btn-ghost" href="/Giovanni_Callahan_CV.pdf">Download my CV</a>
+      </div>
     </div>
     <div class="portrait" role="img" aria-label="Portrait of Giovanni Callahan"></div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="work-h">
+  <div class="wrap">
+    <h2 id="work-h">Selected work</h2>
+    <ul class="work">
+{work_cards(("experiment", "gyrafold", "cogviz", "vector-guild"))}
+    </ul>
+  </div>
+</section>
+""")
+
+# ── Tools (index of the three tools) ─────────────────────────────────────────
+page("projects/index.html", "Tools — Giovanni Callahan",
+     "Three free tools I built for research and learning: a 3D brain atlas, a planner for psychology experiments, and a linear algebra game.",
+     active="Tools", feedback=True, body=f"""
+<section class="page-hero">
+  <div class="wrap">
+    <h1>Tools</h1>
+    <p class="lede">Three free tools I built for research and learning. Each runs in a browser, with no account.</p>
+    <ul class="work work-3">
+{work_cards(("gyrafold", "cogviz", "vector-guild"))}
+    </ul>
   </div>
 </section>
 """)
@@ -250,7 +320,7 @@ page("experiment.html", "Experiment — which one is the best value?",
 # ── Vector Guild (introduction; the game itself is /vector-guild/) ───────────
 page("projects/vector-guild.html", "Vector Guild — a linear algebra adventure",
      "A free browser game for learning linear algebra: 68 engineering missions, and every first solve builds part of an outpost.",
-     active="Vector Guild", body="""
+     active="Tools", feedback=True, body="""
 <section class="page-hero">
   <div class="wrap">
     <h1>Vector Guild</h1>
@@ -278,7 +348,7 @@ page("projects/vector-guild.html", "Vector Guild — a linear algebra adventure"
 # ── Gyrafold ─────────────────────────────────────────────────────────────────
 page("projects/gyrafold.html", "Gyrafold — explore the human brain in 3D",
      "A free 3D brain atlas that runs in your browser: spin and slice the brain, tap any of 300+ structures to learn what it does, and quiz yourself with spaced review.",
-     active="Gyrafold", theme="neuro", og_image="/img/og-neuroapp.png", body=f"""
+     active="Tools", feedback=True, theme="neuro", og_image="/img/og-neuroapp.png", body=f"""
 <section class="page-hero">
   <div class="wrap split">
     <div>
@@ -353,7 +423,7 @@ page("projects/gyrafold.html", "Gyrafold — explore the human brain in 3D",
 # ── CogViz ───────────────────────────────────────────────────────────────────
 page("projects/cogviz.html", "CogViz Research Studio — plan psychology experiments",
      "A free browser-based planner for psychology experiments: compare designs, plan analyses, simulate what a prediction implies and export a preregistration draft.",
-     active="CogViz", og_image="/img/og-cogviz.png", body=f"""
+     active="Tools", feedback=True, og_image="/img/og-cogviz.png", body=f"""
 <section class="page-hero">
   <div class="wrap split">
     <div>
@@ -551,7 +621,7 @@ for _old in ("index.html", "atlas-viewer.html", "neuron.html", "imaging.html"):
 redirect("cogviz/index.html", COGVIZ, "CogViz Research Studio")
 
 (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE}/sitemap.xml\n")
-urls = ["/", "/projects/gyrafold.html", "/about.html", "/experiment.html", "/projects/cogviz.html", "/projects/vector-guild.html", "/vector-guild/", "/contact.html", "/feedback.html"]
+urls = ["/", "/projects/", "/projects/gyrafold.html", "/about.html", "/experiment.html", "/projects/cogviz.html", "/projects/vector-guild.html", "/vector-guild/", "/contact.html", "/feedback.html"]
 (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
                                   + "".join(f"  <url><loc>{SITE}{u}</loc></url>\n" for u in urls) + "</urlset>\n")
 print("wrote robots.txt, sitemap.xml")
