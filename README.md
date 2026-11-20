@@ -39,8 +39,8 @@ and asks search engines not to index it.
 - `/study/?debug=1` runs a one-minute version that saves nothing.
 - `/study/lab.html` is a launcher for lab meetings: three preset versions and a builder. It sets the page's
   options: `load=digits|pattern`, `limit=<seconds>|none`, `ratio=off` (no stated price-health ratio).
-- The consent text shows a draft banner until `CONSENT_IS_DRAFT` is set to `false`
-  (do that only after IRB approval of the online wording).
+- `CONSENT_IS_DRAFT` is `false` (no draft banner). The PI confirmed on 2026-11-19 that no
+  IRB amendment is needed because the data are anonymous.
 
 ## Vector Guild (`/vector-guild/`)
 
