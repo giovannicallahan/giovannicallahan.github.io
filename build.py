@@ -216,7 +216,7 @@ page("experiment.html", "Experiment — which one is the best value?",
           </select></div>
         <div class="field"><label for="v-len">Length</label>
           <select id="v-len" name="debug">
-            <option value="1">Demo: 1 minute, not saved</option>
+            <option value="1">Demo: about 3 minutes, not saved</option>
             <option value="0">Full: 15 minutes, saved</option>
           </select></div>
         <button class="btn btn-primary" type="submit">Start</button>

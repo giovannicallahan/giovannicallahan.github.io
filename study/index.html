@@ -78,7 +78,7 @@ label.check input{width:20px;height:20px;margin-top:3px;flex:0 0 auto}
    ?order=high). Both blocks use the same 44 items (16 conflict, 24 agree, 4 check),
    reshuffled, so the item mix is identical across conditions.
 
-   Quick test: add ?debug=1 to the address for a 1-minute version (not saved).
+   Quick test: add ?debug=1 to the address for a short demo: fewer trials, same timing (not saved).
    ========================================================================== */
 
 const CONFIG = {
@@ -138,7 +138,8 @@ function catIds(){ const k = {digits: "home", pattern: "food", letters: "other"}
 const TAG = "Most commonly purchased";
 const Q = new URLSearchParams(location.search);
 const DEBUG = Q.get("debug") === "1";
-if (DEBUG) Object.assign(CONFIG, {TRIALS_PER_BLOCK: 5, CHECK_TRIALS_PER_BLOCK: 1, PRACTICE_TRIALS: 3, DEADLINE_S: 5, DIGITS_MS: 400, FIXATION_MS: 150});
+// Demo: fewer trials only. Timing (memory display, fixation, time limit) is identical to the full version.
+if (DEBUG) Object.assign(CONFIG, {TRIALS_PER_BLOCK: 5, CHECK_TRIALS_PER_BLOCK: 1, PRACTICE_TRIALS: 3});
 // Lab-meeting options: ?limit=8 sets the seconds per choice (3 to 60), ?limit=none removes the time limit,
 // and ?ratio=off hides the stated price-health ratio so participants form their own trade-off.
 // ?version=A (number memory, household products), B (pattern memory, food products) or C (letter memory, other everyday goods).
