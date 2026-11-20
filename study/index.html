@@ -111,7 +111,10 @@ const DEBUG = Q.get("debug") === "1";
 if (DEBUG) Object.assign(CONFIG, {TRIALS_PER_BLOCK: 5, CHECK_TRIALS_PER_BLOCK: 1, PRACTICE_TRIALS: 3, DEADLINE_S: 5, DIGITS_MS: 400, FIXATION_MS: 150});
 // Lab-meeting options: ?limit=8 sets the seconds per choice (3 to 60), ?limit=none removes the time limit,
 // and ?ratio=off hides the stated price-health ratio so participants form their own trade-off.
-CONFIG.SHOW_RATIO = Q.get("ratio") !== "off";
+// ?version=A (number memory), B (pattern memory) or C (number memory, no stated ratio) is a shorthand for the above.
+const VER = (Q.get("version") || "").toUpperCase();
+const LOAD = Q.get("load") || ({A: "digits", B: "pattern", C: "digits"})[VER] || "";
+CONFIG.SHOW_RATIO = Q.get("ratio") !== "off" && VER !== "C";
 { const L = Q.get("limit"); if (L === "none") CONFIG.DEADLINE_S = 0; else if (+L >= 3 && +L <= 60) CONFIG.DEADLINE_S = +L; }
 
 /* ---------- helpers ---------- */
@@ -176,7 +179,7 @@ function makeDigits(n){const d=[];while(d.length<n){const x=Math.floor(Math.rand
 const S = {
   participant_id: "P" + Math.random().toString(36).slice(2,8).toUpperCase() + Date.now().toString(36).slice(-4).toUpperCase(),
   started_at: new Date().toISOString(),
-  load_type: (Q.get("load") === "digits" || Q.get("load") === "pattern") ? Q.get("load") : (Math.random() < 0.5 ? "digits" : "pattern"),
+  load_type: (LOAD === "digits" || LOAD === "pattern") ? LOAD : (Math.random() < 0.5 ? "digits" : "pattern"),
   order_group: (Q.get("order") === "low" || Q.get("order") === "high") ? Q.get("order") + "_first" : (Math.random() < 0.5 ? "low_first" : "high_first"),
   device: {viewport_w: window.innerWidth, viewport_h: window.innerHeight, touch: matchMedia("(pointer:coarse)").matches},
   trials: [], blocks: [], hidden: 0, running: false

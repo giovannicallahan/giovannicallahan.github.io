@@ -13,7 +13,7 @@ COGVIZ = "https://cogviz-research-studio.streamlit.app/"
 GITHUB = "https://github.com/giovannicallahan"
 
 CSP = ("default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; "
-       "font-src 'self'; connect-src https://formspree.io; form-action https://formspree.io; "
+       "font-src 'self'; connect-src https://formspree.io; form-action 'self' https://formspree.io; "
        "object-src 'none'; base-uri 'none'")
 
 MARK = ('<svg viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11.5" fill="none" '
@@ -202,11 +202,26 @@ page("experiment.html", "Experiment — which pasta is the best value?",
       <h1>Which pasta is the best value?</h1>
       <p class="lede">My current experiment asks when people stop weighing their options and reach for a
       rule of thumb. You pick the best value among four pastas while holding something in mind: a few digits, or a pattern of squares.</p>
-      <div class="actions">
-        <a class="btn btn-primary" href="/study/">Start the experiment</a>
-        <a class="btn btn-ghost" href="/study/?debug=1">One-minute demo</a>
-      </div>
-      <p class="note">About 15 minutes. Works on a phone or a computer.</p>
+      <form class="version-form" action="/study/" method="get">
+        <div class="field"><label for="v-type">Version</label>
+          <select id="v-type" name="version">
+            <option value="A">Number memory</option>
+            <option value="B">Pattern memory</option>
+            <option value="C">Own trade-off</option>
+          </select></div>
+        <div class="field"><label for="v-limit">Time limit per choice</label>
+          <select id="v-limit" name="limit">
+            <option value="4">4 seconds</option><option value="6">6 seconds</option><option value="8">8 seconds</option>
+            <option value="12" selected>12 seconds</option><option value="20">20 seconds</option><option value="none">No limit</option>
+          </select></div>
+        <div class="field"><label for="v-len">Length</label>
+          <select id="v-len" name="debug">
+            <option value="1">Demo: 1 minute, not saved</option>
+            <option value="0">Full: 15 minutes, saved</option>
+          </select></div>
+        <button class="btn btn-primary" type="submit">Start</button>
+      </form>
+      <p class="note">Works on a phone or a computer.</p>
     </div>
     <table class="pasta" aria-label="Example trial: four pastas with price and health score">
       <thead><tr><th></th><th>Rotini</th><th>Penne</th><th>Spaghetti</th><th>Farfalle</th></tr></thead>
@@ -223,9 +238,10 @@ page("experiment.html", "Experiment — which pasta is the best value?",
     <div class="section-head"><h2 id="expect-h">What to expect</h2></div>
     <ul class="feature-list">
       <li><strong>A short practice first</strong><span>Six practice trials with feedback, so the rule is clear before anything counts.</span></li>
-      <li><strong>Two parts of 44 choices</strong><span>One part has a small memory load on each trial and the other a larger one. You have 12 seconds per choice.</span></li>
+      <li><strong>Three versions</strong><span>Number memory: hold a few digits. Pattern memory: hold squares on a grid. Own trade-off: number memory with no stated rule for weighing price against health.</span></li>
+      <li><strong>Two parts of 44 choices</strong><span>One part has a small memory load on each trial and the other a larger one.</span></li>
       <li><strong>Anonymous responses</strong><span>The task does not ask for your name or email. Your choices and their timing are saved under a random code when you finish.</span></li>
-      <li><strong>Just looking?</strong><span>The one-minute demo runs a few trials and saves nothing.</span></li>
+      <li><strong>Just looking?</strong><span>The one-minute demo runs a few trials and saves nothing. A full session saves your responses.</span></li>
     </ul>
   </div>
 </section>

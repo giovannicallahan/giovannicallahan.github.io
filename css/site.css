@@ -455,3 +455,12 @@ body.neuro { background: radial-gradient(ellipse 80% 60% at 70% 0%, #1d2563 0%, 
   .timeline li { grid-template-columns: 1fr; gap: 0.35rem; padding-bottom: 1.75rem; }
   .timeline .when { text-align: left; padding-left: 1.75rem; }
 }
+
+/* Experiment page: version picker */
+.version-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.75rem; max-width: 34rem; align-items: end; }
+.version-form .field { margin: 0; }
+.version-form .field:first-child { grid-column: 1 / -1; }
+.version-form label { display: block; font-size: var(--step--1); color: var(--ink-2); margin-bottom: 0.35rem; }
+.version-form select { width: 100%; min-height: 48px; }
+.version-form .btn { grid-column: 1 / -1; justify-content: center; }
+@media (max-width: 520px) { .version-form { grid-template-columns: 1fr; } }
