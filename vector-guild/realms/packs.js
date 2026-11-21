@@ -14,7 +14,7 @@
    after   classic scripts after the pack's scripts and before app.js (page code) */
 window.VG_REALM_SHARED = {
  styles: ['collection/collection.css', 'daily.css'],
- before: ['realms/registry.js', 'collection/figures.js', 'collection/achievements.js', 'collection/core.js'],
+ before: ['voice/index.js', 'realms/registry.js', 'collection/figures.js', 'collection/achievements.js', 'collection/core.js'],
  after: ['collection/ui.js', 'daily.js']
 };
 window.VG_PACKS = {
