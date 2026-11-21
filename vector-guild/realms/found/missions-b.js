@@ -160,7 +160,7 @@ window.QUESTS.push(
   brief: 'The rover’s gauge shows the total after refuelling, and Mira needs to know how much went into each jerry can.',
   lesson: 'Tidy each side first, then undo the operations in reverse order: adding or subtracting before multiplying.',
   prompt: 'Mira fills 3 jerry cans. Each gets x litres from the pump plus a 2 L top-up, and all of them are poured into the rover’s tank, which already held 12 L. The gauge now reads 51 L, so 3(x + 2) + 12 = 51. Solve for x. Enter what 3x equals, then x.',
-  answer: [33, 11], labels: ['value of 3x', 'x (litres from the pump per can)'], tolerance: 0.01,
+  answer: [33, 11], labels: ['litres from the pump for all the cans', 'x (litres from the pump per can)'], tolerance: 0.01,
   hints: ['Distribute and collect the plain numbers first: 3(x + 2) + 12 = 3x + 18.', 'Subtract 18 from both sides, then divide both sides by 3.'],
   solution: '3(x + 2) + 12 = 51 becomes 3x + 6 + 12 = 51, so 3x + 18 = 51. Subtract 18: 3x = 33. Divide by 3: x = 11 L. Check: 3 × (11 + 2) + 12 = 3 × 13 + 12 = 51.',
   xp: 150, prereqs: ['q16'],
@@ -186,7 +186,7 @@ window.QUESTS.push(
   },
   guidance: [
    { prompt: 'Tidy the left side into 3x + (a number): distribute 3(x + 2) and add the 12. What is the number?', answer: [18], labels: ['number on its own after tidying'], explanation: '3 × 2 = 6, and 6 + 12 = 18, so the equation is 3x + 18 = 51.' },
-   { prompt: '3x + 18 = 51. Subtract 18 from both sides. What is 3x?', answer: [33], labels: ['value of 3x'], explanation: '51 − 18 = 33, so 3x = 33.' },
+   { prompt: '3x + 18 = 51. Subtract 18 from both sides. What is 3x?', answer: [33], labels: ['litres from the pump for all the cans'], explanation: '51 − 18 = 33, so 3x = 33.' },
    { prompt: '3x = 33. Divide both sides by 3. What is x?', answer: [11], labels: ['x'], explanation: '33 ÷ 3 = 11, so each can got 11 L from the pump.' }
   ]
  },

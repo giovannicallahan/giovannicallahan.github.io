@@ -58,7 +58,7 @@ Object.assign(window.MISSION_GEN, {
  },
  q04: {
   canonical: { d: 6, q: 22, r: 5 },
-  draw: R => { const d = R.int(3, 9); return { d, q: R.int(10, 30), r: R.int(1, d - 1) }; },
+  draw: R => { const d = R.int(3, 9); return { d, q: R.int(11, 30), r: R.int(1, d - 1) }; },
   build: ({ d, q, r }) => { const dq = d * q, N = dq + r; return {
    prompt: `${n(N)} ration packs arrive loose and are packed into boxes that hold ${n(d)} packs each. Enter how many boxes are completely full, then how many packs are left over.`,
    answer: [q, r],
@@ -101,7 +101,7 @@ Object.assign(window.MISSION_GEN, {
   canonical: { d: 8, k: 3, w: 5 },
   draw: R => { const d = R.pick([4, 5, 6, 8, 10, 12]); return { d, k: R.int(1, d - 1), w: R.int(3, 9) }; },
   build: ({ d, k, w }) => { const bar = d * w, kw = k * w; return {
-   prompt: `A ${n(bar)} g ration bar is scored into ${n(d)} equal pieces, and a recruit eats ${n(k)} pieces. Enter the fraction of the bar eaten, numerator then denominator, as the bar is scored (do not simplify). Then enter the grams eaten.`,
+   prompt: `A ${n(bar)} g ration bar is scored into ${n(d)} equal pieces, and a recruit eats ${n(k)} pieces. Enter the fraction of the bar eaten, numerator then denominator, using the number of pieces the bar is scored into. Then enter the grams eaten.`,
    answer: [k, d, kw],
    hints: ['The denominator counts the equal pieces in the whole bar. The numerator counts the pieces eaten.', `One piece weighs ${n(bar)} ÷ ${n(d)} grams. Multiply that by the pieces eaten.`],
    solution: `The bar has ${n(d)} equal pieces and ${n(k)} were eaten, so ${n(k)}/${n(d)} of the bar was eaten. One piece weighs ${n(bar)} ÷ ${n(d)} = ${n(w)} g, so ${n(k)} pieces weigh ${n(k)} × ${n(w)} = ${n(kw)} g.`,
@@ -137,7 +137,7 @@ Object.assign(window.MISSION_GEN, {
    return {
    prompt: `A pot gets ${n(a)}/${n(b)} litre of broth and ${n(c)}/${n(d)} litre of water. Enter the litres in the pot as a fraction in lowest terms, numerator then denominator. Then the cook uses ${n(e)}/${n(f)} of a jug that holds ${n(g)}/${n(h)} litre of oil, that is ${n(e)}/${n(f)} × ${n(g)}/${n(h)} litre. Enter that amount in lowest terms, numerator then denominator.`,
    answer: [sn, sd, pn, pd],
-   hints: [`To add, the pieces must be the same size: write both fractions with the denominator ${n(L)}, then add the numerators.`, `To multiply, multiply the tops (${n(e)} × ${n(g)}) and the bottoms (${n(f)} × ${n(h)}), then simplify.`],
+   hints: [`To add, the pieces must be the same size: find a number that both ${n(b)} and ${n(d)} divide into exactly, write both fractions with that denominator, then add the numerators.`, `To multiply, multiply the tops (${n(e)} × ${n(g)}) and the bottoms (${n(f)} × ${n(h)}), then simplify.`],
    solution: `Adding: ${n(a)}/${n(b)} = ${n(a2)}/${n(L)} and ${n(c)}/${n(d)} = ${n(c2)}/${n(L)}, so the sum is ${sumEnd}. Multiplying: ${n(e)}/${n(f)} × ${n(g)}/${n(h)} = ${prodEnd}.`,
    guidance: [
     { prompt: `Write ${n(a)}/${n(b)} and ${n(c)}/${n(d)} with the denominator ${n(L)}. What do the two numerators add up to?`, answer: [top], explanation: `${n(a)}/${n(b)} = ${n(a2)}/${n(L)} and ${n(c)}/${n(d)} = ${n(c2)}/${n(L)}. ${n(a2)} + ${n(c2)} = ${n(top)}, so the sum is ${n(top)}/${n(L)}.` },

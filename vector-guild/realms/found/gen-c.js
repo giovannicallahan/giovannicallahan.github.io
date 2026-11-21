@@ -101,19 +101,19 @@ Object.assign(window.MISSION_GEN, {
    prompt: `A sheet of alloy is cut in half, then every piece is cut in half again, ${n(m)} times in all: that makes 2${sup(m)} pieces. Then every piece is halved ${n(k)} more times, which multiplies the count by 2${sup(k)}. So there are 2${sup(m)} × 2${sup(k)} pieces. Write this as one power of 2 and enter the exponent, then enter the number of pieces. Next, a cube-shaped tank has sides of ${bp} = ${n(s)} decimetres (a decimetre, dm for short, is a tenth of a metre), so it holds (${bp})³ cubic decimetres. Write this as one power of ${n(b)} and enter the exponent.`,
    answer: [e, pieces, v],
    hints: [`Multiplying powers of the same base adds the exponents: count all the 2s being multiplied together.`, `A power of a power multiplies the exponents: write out (${bp})³ as ${bp} × ${bp} × ${bp} and count the ${n(b)}s.`],
-   solution: `2${sup(m)} × 2${sup(k)} is ${n(m)} twos times ${n(k)} twos, ${n(e)} twos in all: 2${sup(e)} = ${n(pieces)} pieces. (${bp})³ = ${bp} × ${bp} × ${bp}, three groups of ${n(p)} factors of ${n(b)}, so it is ${n(b)}${sup(v)}: the exponent is ${n(v)}. The tank holds ${n(s)} × ${n(s)} × ${n(s)} = ${n(s * s * s)} dm³.`,
+   solution: `2${sup(m)} × 2${sup(k)} is ${n(m)} twos times ${n(k)} twos, ${n(e)} twos in all: 2${sup(e)} = ${n(pieces)} pieces. (${bp})³ = ${bp} × ${bp} × ${bp}, three groups of ${n(p)} ${b === 2 ? 'twos' : 'threes'}, ${n(v)} ${b === 2 ? 'twos' : 'threes'} in all, so it is ${n(b)}${sup(v)}: the exponent is ${n(v)}. The tank holds ${n(s)} × ${n(s)} × ${n(s)} = ${n(s * s * s)} dm³.`,
    guidance: [
     { prompt: `2${sup(m)} × 2${sup(k)} is ${n(m)} twos multiplied by ${n(k)} more twos. How many twos is that in all?`, answer: [e], explanation: `${n(m)} + ${n(k)} = ${n(e)}, so the product is 2${sup(e)}.` },
     { prompt: `Work out 2${sup(e)}: double 1, ${n(e)} times. How many pieces?`, answer: [pieces], explanation: `2${sup(e)} = ${n(pieces)} pieces.` },
-    { prompt: `(${bp})³ is ${bp} written three times and multiplied. How many factors of ${n(b)} is that?`, answer: [v], explanation: `Three groups of ${n(p)} make ${n(v)}, so (${bp})³ = ${n(b)}${sup(v)}.` }
+    { prompt: `(${bp})³ is ${bp} written three times and multiplied. How many ${n(b)}s are multiplied in all?`, answer: [v], explanation: `Three groups of ${n(p)} make ${n(v)}, so (${bp})³ = ${n(b)}${sup(v)}.` }
    ] }; }
  },
- /* A square plate of area s², and √(k²·m) = k√m with m free of square factors. */
+ /* A square plate of area s², and √(k²·m) = k√m where no perfect square above 1 divides m. */
  q31: {
   canonical: { s: 12, k: 6, m: 2 },
   draw: R => ({ s: R.int(4, 15), k: R.int(2, 6), m: R.pick([2, 3, 5, 6, 7]) }),
   build: ({ s, k, m }) => { const A = s * s, K = k * k, N = K * m; return {
-   prompt: `A square floor plate has an area of ${n(A)} m². Enter the length of its side in metres. A diagonal brace in the yard measures √${n(N)} m. Simplify √${n(N)} into the form k√m, where k is a whole number and m has no perfect square factor other than 1, and enter k, then m.`,
+   prompt: `A square floor plate has an area of ${n(A)} m². Enter the length of its side in metres. A diagonal brace in the yard measures √${n(N)} m. Simplify √${n(N)} into the form k√m, where k is a whole number and no perfect square other than 1 divides m exactly, and enter k, then m.`,
    answer: [s, k, m],
    hints: [`Which whole number times itself gives ${n(A)}?`, `Try the perfect squares 4, 9, 16, 25, 36, 49 … and find the largest one that divides ${n(N)} exactly.`],
    solution: `${n(s)} × ${n(s)} = ${n(A)}, so the side is √${n(A)} = ${n(s)} m. The largest perfect square that divides ${n(N)} is ${n(K)}, and ${n(N)} = ${n(K)} × ${n(m)}, so √${n(N)} = √${n(K)} × √${n(m)} = ${n(k)}√${n(m)} m.`,

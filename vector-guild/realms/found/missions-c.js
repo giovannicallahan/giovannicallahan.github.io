@@ -197,7 +197,7 @@ window.QUESTS.push(
   prompt: 'A sheet of alloy is cut in half, then every piece is cut in half again, 4 times in all: that makes 2⁴ pieces. Then every piece is halved 5 more times, which multiplies the count by 2⁵. So there are 2⁴ × 2⁵ pieces. Write this as one power of 2 and enter the exponent, then enter the number of pieces. Next, a cube-shaped tank has sides of 3² = 9 decimetres (a decimetre, dm for short, is a tenth of a metre), so it holds (3²)³ cubic decimetres. Write this as one power of 3 and enter the exponent.',
   answer: [9, 512, 6], labels: ['exponent of 2', 'number of pieces', 'exponent for the tank'], tolerance: 0.01,
   hints: ['Multiplying powers of the same base adds the exponents: count all the 2s being multiplied together.', 'A power of a power multiplies the exponents: write out (3²)³ as 3² × 3² × 3² and count the 3s.'],
-  solution: '2⁴ × 2⁵ is 4 twos times 5 twos, 9 twos in all: 2⁹ = 512 pieces. (3²)³ = 3² × 3² × 3², three groups of 2 factors of 3, so it is 3⁶: the exponent is 6. The tank holds 9 × 9 × 9 = 729 dm³.',
+  solution: '2⁴ × 2⁵ is 4 twos times 5 twos, 9 twos in all: 2⁹ = 512 pieces. (3²)³ = 3² × 3² × 3², three groups of 2 threes, 6 threes in all, so it is 3⁶: the exponent is 6. The tank holds 9 × 9 × 9 = 729 dm³.',
   xp: 200, prereqs: ['q29', 'q03'],
   sources: [
    { title: 'OpenStax Elementary Algebra 2e — 6.2 Use Multiplication Properties of Exponents', url: 'https://openstax.org/books/elementary-algebra-2e/pages/6-2-use-multiplication-properties-of-exponents', description: 'Exponent notation, the product property and the power property.', verified: '2026-11-21' }
@@ -206,8 +206,8 @@ window.QUESTS.push(
    intuition: 'Cut a sheet in half and you have 2 pieces; halve every piece again and you have 2 × 2 = 4; again, 2 × 2 × 2 = 8. Multiplying the same number over and over is so common that it has a short form: 2⁵, read "2 to the power 5", means five 2s multiplied together, 2 × 2 × 2 × 2 × 2 = 32. The big number is the base and the small raised number is the exponent, which counts how many times the base is used. Because the exponent is only a count, two rules follow. 2³ × 2⁴ strings three 2s and four 2s together, seven 2s in all, so it is 2⁷. And (5²)³ repeats a group of two 5s three times, six 5s in all, so it is 5⁶.',
    steps: [
     'Read a power as repeated multiplying: the exponent says how many times the base appears.',
-    'Multiplying powers with the same base: keep the base and add the exponents, because you are counting all the factors together.',
-    'A power raised to a power: keep the base and multiply the exponents, because the group of factors is repeated.',
+    'Multiplying powers with the same base: keep the base and add the exponents, because you are counting all the copies of the base together.',
+    'A power raised to a power: keep the base and multiply the exponents, because the whole group of copies is repeated.',
     'A cube with sides s holds s × s × s = s³ unit cubes, which is why a cube’s volume is the side to the power 3 (the side cubed).'
    ],
    example: {
@@ -224,14 +224,14 @@ window.QUESTS.push(
   guidance: [
    { prompt: '2⁴ × 2⁵ is 4 twos multiplied by 5 more twos. How many twos is that in all?', answer: [9], labels: ['exponent of 2'], explanation: '4 + 5 = 9, so the product is 2⁹.' },
    { prompt: 'Work out 2⁹: double 1, 9 times. How many pieces?', answer: [512], labels: ['number of pieces'], explanation: '2⁹ = 512 pieces.' },
-   { prompt: '(3²)³ is 3² written three times and multiplied. How many factors of 3 is that?', answer: [6], labels: ['exponent for the tank'], explanation: 'Three groups of 2 make 6, so (3²)³ = 3⁶.' }
+   { prompt: '(3²)³ is 3² written three times and multiplied. How many 3s are multiplied in all?', answer: [6], labels: ['exponent for the tank'], explanation: 'Three groups of 2 make 6, so (3²)³ = 3⁶.' }
   ]
  },
  {
   id: 'q31', title: 'Square plates and braces', topic: 'Square roots and radicals', tier: 'Advanced', sector: 'Fabrication Yard',
   brief: 'A square floor plate must be cut to size, and a brace length has to be written in its simplest exact form.',
   lesson: 'The square root undoes squaring; to simplify a root, split off the largest perfect square and take its root outside.',
-  prompt: 'A square floor plate has an area of 144 m². Enter the length of its side in metres. A diagonal brace in the yard measures √72 m. Simplify √72 into the form k√m, where k is a whole number and m has no perfect square factor other than 1, and enter k, then m.',
+  prompt: 'A square floor plate has an area of 144 m². Enter the length of its side in metres. A diagonal brace in the yard measures √72 m. Simplify √72 into the form k√m, where k is a whole number and no perfect square other than 1 divides m exactly, and enter k, then m.',
   answer: [12, 6, 2], labels: ['side (m)', 'k (outside the root)', 'm (inside the root)'], tolerance: 0.01,
   hints: ['Which whole number times itself gives 144?', 'Try the perfect squares 4, 9, 16, 25, 36, 49 … and find the largest one that divides 72 exactly.'],
   solution: '12 × 12 = 144, so the side is √144 = 12 m. The largest perfect square that divides 72 is 36, and 72 = 36 × 2, so √72 = √36 × √2 = 6√2 m.',
@@ -241,12 +241,12 @@ window.QUESTS.push(
    { title: 'OpenStax Elementary Algebra 2e — 9.2 Simplify Square Roots', url: 'https://openstax.org/books/elementary-algebra-2e/pages/9-2-simplify-square-roots', description: 'Using the product property to pull perfect squares out of a square root.', verified: '2026-11-21' }
   ],
   teaching: {
-   intuition: 'A square plate with sides of 3 m has an area of 3 × 3 = 3² = 9 square metres. Going backwards, from the area to the side, is called taking the square root, written √: √9 = 3, because 3 × 3 = 9. Numbers such as 1, 4, 9, 16, 25 and 36, each a whole number times itself, are called perfect squares. Most numbers are not, and their roots are not whole numbers. But a root can be split over a product, √(a × b) = √a × √b, so any perfect square hiding inside can come out: √50 = √(25 × 2) = √25 × √2 = 5√2, read "five root two".',
+   intuition: 'A square plate with sides of 3 m has an area of 3 × 3 = 3² = 9 square metres. Going backwards, from the area to the side, is called taking the square root, written √: √9 = 3, because 3 × 3 = 9. The sign √ is called the radical sign, and a root written with it, such as √2, is called a radical. Numbers such as 1, 4, 9, 16, 25 and 36, each a whole number times itself, are called perfect squares. Most numbers are not, and their roots are not whole numbers. But a root can be split over a product, √(a × b) = √a × √b, so any perfect square hiding inside can come out: √50 = √(25 × 2) = √25 × √2 = 5√2, read "five root two".',
    steps: [
     'To find the side of a square from its area, find the whole number that times itself gives the area.',
     'To simplify a root, find the largest perfect square that divides the number exactly.',
     'Write the number as that perfect square times what is left, and split the root over the product.',
-    'Take the root of the perfect square outside; what is left stays under the root and should have no perfect square factor other than 1.'
+    'Take the root of the perfect square outside; what is left stays under the root, and no perfect square other than 1 should divide it exactly.'
    ],
    example: {
     prompt: 'A square plate has an area of 49 m². How long is a side? Simplify √45.',

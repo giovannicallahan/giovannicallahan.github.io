@@ -94,7 +94,7 @@ window.QUESTS.push(
   lesson: 'An inverse function undoes a function: it reverses each step, in the opposite order, and takes an output back to the input that made it.',
   prompt: 'Transmitter log. At setting s the transmitter draws P(s) = 5s + 20 watts. Last night’s log shows 65 W but not the setting. Write the inverse rule in the form P⁻¹(w) = (w − a) ÷ b, and enter a, then b, then the setting P⁻¹(65).',
   answer: [20, 5, 9], labels: ['a (number taken away)', 'b (number divided by)', 'setting'], tolerance: 0.01,
-  hints: ['List what P does to s, in order, then undo the last step first.', 'P⁻¹(65) = (65 − 20) ÷ 5 = 45 ÷ 5.'],
+  hints: ['List what P does to s, in order, then undo the last step first.', 'P multiplies s by one number, then adds another. The number added last is taken away first, so it is a; the number multiplied by is b. Then put 65 in place of w.'],
   solution: 'P multiplies by 5, then adds 20. Undo the last step first: P⁻¹(w) = (w − 20) ÷ 5, so a = 20 and b = 5. Then P⁻¹(65) = (65 − 20) ÷ 5 = 45 ÷ 5 = 9. Check: P(9) = 5 × 9 + 20 = 65.',
   xp: 200, prereqs: ['q37', 'q17'],
   artifact: { name: 'Reverse table', description: 'A card that turns any logged wattage back into its dial setting.' },
@@ -140,7 +140,7 @@ window.QUESTS.push(
    steps: [
     'For growth, write the power out as a repeated product, for example 2⁴ = 2 × 2 × 2 × 2, and multiply one step at a time.',
     'Multiply the starting amount by that power to get the final amount.',
-    'For a logarithm, first find the growth factor needed: the target divided by the start.',
+    'For a logarithm, first find how many times bigger the target is than the start: the target divided by the start. This number is called the growth factor.',
     'Then count how many copies of the base multiply together to give that factor; that count is the logarithm.'
    ],
    example: {
@@ -165,9 +165,9 @@ window.QUESTS.push(
   brief: 'The mast’s guy wire is fixed, and the crew needs its angle and the height of the swinging boom before they hang the antenna.',
   lesson: 'In a right triangle, sin of an angle is opposite ÷ longest side and cos is adjacent ÷ longest side; on a circle of radius 1 they are the height and the across distance of the point at that angle.',
   prompt: 'Guy wire. A cable runs from the top of the signal mast, 24 m high, in a straight line to a ground anchor 18 m from the mast’s foot; the cable is 30 m long. Let θ be the angle between the cable and the ground at the anchor. Enter sin θ, then cos θ (each as a decimal or as a fraction). Then a boom 10 m long, fixed to a pivot, swings up from flat to the same angle θ: enter how high its tip rises above the pivot, in metres.',
-  answer: [0.8, 0.6, 8], labels: ['sin θ', 'cos θ', 'tip height (m)'], tolerance: 0.004, /* answers are exact hundredths (0.28, 3.84): 0.01 would accept a neighbouring hundredth */
-  hints: ['Stand at the anchor. The mast is the side across from θ (opposite), the ground is the side touching θ (adjacent), and the cable is the longest side. sin θ = opposite ÷ longest; cos θ = adjacent ÷ longest.', 'On a circle of radius 1 the tip at angle θ is sin θ above the centre. A boom 10 m long is 10 times bigger, so its tip is 10 × sin θ high.'],
-  solution: 'sin θ = 24 ÷ 30 = 0.8, and cos θ = 18 ÷ 30 = 0.6. The boom’s tip moves on a circle of radius 10 around the pivot, so its tip is 10 × sin θ = 10 × 0.8 = 8 m above the pivot.',
+  answer: [0.8, 0.6, 8], labels: ['sin θ', 'cos θ', 'tip height (m)'], tolerance: 0.004, /* sin and cos can be exact hundredths (0.28, 0.96): 0.01 would accept a neighbouring hundredth */
+  hints: ['Stand at the anchor. The mast is the side across from θ (opposite), the ground is the side touching θ (adjacent), and the cable is the longest side. sin θ = opposite ÷ longest; cos θ = adjacent ÷ longest.', 'On a circle of radius 1 the tip at angle θ is sin θ above the centre. A boom 10 m long is 10 times bigger, so its tip is 10 × sin θ high. Write sin θ as a fraction in lowest terms, then divide 10 by its bottom number and multiply by its top number.'],
+  solution: 'sin θ = 24 ÷ 30, the fraction 24/30, which is 4/5 in lowest terms, or 0.8 as a decimal. cos θ = 18 ÷ 30, the fraction 18/30, which is 3/5 in lowest terms, or 0.6 as a decimal. The boom’s tip moves on a circle of radius 10 around the pivot, so its tip is 10 × sin θ = 10 × 4/5 high: 10 ÷ 5 = 2, and 2 × 4 = 8 m above the pivot.',
   xp: 200, prereqs: ['q39', 'q12', 'q20'],
   artifact: { name: 'Guy-wire clinometer', description: 'The angle gauge clipped to the mast cable on the day the tower went up.' },
   sources: [source.q40a, source.q40b],
@@ -175,9 +175,9 @@ window.QUESTS.push(
    intuition: 'A mast, the flat ground and a cable from the mast top to the ground make a triangle with a square corner, called a right triangle. Pick the angle where the cable meets the ground and name it θ (the Greek letter theta). Seen from that angle, the side across the triangle is the opposite side, the side along the ground that touches the angle is the adjacent side, and the slanted cable is the longest side. However big the triangle, if the angle stays the same these sides keep the same proportions, so their ratios belong to the angle itself: sin θ = opposite ÷ longest, and cos θ = adjacent ÷ longest. Now picture a stick of length 1 turning about one end. When it has turned up by θ, its tip is sin θ above the pivot and cos θ across from it: that circle of radius 1 is the unit circle. A stick r times longer reaches r times as high.',
    steps: [
     'Stand at the angle θ and name the sides: opposite (across from θ), adjacent (touching θ, not the longest), longest (across from the square corner).',
-    'sin θ = opposite ÷ longest, and cos θ = adjacent ÷ longest. Both are between 0 and 1.',
+    'sin θ = opposite ÷ longest, and cos θ = adjacent ÷ longest. Both are between 0 and 1, and each can stay a fraction: 12 ÷ 13 is 12/13.',
     'On the unit circle, the point at angle θ is cos θ across and sin θ up from the centre.',
-    'For an arm of length r turned to angle θ, multiply: its tip is r × sin θ up and r × cos θ across.'
+    'For an arm of length r turned to angle θ, multiply: its tip is r × sin θ up and r × cos θ across. To multiply by a fraction, divide by its bottom number and multiply by its top number.'
    ],
    example: {
     prompt: 'A ladder 13 m long leans from the ground to a wall, reaching 12 m up the wall, with its foot 5 m from the wall. Find sin and cos of the angle at the foot, and how high the tip of a 26 m arm at that angle reaches.',
@@ -191,9 +191,9 @@ window.QUESTS.push(
    ]
   },
   guidance: [
-   { prompt: 'From the anchor, the mast (24 m) is opposite θ and the cable (30 m) is the longest side. What is 24 ÷ 30?', answer: [0.8], labels: ['sin θ'], explanation: '24 ÷ 30 = 0.8, so sin θ = 0.8.' },
-   { prompt: 'The ground (18 m) is the side touching θ. What is 18 ÷ 30?', answer: [0.6], labels: ['cos θ'], explanation: '18 ÷ 30 = 0.6, so cos θ = 0.6.' },
-   { prompt: 'The boom is 10 m long. What is 10 × 0.8?', answer: [8], labels: ['tip height (m)'], explanation: '10 × 0.8 = 8: the tip of a boom 10 times longer than 1 rises 10 times as high.' }
+   { prompt: 'From the anchor, the mast (24 m) is opposite θ and the cable (30 m) is the longest side. What is 24 ÷ 30? You may type it as the fraction 24/30.', answer: [0.8], labels: ['sin θ'], explanation: '24 ÷ 30 is the fraction 24/30, which is 4/5 in lowest terms. So sin θ = 4/5; as a decimal, 4/5 = 8/10 = 0.8.' },
+   { prompt: 'The ground (18 m) is the side touching θ. What is 18 ÷ 30? You may type it as the fraction 18/30.', answer: [0.6], labels: ['cos θ'], explanation: '18 ÷ 30 is the fraction 18/30, which is 3/5 in lowest terms. So cos θ = 3/5; as a decimal, 3/5 = 6/10 = 0.6.' },
+   { prompt: 'The boom is 10 m long and sin θ = 4/5. What is 10 × 4/5? Divide 10 by 5, then multiply by 4.', answer: [8], labels: ['tip height (m)'], explanation: '10 ÷ 5 = 2, and 2 × 4 = 8: the tip of a boom 10 times longer than 1 rises 10 times as high.' }
   ]
  }
 );

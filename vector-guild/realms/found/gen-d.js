@@ -49,7 +49,7 @@ Object.assign(window.MISSION_GEN, {
   build: ({ m, c, s, y }) => { return {
    prompt: `Transmitter log. At setting s the transmitter draws P(s) = ${n(m)}s + ${n(c)} watts. Last night’s log shows ${n(y)} W but not the setting. Write the inverse rule in the form P⁻¹(w) = (w − a) ÷ b, and enter a, then b, then the setting P⁻¹(${n(y)}).`,
    answer: [c, m, s],
-   hints: ['List what P does to s, in order, then undo the last step first.',`P⁻¹(${n(y)}) = (${n(y)} − ${n(c)}) ÷ ${n(m)} = ${n(y - c)} ÷ ${n(m)}.`],
+   hints: ['List what P does to s, in order, then undo the last step first.',`P multiplies s by one number, then adds another. The number added last is taken away first, so it is a; the number multiplied by is b. Then put ${n(y)} in place of w.`],
    solution: `P multiplies by ${n(m)}, then adds ${n(c)}. Undo the last step first: P⁻¹(w) = (w − ${n(c)}) ÷ ${n(m)}, so a = ${n(c)} and b = ${n(m)}. Then P⁻¹(${n(y)}) = (${n(y)} − ${n(c)}) ÷ ${n(m)} = ${n(y - c)} ÷ ${n(m)} = ${n(s)}. Check: P(${n(s)}) = ${n(m)} × ${n(s)} + ${n(c)} = ${n(y)}.`,
    guidance: [
     { prompt: `P does two things to s: times ${n(m)}, then plus ${n(c)}. The inverse undoes the last one first. Which number does it take away?`, answer: [c], explanation: `The last thing P did was add ${n(c)}, so the inverse starts by taking away ${n(c)}: a = ${n(c)}.` },
@@ -74,19 +74,23 @@ Object.assign(window.MISSION_GEN, {
     { prompt: `${n(T)} ÷ ${n(S)} = ${n(F)}. How many times must you multiply by ${n(b)} to reach ${n(F)}? That count is log${sub(b)} ${n(F)}.`, answer: [k], explanation: `${times(b, k)} = ${n(F)}, which is ${n(k)} copies of ${n(b)}, so log${sub(b)} ${n(F)} = ${n(k)}.` }
    ] }; }
  },
- /* q40 right triangle (mast o, ground d, cable h, scaled by k): sin θ = o/h, cos θ = d/h; boom tip height arm × sin θ. */
+ /* q40 right triangle (mast o, ground d, cable h, scaled by k): sin θ = o/h, cos θ = d/h; boom tip height arm × sin θ.
+    The boom is a whole multiple of h, so its tip height is a whole number found with whole-number steps (arm ÷ h × o):
+    multiplying by a decimal is not taught. It is never as long as the cable, where the tip height would be the mast height. */
  q40: {
   canonical: { o: 4, d: 3, h: 5, k: 6, arm: 10 },
-  draw: R => { const [o, d, h] = R.pick([[3, 4, 5], [4, 3, 5], [7, 24, 25], [24, 7, 25]]); return { o, d, h, k: h === 5 ? R.int(2, 8) : 1, arm: R.pick([4, 5, 6, 8, 10, 12, 15, 20]) }; },
-  build: ({ o, d, h, k, arm }) => { const H = k * o, D = k * d, L = k * h, s = G.tidy(o / h), c = G.tidy(d / h), tip = G.tidy(arm * o / h); return {
+  draw: R => { const [o, d, h] = R.pick([[3, 4, 5], [4, 3, 5], [7, 24, 25], [24, 7, 25]]); const k = h === 5 ? R.int(2, 8) : 1; return { o, d, h, k, arm: h === 5 ? 5 * R.except(1, 6, [k]) : 25 * R.int(2, 3) }; },
+  build: ({ o, d, h, k, arm }) => { const H = k * o, D = k * d, L = k * h, s = G.tidy(o / h), c = G.tidy(d / h), per = arm / h, tip = G.tidy(per * o), ten = h === 5 ? 2 : 4;
+   /* "the fraction 24/30, which is 4/5 in lowest terms", and the same fraction in tenths or hundredths. */
+   const low = (a, b) => `the fraction ${n(a)}/${n(b)}` + (k > 1 ? `, which is ${n(a / k)}/${n(b / k)} in lowest terms` : ''), dec = (a, v) => `${n(a)}/${n(h)} = ${n(a * ten)}/${n(h * ten)} = ${n(v)}`; return {
    prompt: `Guy wire. A cable runs from the top of the signal mast, ${n(H)} m high, in a straight line to a ground anchor ${n(D)} m from the mast’s foot; the cable is ${n(L)} m long. Let θ be the angle between the cable and the ground at the anchor. Enter sin θ, then cos θ (each as a decimal or as a fraction). Then a boom ${n(arm)} m long, fixed to a pivot, swings up from flat to the same angle θ: enter how high its tip rises above the pivot, in metres.`,
    answer: [s, c, tip],
-   hints: [`Stand at the anchor. The mast is the side across from θ (opposite), the ground is the side touching θ (adjacent), and the cable is the longest side. sin θ = opposite ÷ longest; cos θ = adjacent ÷ longest.`, `On a circle of radius 1 the tip at angle θ is sin θ above the centre. A boom ${n(arm)} m long is ${n(arm)} times bigger, so its tip is ${n(arm)} × sin θ high.`],
-   solution: `sin θ = ${n(H)} ÷ ${n(L)} = ${n(s)}, and cos θ = ${n(D)} ÷ ${n(L)} = ${n(c)}. The boom’s tip moves on a circle of radius ${n(arm)} around the pivot, so its tip is ${n(arm)} × sin θ = ${n(arm)} × ${n(s)} = ${n(tip)} m above the pivot.`,
+   hints: [`Stand at the anchor. The mast is the side across from θ (opposite), the ground is the side touching θ (adjacent), and the cable is the longest side. sin θ = opposite ÷ longest; cos θ = adjacent ÷ longest.`, `On a circle of radius 1 the tip at angle θ is sin θ above the centre. A boom ${n(arm)} m long is ${n(arm)} times bigger, so its tip is ${n(arm)} × sin θ high. Write sin θ as a fraction in lowest terms, then divide ${n(arm)} by its bottom number and multiply by its top number.`],
+   solution: `sin θ = ${n(H)} ÷ ${n(L)}, ${low(H, L)}, or ${n(s)} as a decimal. cos θ = ${n(D)} ÷ ${n(L)}, ${low(D, L)}, or ${n(c)} as a decimal. The boom’s tip moves on a circle of radius ${n(arm)} around the pivot, so its tip is ${n(arm)} × sin θ = ${n(arm)} × ${n(o)}/${n(h)} high: ${n(arm)} ÷ ${n(h)} = ${n(per)}, and ${n(per)} × ${n(o)} = ${n(tip)} m above the pivot.`,
    guidance: [
-    { prompt: `From the anchor, the mast (${n(H)} m) is opposite θ and the cable (${n(L)} m) is the longest side. What is ${n(H)} ÷ ${n(L)}?`, answer: [s], explanation: `${n(H)} ÷ ${n(L)} = ${n(s)}, so sin θ = ${n(s)}.` },
-    { prompt: `The ground (${n(D)} m) is the side touching θ. What is ${n(D)} ÷ ${n(L)}?`, answer: [c], explanation: `${n(D)} ÷ ${n(L)} = ${n(c)}, so cos θ = ${n(c)}.` },
-    { prompt: `The boom is ${n(arm)} m long. What is ${n(arm)} × ${n(s)}?`, answer: [tip], explanation: `${n(arm)} × ${n(s)} = ${n(tip)}: the tip of a boom ${n(arm)} times longer than 1 rises ${n(arm)} times as high.` }
+    { prompt: `From the anchor, the mast (${n(H)} m) is opposite θ and the cable (${n(L)} m) is the longest side. What is ${n(H)} ÷ ${n(L)}? You may type it as the fraction ${n(H)}/${n(L)}.`, answer: [s], explanation: `${n(H)} ÷ ${n(L)} is ${low(H, L)}. So sin θ = ${n(o)}/${n(h)}; as a decimal, ${dec(o, s)}.` },
+    { prompt: `The ground (${n(D)} m) is the side touching θ. What is ${n(D)} ÷ ${n(L)}? You may type it as the fraction ${n(D)}/${n(L)}.`, answer: [c], explanation: `${n(D)} ÷ ${n(L)} is ${low(D, L)}. So cos θ = ${n(d)}/${n(h)}; as a decimal, ${dec(d, c)}.` },
+    { prompt: `The boom is ${n(arm)} m long and sin θ = ${n(o)}/${n(h)}. What is ${n(arm)} × ${n(o)}/${n(h)}? Divide ${n(arm)} by ${n(h)}, then multiply by ${n(o)}.`, answer: [tip], explanation: `${n(arm)} ÷ ${n(h)} = ${n(per)}, and ${n(per)} × ${n(o)} = ${n(tip)}: the tip of a boom ${n(arm)} times longer than 1 rises ${n(arm)} times as high.` }
    ] }; }
  }
 });

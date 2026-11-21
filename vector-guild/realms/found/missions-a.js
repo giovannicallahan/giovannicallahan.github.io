@@ -270,7 +270,7 @@ window.QUESTS.push(
   id: 'q07', title: 'Splitting the ration bars', topic: 'What a fraction means', tier: 'Basic', sector: 'Ration Kitchen',
   brief: 'The kitchen logs how much of each ration bar is eaten, as a share of the bar and in grams.',
   lesson: 'A fraction names some of the equal parts of a whole: parts taken over equal parts in all.',
-  prompt: 'A 40 g ration bar is scored into 8 equal pieces, and a recruit eats 3 pieces. Enter the fraction of the bar eaten, numerator then denominator, as the bar is scored (do not simplify). Then enter the grams eaten.',
+  prompt: 'A 40 g ration bar is scored into 8 equal pieces, and a recruit eats 3 pieces. Enter the fraction of the bar eaten, numerator then denominator, using the number of pieces the bar is scored into. Then enter the grams eaten.',
   answer: [3, 8, 15], labels: ['numerator', 'denominator', 'grams eaten'], tolerance: 0.01,
   hints: [
    'The denominator counts the equal pieces in the whole bar. The numerator counts the pieces eaten.',
@@ -354,7 +354,7 @@ window.QUESTS.push(
   prompt: 'A pot gets 1/2 litre of broth and 1/3 litre of water. Enter the litres in the pot as a fraction in lowest terms, numerator then denominator. Then the cook uses 3/4 of a jug that holds 2/3 litre of oil, that is 3/4 × 2/3 litre. Enter that amount in lowest terms, numerator then denominator.',
   answer: [5, 6, 1, 2], labels: ['sum numerator', 'sum denominator', 'oil numerator', 'oil denominator'], tolerance: 0.01,
   hints: [
-   'To add, the pieces must be the same size: write both fractions with the denominator 6, then add the numerators.',
+   'To add, the pieces must be the same size: find a number that both 2 and 3 divide into exactly, write both fractions with that denominator, then add the numerators.',
    'To multiply, multiply the tops (3 × 2) and the bottoms (4 × 3), then simplify.'
   ],
   solution: 'Adding: 1/2 = 3/6 and 1/3 = 2/6, so the sum is 5/6, which is already in lowest terms. Multiplying: 3/4 × 2/3 = 6/12; dividing the top and the bottom by 6 gives 1/2.',
