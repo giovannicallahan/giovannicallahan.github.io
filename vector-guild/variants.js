@@ -11,7 +11,7 @@ const T=t=>Math.max(-10,Math.min(10,Math.round(Number(t)||0)));
    interpolating negative numbers: "2+-4" → "2−4", "2−-4" → "2+4", "-4" → "−4". */
 const clean=s=>String(s)
   .replace(/\d+\.\d{6,}/g,m=>String(Number(Number(m).toPrecision(6))))
-  .replace(/\+\s*-(?=[\d.])/g,'−').replace(/−\s*-(?=[\d.])/g,'+').replace(/-(?=[\d.])/g,'−');
+  .replace(/\+\s*-(?=[\d.])/g,'−').replace(/−\s*-(?=[\d.])/g,'+').replace(/(?<![A-Za-z])-(?=[\d.])/g,'−');
 const SETUP={
 q01:t=>`Thrusters deliver impulses u=(${3+t},−1,2) and v=(−1,4,0) N·s.`,
 q02:t=>`A cable displacement is r=(3,${4+t},0) m.`,
@@ -83,11 +83,9 @@ q67:t=>`x=(1,${t},3) and h=(1,−1), with zeros outside each signal. Form the fu
 q68:t=>`f(x)=½xᵀdiag(2,4)x−(2,4)·x, x₀=(${t},0) and step α=0.25. Take one gradient step.`
 };
 /* Parameter pools. The default keeps numbers small; listed pools avoid
-   degenerate or unwieldy cases (zero vectors, 3¹⁰, awkward angles).
-   q13 and q27 need values outside the default so that the asked-for answer changes:
-   q13's rank is 1 only at t=0, and q27's largest singular value exceeds 3 only when |t|>6. */
+   degenerate or unwieldy cases (zero vectors, 3¹⁰, awkward angles). */
 const DEFAULT=[-6,-5,-4,-3,-2,-1,1,2,3,4,5,6];
-const POOL={q05:[-3,-2,-1,1,2,3],q07:[-10,-5,5],q25:[1,2,4,5],q57:[1,2,3],q02:[-8,-4,-3,-1,1,2,4],q19:[-3,-2,-1,1,2,3],q13:[-3,-1,0,0,2,4],q27:[-10,-9,-8,-7,-4,-2,2,4,7,8,9,10]};
+const POOL={q05:[-3,-2,-1,1,2,3],q07:[-10,-5,5],q25:[1,2,4,5],q57:[1,2,3],q02:[-8,-4,-3,-1,1,2,4],q19:[-3,-2,-1,1,2,3]};
 for(const id of Object.keys(models)){
   const base=models[id];
   models[id]=t=>{const r=base(t),setup=SETUP[id]?clean(SETUP[id](T(t))):'';return {...r,prompt:clean(r.prompt),formula:clean(r.formula),setup};};
@@ -102,5 +100,5 @@ function make(id,random=Math.random){
 }
 const check=(variant,guess)=>Number.isFinite(guess)&&Math.abs(guess-variant.target)<=variant.tolerance;
 const show=n=>Math.abs(n)<1e-10?'0':String(Number(Number(n).toPrecision(5)));
-window.Variants={make,check,clean,show,pool:id=>[...(POOL[id]||DEFAULT)],has:id=>typeof models[id]==='function'&&!!SETUP[id]};
+window.Variants={make,check,clean,show,has:id=>typeof models[id]==='function'&&!!SETUP[id]};
 })();

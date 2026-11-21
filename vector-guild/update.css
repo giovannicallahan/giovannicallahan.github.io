@@ -10,11 +10,6 @@
 .tool-form input,.answer-grid input{min-height:44px}
 .lesson-sources a{display:inline-block;padding:12px 0}
 .guide-list summary{min-height:44px}
-/* Controls the list above missed: the header link and buttons, and the visual-lab fields.
-   The labs inject their own <style> after this sheet, hence the more specific selectors. */
-.brand{min-height:44px}
-.top-stats .help-btn{flex:0 0 44px}
-section.lab3d input,section.lab3d select,section.concept-lab select,section.concept-lab input:not([type=range]),section.graph2d input:not([type=range]),section.graph2d select{min-height:44px}
 
 /* Chapters reuse the sector panel, but collapse. */
 .chapter>summary{cursor:pointer;list-style:none}
@@ -63,10 +58,6 @@ section.lab3d input,section.lab3d select,section.concept-lab select,section.conc
   .nav span{width:auto}
   .board-grid{grid-template-columns:1fr}
 }
-@media(max-width:380px){
-  /* Two fieldsets side by side leave the matrix fields under 44 px wide inside a mission dialog. */
-  section.graph2d .gl-controls{grid-template-columns:1fr}
-}
 @media(max-width:650px){
   .outpost-scene .op-label{display:none}
   .outpost-status{display:grid}
@@ -77,3 +68,27 @@ section.lab3d input,section.lab3d select,section.concept-lab select,section.conc
   .sector-heading .sector-count{margin-left:0;flex-basis:100%;order:3}
   .chapter>summary::after{margin-left:auto}
 }
+
+/* ---- 1.4: fractions note, error notebook, pitfall chips ---- */
+.entry-note{font-size:12px;color:var(--muted);margin:10px 0 0}
+.entry-note .text-link{font-size:12px;min-height:0;padding:12px 4px;margin:-12px 0}
+.pitfall-ask{margin:14px 0;padding:14px;border:1px solid #6b5a3a;border-left:3px solid #f3c37b;background:#221f18;display:grid;gap:8px}
+.pitfall-ask b{font-size:10px;letter-spacing:1.6px;color:#f3c37b}
+.pitfall-ask p{margin:0;font-size:13px}
+.pit-chip{text-align:left;white-space:normal;line-height:1.4;padding:10px 12px}
+.pit-chip[aria-pressed=true]{border-color:#f3c37b;color:#f3c37b}
+.pit-chip[aria-pressed=true]::before{content:'✓ '}
+.notebook{margin:0 0 30px;padding:22px;border:1px solid var(--line);background:#172428}
+.notebook h2{margin:10px 0}
+.notebook>p{color:var(--muted);line-height:1.6;max-width:70ch}
+.notebook-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.nb-entry{padding:16px;border:1px solid var(--line);background:#14201f;min-width:0}
+.nb-entry.is-open{border-color:#8a7445}
+.nb-entry.is-closed{opacity:.8}
+.nb-head{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.nb-entry p{margin:8px 0;font-size:13px;color:#bdd1c8}
+.nb-entry ul{margin:8px 0;padding-left:18px;font-size:13px;line-height:1.5}
+.nb-count{color:#f3c37b}
+.nb-none{color:var(--muted)!important}
+@media(max-width:650px){.notebook{padding:14px}.notebook-list{grid-template-columns:1fr}}
+.reference-problem{margin:8px 0;padding:10px 12px;border-left:2px solid var(--cyan);background:#14262b;font-size:13px}

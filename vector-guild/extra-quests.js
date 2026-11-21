@@ -1205,7 +1205,7 @@ const additions = [
           2
         ],
         "labels": [
-          "x"
+          "y"
         ],
         "explanation": "The remaining shared resource allows y=2."
       },

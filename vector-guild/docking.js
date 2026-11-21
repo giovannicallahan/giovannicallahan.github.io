@@ -6,9 +6,10 @@ window.Docking = (() => {
   const fmt = n => Number(n.toFixed(3)).toString();
   const vector = v => '(' + v.map(fmt).join(', ') + ')';
   const rotate = ([x, y], angle) => [x * Math.cos(angle) - y * Math.sin(angle), x * Math.sin(angle) + y * Math.cos(angle)];
-  function evaluate(id, candidate) {
+  /* goal defaults to the authored mission; a generated mission passes its own answer. */
+  function evaluate(id, candidate, goalOverride) {
     if (!supported(id)) return { valid: false };
-    const goal = id === 'q01' ? [2, 3, 2] : id === 'q07' ? [2, 3] : [2, 1, 1];
+    const goal = finite(goalOverride) ? goalOverride : id === 'q01' ? [2, 3, 2] : id === 'q07' ? [2, 3] : [2, 1, 1];
     if (!finite(candidate) || candidate.length !== goal.length) return { valid: false };
     const delta = goal.map((x, i) => x - candidate[i]);
     return { valid: true, goal, candidate: [...candidate], delta, hit: delta.every(x => Math.abs(x) <= .01) };
@@ -21,10 +22,13 @@ window.Docking = (() => {
     }).join('; ') + '. Add the matching components again, one axis at a time.”';
   }
   const verdict = d => Math.abs(d) <= .01 ? 'on target' : d > 0 ? 'too low' : 'too high';
+  const pair = (v, fallback) => finite(v) && v.length === 2 ? v : fallback;
+  const show = v => '(' + v.map(x => fmt(x).replace('-', '−')).join(',') + ')';
   function html(q) {
     if (!supported(q.id)) return '';
     const dock = q.id === 'q01', demo = q.id === 'q07';
-    return `<section class="flight-trial" data-flight-id="${q.id}"><div class="eyebrow">${dock ? 'MISSION CONTROL / LIVE DOCKING TRIAL' : demo ? 'MIRA DEMONSTRATES → YOU TAKE CONTROL' : 'INDEPENDENT FRAME TRANSFER'}</div><h3>${dock ? 'Your impulse flies the shuttle' : demo ? 'Watch a quarter turn. Then predict your own.' : 'Plan the docking-frame transform'}</h3><p>${dock ? 'Model: initially stationary shuttle, mass 1 kg, instantaneous impulse at t=0, then 1 s of unpowered drift. Thus v=J/m and p(1)=J. The dock sits exactly where the correct resultant carries the shuttle; its coordinates are not shown. Enter the resultant impulse above, then test the approach.' : demo ? 'Mira’s example uses (1,0), not your mission point. A 90° counterclockwise turn takes it to (0,1). Then you predict and test (3,−2).' : 'You have the controls. Enter your predicted homogeneous point above, then test the complete rotation-plus-translation. Help stays optional.'}</p>${demo ? '<button class="secondary flight-demo">▶ Watch Mira’s example</button>' : ''}${q.id === 'q48' ? '<details class="flight-help"><summary>Ask Mira for a strategy</summary><p>First rotate (x,y) to (−y,x). Then add (5,−1) because the point’s homogeneous coordinate is 1. A direction with final coordinate 0 receives no translation.</p></details>' : ''}<div class="flight-scene" role="img" aria-label="Mission trajectory will appear after you test an answer."></div><div class="flight-axis"></div><p class="flight-status" role="status">${dock ? 'Awaiting your candidate impulse.' : demo ? 'Watch the example if you wish, then test your own prediction.' : 'Awaiting your independent prediction.'}</p><div class="flight-controls"><button class="secondary flight-pause" disabled>Pause</button><button class="secondary flight-replay" disabled>Replay trial</button><button class="secondary flight-revise" disabled>Revise answer</button></div><p class="flight-mira" aria-live="polite"></p><p class="flight-note">Replay is observation only. A mission reward is considered only after a completed test of your current answer. A hit on your first test earns the first-try star.</p></section>`;
+    const point = pair(q.params?.v, [3, -2]), shift = pair(q.params?.t, [5, -1]);
+    return `<section class="flight-trial" data-flight-id="${q.id}"><div class="eyebrow">${dock ? 'MISSION CONTROL / LIVE DOCKING TRIAL' : demo ? 'MIRA DEMONSTRATES → YOU TAKE CONTROL' : 'INDEPENDENT FRAME TRANSFER'}</div><h3>${dock ? 'Your impulse flies the shuttle' : demo ? 'Watch a quarter turn. Then predict your own.' : 'Plan the docking-frame transform'}</h3><p>${dock ? 'Model: initially stationary shuttle, mass 1 kg, instantaneous impulse at t=0, then 1 s of unpowered drift. Thus v=J/m and p(1)=J. The dock sits exactly where the correct resultant carries the shuttle; its coordinates are not shown. Enter the resultant impulse above, then test the approach.' : demo ? 'Mira’s example uses (1,0), not your mission point. A 90° counterclockwise turn takes it to (0,1). Then you predict and test ' + show(point) + '.' : 'You have the controls. Enter your predicted homogeneous point above, then test the complete rotation-plus-translation. Help stays optional.'}</p>${demo ? '<button class="secondary flight-demo">▶ Watch Mira’s example</button>' : ''}${q.id === 'q48' ? '<details class="flight-help"><summary>Ask Mira for a strategy</summary><p>First rotate (x,y) to (−y,x). Then add ' + show(shift) + ' because the point’s homogeneous coordinate is 1. A direction with final coordinate 0 receives no translation.</p></details>' : ''}<div class="flight-scene" role="img" aria-label="Mission trajectory will appear after you test an answer."></div><div class="flight-axis"></div><p class="flight-status" role="status">${dock ? 'Awaiting your candidate impulse.' : demo ? 'Watch the example if you wish, then test your own prediction.' : 'Awaiting your independent prediction.'}</p><div class="flight-controls"><button class="secondary flight-pause" disabled>Pause</button><button class="secondary flight-replay" disabled>Replay trial</button><button class="secondary flight-revise" disabled>Revise answer</button></div><p class="flight-mira" aria-live="polite"></p><p class="flight-note">Replay is observation only. A mission reward is considered only after a completed test of your current answer. A hit on your first test earns the first-try star.</p></section>`;
   }
   function mount(root, q, options = {}) {
     const el = root.querySelector('.flight-trial');
@@ -39,10 +43,11 @@ window.Docking = (() => {
       if (pending) { const resolve = pending; pending = null; resolve({ completed }); }
     }
     function render(t, candidate, demo = false) {
-      const dock = q.id === 'q01', start = demo ? [1, 0] : q.id === 'q07' ? [3, -2] : [2, 3];
-      const result = demo ? { goal: [0, 1], candidate: [0, 1] } : evaluate(q.id, candidate);
+      const dock = q.id === 'q01', start = demo ? [1, 0] : q.id === 'q07' ? pair(q.params?.v, [3, -2]) : pair(q.params?.p, [2, 3]);
+      const shift = pair(q.params?.t, [5, -1]), turned = [-start[1], start[0]];
+      const result = demo ? { goal: [0, 1], candidate: [0, 1] } : evaluate(q.id, candidate, q.answer);
       const goal = result.goal;
-      const positionAt = u => dock ? candidate.map(v => v * u) : demo || q.id === 'q07' ? rotate(start, u * Math.PI / 2) : u <= .5 ? rotate(start, u * Math.PI) : [-3 + 5 * (u * 2 - 1), 2 - (u * 2 - 1)];
+      const positionAt = u => dock ? candidate.map(v => v * u) : demo || q.id === 'q07' ? rotate(start, u * Math.PI / 2) : u <= .5 ? rotate(start, u * Math.PI) : [turned[0] + shift[0] * (u * 2 - 1), turned[1] + shift[1] * (u * 2 - 1)];
       const position = positionAt(t);
       const extent = Math.max(5, ...candidate.map(Math.abs), ...goal.map(Math.abs), ...start.map(Math.abs)), scale = 80 / extent;
       const panels = dock ? [[0, 1, 'X / Y'], [0, 2, 'X / Z']] : [[0, 1, demo ? 'Mira’s counterclockwise demonstration' : 'World plane / transformed point']];
@@ -68,7 +73,7 @@ window.Docking = (() => {
     function begin(candidate, rewardTrial, demo = false) {
       stop(false);
       if (disposed) return Promise.resolve({ completed: false });
-      const result = demo ? { valid: true } : evaluate(q.id, candidate);
+      const result = demo ? { valid: true } : evaluate(q.id, candidate, q.answer);
       if (!result.valid) { status.textContent = 'Enter a finite number for each mission coordinate before testing.'; return Promise.resolve({ completed: false }); }
       elapsed = 0; last = demo ? last : [...candidate];
       pause.disabled = false; replay.disabled = true; revise.disabled = false; mira.textContent = ''; status.textContent = demo ? 'Mira demonstrates a positive quarter turn.' : 'Testing your current prediction…';

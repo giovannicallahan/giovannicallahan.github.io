@@ -1114,7 +1114,7 @@ window.QUESTS = [
     "sector": "Orbital Dock",
     "brief": "Find motions allowed by two safety constraints.",
     "lesson": "The intersection of homogeneous linear constraints is a subspace. Independent constraints reduce the number of free coordinates.",
-    "prompt": "Allowed v=(x,y,z) obey x+y+z=0 and x−y=0. With z=2, enter x,y,z and the dimension of the intersection.",
+    "prompt": "Allowed v=(x,y,z) obey x+y+z=0 and x−y=0. Enter the allowed vector with z=2 as x,y,z. Then enter the dimension of the whole intersection, counted before z is fixed.",
     "answer": [
       -1,
       -1,

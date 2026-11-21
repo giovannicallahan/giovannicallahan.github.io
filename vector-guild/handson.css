@@ -1,0 +1,168 @@
+/* Hands-on exploration widgets (game/handson.js). Every selector starts with .hands-on. */
+.hands-on {
+  padding: 18px;
+  margin: 20px 0;
+  border: 1px solid #52797c;
+  border-radius: 12px;
+  background: #102730;
+  color: var(--ivory, #edf0dd);
+  max-width: 560px;
+  min-width: 0;
+  overflow: hidden;
+}
+.hands-on .hands-on-eyebrow {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  color: var(--cyan, #8cddd4);
+}
+.hands-on h3 {
+  font-size: 20px !important;
+  line-height: 1.2;
+  letter-spacing: 0 !important;
+  margin: 6px 0 10px;
+  color: var(--lime, #d4f36a);
+}
+.hands-on p {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0 0 10px;
+}
+.hands-on .hands-on-lead b { color: var(--ivory, #edf0dd); }
+
+/* 2x2 matrix shown inline in the lead text */
+.hands-on .hands-on-matrix {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  gap: 0 10px;
+  padding: 1px 7px;
+  margin: 0 3px;
+  vertical-align: middle;
+  border-left: 2px solid var(--cyan, #8cddd4);
+  border-right: 2px solid var(--cyan, #8cddd4);
+  border-radius: 4px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: right;
+}
+
+/* Picture */
+.hands-on .hands-on-scene {
+  background: #11212e;
+  border: 1px solid #365b65;
+  border-radius: 10px;
+  margin: 12px 0;
+}
+.hands-on .hands-on-scene svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 440px;
+  margin: 0 auto;
+}
+.hands-on .hands-on-grid { stroke: #24414b; stroke-width: 1; }
+.hands-on .hands-on-axis { stroke: #6f8f93; stroke-width: 1.4; }
+.hands-on .hands-on-plot { fill: none; stroke: #365b65; stroke-width: 1; }
+.hands-on .hands-on-tick { fill: #a9bdb9; font-size: 10px; }
+.hands-on .hands-on-label { font-size: 14px; font-weight: 700; paint-order: stroke; stroke: #11212e; stroke-width: 4px; }
+.hands-on .hands-on-v-label { fill: var(--cyan, #8cddd4); }
+.hands-on .hands-on-av-label { fill: #f3b36a; }
+.hands-on .hands-on-p-label { fill: var(--lime, #d4f36a); }
+.hands-on .hands-on-span { stroke: #c9d2c3; stroke-width: 2; opacity: .75; }
+.hands-on .hands-on-circle { fill: none; stroke: #6f8f93; stroke-width: 1.2; stroke-dasharray: 3 4; }
+.hands-on .hands-on-arrow line { stroke-width: 3; stroke-linecap: round; }
+.hands-on .hands-on-v line { stroke: var(--cyan, #8cddd4); }
+.hands-on .hands-on-v polygon { fill: var(--cyan, #8cddd4); }
+.hands-on .hands-on-av line { stroke: #f3b36a; }
+.hands-on .hands-on-av polygon { fill: #f3b36a; }
+.hands-on .hands-on-av.is-shortened line { stroke-dasharray: 7 5; }
+.hands-on .hands-on-link { stroke: #f3b36a; stroke-width: 2.5; stroke-dasharray: 6 4; }
+.hands-on .hands-on-corner { fill: none; stroke: var(--lime, #d4f36a); stroke-width: 2; }
+.hands-on .hands-on-fit { stroke: var(--lime, #d4f36a); stroke-width: 2.5; }
+.hands-on .hands-on-square { fill: rgba(243, 179, 106, .28); stroke: #f3b36a; stroke-width: 1.5; }
+.hands-on .hands-on-point { fill: var(--cyan, #8cddd4); stroke: #11212e; stroke-width: 1.5; }
+
+/* Draggable handle: only this part of the picture swallows touch gestures. */
+.hands-on .hands-on-handle { cursor: grab; touch-action: none; }
+.hands-on .hands-on-handle.is-dragging { cursor: grabbing; }
+.hands-on .hands-on-hit { fill: rgba(212, 243, 106, .1); stroke: rgba(212, 243, 106, .35); stroke-width: 1; }
+.hands-on .hands-on-dot { fill: var(--lime, #d4f36a); stroke: #11212e; stroke-width: 2; }
+
+/* Found state */
+.hands-on.is-found .hands-on-scene { border-color: var(--lime, #d4f36a); }
+.hands-on.is-found .hands-on-link { stroke: var(--lime, #d4f36a); stroke-dasharray: none; }
+.hands-on.is-found .hands-on-av line { stroke: var(--lime, #d4f36a); }
+.hands-on.is-found .hands-on-av polygon { fill: var(--lime, #d4f36a); }
+.hands-on.is-found .hands-on-status { color: var(--lime, #d4f36a); border-left-color: var(--lime, #d4f36a); }
+
+/* Readings */
+.hands-on .hands-on-readings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+}
+.hands-on .hands-on-readings > div {
+  min-width: 0;
+  padding: 8px 10px;
+  background: #1c3940;
+  border-radius: 7px;
+  display: grid;
+  gap: 3px;
+}
+.hands-on .hands-on-readings b { color: var(--cyan, #8cddd4); font-size: 11px; letter-spacing: .4px; }
+.hands-on .hands-on-readings span { font-size: 16px; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.hands-on .hands-on-status {
+  margin: 12px 0;
+  padding-left: 12px;
+  border-left: 2px solid #52797c;
+  min-height: 4.5em; /* reserve room so the controls do not jump as the text changes */
+}
+
+/* Controls */
+.hands-on .hands-on-controls { display: grid; gap: 10px; }
+.hands-on .hands-on-control label { display: block; font-size: 13px; font-weight: 700; margin: 0; }
+.hands-on .hands-on-value { color: var(--lime, #d4f36a); font-variant-numeric: tabular-nums; }
+.hands-on .hands-on-row {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  gap: 8px;
+  align-items: center;
+}
+.hands-on input[type=range] {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  min-height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  accent-color: var(--lime, #d4f36a);
+}
+.hands-on button {
+  min-height: 44px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid #577d7e;
+  border-radius: 7px;
+  background: #1c3940;
+  color: var(--ivory, #edf0dd);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.hands-on .hands-on-nudge { padding: 0; font-size: 22px; line-height: 1; }
+.hands-on .hands-on-reset { margin-top: 12px; }
+.hands-on button:active { background: #29505a; }
+.hands-on button:focus-visible,
+.hands-on input:focus-visible { outline: 2px solid var(--cyan, #8cddd4); outline-offset: 3px; }
+.hands-on .hands-on-note { font-size: 12px; color: #a9bdb9; margin: 12px 0 0; }
+
+@media (max-width: 650px) {
+  .hands-on { padding: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hands-on, .hands-on * { transition: none !important; animation: none !important; }
+}
