@@ -485,7 +485,7 @@ function layoutMap(){
   var tr=topBar.getBoundingClientRect(),sr=stage.getBoundingClientRect();
   labelTop=Math.max(0,Math.min(H*0.4,tr.bottom-sr.top))+4;
   var portrait=phase==='map'&&W<H;
-  spreadY=portrait?Math.max(1,Math.min(1.8,(H-labelTop)/W)):1;
+  spreadY=portrait?Math.max(1,Math.min(2.3,(H-labelTop)/W)):1;
   pivot.scale.set(1,spreadY,1);
   if(portrait)camera.setViewOffset(W,H,0,-Math.round(labelTop/2),W,H);else camera.clearViewOffset();
   REALMS.forEach(function(r){nodes[r.node].w=0});
@@ -494,7 +494,7 @@ var phase='tunnel';
 root.addEventListener('resize',resize);root.addEventListener('orientationchange',resize);resize();
 
 /* ---------- Phases ---------- */
-var clock=0,t0=0,mapT=0,mapFlash=false,travel=0,INTRO=6,v3=new THREE.Vector3();
+var clock=0,t0=0,mapT=0,mapFlash=false,travel=0,INTRO=4.4,v3=new THREE.Vector3();
 var narrow=root.matchMedia?root.matchMedia('(max-width: 650px)'):null;
 function ease(x){return x*x*(3-2*x)}
 function startTunnel(){
@@ -540,7 +540,7 @@ function tunnelFrame(dt){
 function mapFrame(dt){
   var m=Math.min(1,(clock-mapT)/1.8),e=1-Math.pow(1-m,3);
   if(mapFlash){flash.style.opacity=String(Math.max(0,1-m*1.6));if(m>=0.625)mapFlash=false}
-  if(!drag&&!reduced&&!selected)rotY+=dt*0.045;
+  if(!drag&&!reduced&&!selected&&!(W<H&&W<=650))rotY+=dt*0.045; /* no drift on a phone: targets must hold still */
   pivot.rotation.set(rotX,rotY,0);
   camera.rotation.set(0,0,0);camera.position.set(0,0,mapDist*(reduced?1:2.4-1.4*e));camera.lookAt(0,0,0);
   if(!reduced&&nodes)REALMS.forEach(function(r){var o=nodes[r.node].orbit;if(o)o.rotation.y+=dt*0.6});
@@ -553,7 +553,9 @@ function mapFrame(dt){
     n.holder.getWorldPosition(v3);var depth=v3.z;v3.project(camera);
     if(v3.z>1){n.btn.style.opacity='0';n.btn.style.visibility='hidden';n.dy=null;return}
     n.btn.style.visibility='';
-    if(!n.w){n.w=n.btn.offsetWidth||120;rowH=Math.ceil(((n.pill.offsetHeight||28)+44)/2)+1}
+    if(!n.w){n.w=n.btn.offsetWidth||120;rowH=Math.ceil(((n.pill.offsetHeight||28)+44)/2)+1;
+      /* Phone: give every realm a wide row of its own so a thumb cannot land on a neighbour. */
+      if(W<H&&W<=650)rowH=Math.max(rowH,Math.min(60,Math.floor((H-12-labelTop)/Math.max(1,REALMS.length))))}
     var x=(v3.x*0.5+0.5)*W,y=(-v3.y*0.5+0.5)*H+18,half=n.w/2;
     x=Math.max(half+4,Math.min(W-half-4,x));
     n.btn.style.opacity=(0.5+0.5*Math.max(0,Math.min(1,(depth+18)/30))).toFixed(2);
