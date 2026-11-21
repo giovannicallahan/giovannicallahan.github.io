@@ -2,8 +2,8 @@
    node      one shape on the star map
    needs     map nodes this one builds on (soft lock: a warning, never a block)
    parts     playable realms inside the node. status 'ready' = a pack exists; 'coming' = not built yet.
-             missions = every mission of the full pack, learn and practice (Foundations: 40 learn + 120 practice;
-             linear algebra: 68 learn + 204 practice).
+             missions = every mission of the full pack, learn and practice (Foundations and Calculus 1: 40 learn +
+             120 practice each; linear algebra: 68 learn + 204 practice).
              learn = the learn missions alone, one per concept, where a pack has practice missions as well.
    A part with status 'ready' has a pack id; its scripts are listed in VG_PACKS (realms/packs.js). */
 window.VG_REALMS = [
@@ -18,7 +18,7 @@ window.VG_REALMS = [
  {node:'calc',name:'Calculus',pos:[7,1,4],color:'violet',needs:['found'],
   learn:'How things change and how change adds up, first along a line and then across surfaces.',
   world:'Find the fastest route, the dose that lasts, the shape that uses least material.',
-  parts:[{id:'calc1',name:'Calculus 1: change',status:'coming'},{id:'calc2',name:'Calculus 2: accumulation',status:'coming'},{id:'calc3',name:'Calculus 3: many variables',status:'coming'}]},
+  parts:[{id:'calc1',name:'Calculus 1: change',status:'ready',missions:160,learn:40},{id:'calc2',name:'Calculus 2: accumulation',status:'coming'},{id:'calc3',name:'Calculus 3: many variables',status:'coming'}]},
  {node:'stat',name:'Statistics & probability',pos:[2,-7,-4],color:'cyan',needs:['found'],
   learn:'Reasoning under uncertainty: chance, evidence and what a sample can tell you.',
   world:'Judge a medical test, a poll, or whether a result is luck.',

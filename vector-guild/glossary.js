@@ -147,12 +147,91 @@
     ['permutation matrix', 'q62', 'A square matrix with exactly one 1 in every row and column and zeros elsewhere; it reorders coordinates.', '[0 1; 1 0] swaps the two coordinates of a vector.'],
     ['scalar', 'q01', 'A single number, as opposed to a vector or a matrix.', 'In 3(1, 2) = (3, 6) the scalar is 3.']
   ];
+  /* Calculus 1 (docs/CALC1-PLAN.md). `taught` is the learn mission the plan gives the word to; a word is offered on
+     the page once that mission's text uses it. */
+  const CALC1 = [
+    ['rate of change', 'q01', 'How fast one quantity changes compared with another: a change in the output divided by the change in the input.', 'A tank that gains 12 litres in 4 minutes fills at 3 litres per minute.'],
+    ['average rate of change', 'q01', 'The change in a function’s value over an interval, divided by the length of the interval.', 'From t = 1 to t = 3 a height rises from 5 m to 21 m: 16 ÷ 2 = 8 m per second.'],
+    ['interval', 'q01', 'All the numbers between a starting value and an ending value.', 'The interval from t = 2 to t = 6 lasts 4 seconds.'],
+    ['Δ', 'q01', 'The Greek letter delta; written in front of a quantity it means “the change in” that quantity.', 'If t goes from 2 to 6, then Δt = 6 − 2 = 4.', ['delta']],
+    ['secant line', 'q01', 'The straight line through two points of a curve; its slope is the average rate of change between them.', 'The secant line through (1, 5) and (3, 21) has slope 16 ÷ 2 = 8.', ['secant']],
+    ['instantaneous rate of change', 'q02', 'The rate of change at one single moment: the number that average rates settle on as the interval shrinks.', 'A speedometer shows an instantaneous rate of change of distance.', ['instantaneous rate']],
+    ['limit', 'q03', 'The value that a function’s outputs get closer and closer to as the input gets close to a chosen number.', 'As x gets close to 2, x² gets close to 4, so the limit is 4.', [], 'speed limit|weight limit|safety limit|limit switch'],
+    ['direct substitution', 'q04', 'Finding a limit by simply putting the number into the formula, which works wherever the function is continuous.', 'The limit of 3x + 1 as x approaches 2 is 3 × 2 + 1 = 7.'],
+    ['limit law', 'q04', 'One of the rules that say limits behave well under adding, subtracting, multiplying, dividing and taking powers.', 'By the sum law, the limit of x² + 3x as x approaches 2 is 4 + 6 = 10.', ['sum law', 'difference law', 'product law', 'quotient law', 'power law', 'constant multiple law']],
+    ['hole', 'q05', 'A single missing point in a graph, where the formula has no value although the limit exists.', 'y = (x² − 4) ÷ (x − 2) is the line y = x + 2 with a hole at x = 2.'],
+    ['one-sided limit', 'q06', 'A limit that looks at inputs on only one side of the chosen number, the left or the right.', 'From the right of 0, 1 ÷ x grows without bound; from the left it falls without bound.'],
+    ['left-hand limit', 'q06', 'The value a function closes in on as the input approaches a number from below, written with a small minus sign.', 'For f(x) = x + 1 when x < 1, the left-hand limit at 1 is 2.'],
+    ['right-hand limit', 'q06', 'The value a function closes in on as the input approaches a number from above, written with a small plus sign.', 'For f(x) = 3x when x ≥ 1, the right-hand limit at 1 is 3.'],
+    ['continuous', 'q07', 'Having no break, jump or hole: at each point the limit equals the function’s value there.', 'f(x) = x² is continuous; a graph you can draw without lifting the pen.', ['continuity']],
+    ['∞', 'q08', 'The symbol for infinity: not a number, but shorthand for growing beyond every number you can name.', 'As x → ∞, 1 ÷ x shrinks towards 0.', ['infinity']],
+    ['asymptote', 'q08', 'A straight line that a graph gets closer and closer to without settling on it.', 'The graph of y = 1 ÷ x has the asymptotes y = 0 and x = 0.'],
+    ['horizontal asymptote', 'q08', 'A level line y = L that a graph approaches as x grows very large in either direction.', 'y = (2x + 1) ÷ x has the horizontal asymptote y = 2.'],
+    ['vertical asymptote', 'q09', 'An upright line x = a beside which the function’s values grow or fall without bound.', 'y = 1 ÷ (x − 3) has the vertical asymptote x = 3.'],
+    ['Intermediate Value Theorem', 'q10', 'A continuous function on an interval takes every value between its values at the two ends.', 'If f(1) = −2 and f(2) = 3, a continuous f is 0 somewhere between 1 and 2.'],
+    ['difference quotient', 'q12', 'The fraction (f(a + h) − f(a)) ÷ h: the average rate of change of f from a to a + h.', 'For f(x) = x² at a = 3 with h = 1: (16 − 9) ÷ 1 = 7.'],
+    ['derivative', 'q12', 'The instantaneous rate of change of a function: the limit of its difference quotients as the step shrinks to zero.', 'The derivative of x² is 2x, so at x = 3 the rate of change is 6.'],
+    ['prime notation', 'q12', 'Writing a derivative with a small mark after the function’s name: f′ for the derivative of f and f″ for the second derivative.', 'If f(x) = x², then f′(3) = 6, read “f prime of 3”.'],
+    ['tangent line', 'q13', 'The straight line that touches a curve at a point and has the curve’s slope there.', 'At x = 3 the tangent line to y = x² has slope 6: y = 6x − 9.', ['tangent'], 'tangent of|tangent ratio'],
+    ['derivative function', 'q13', 'The function f′ that gives, for each input x, the derivative of f at that x.', 'For f(x) = x² the derivative function is f′(x) = 2x.'],
+    ['power rule', 'q14', 'The rule that the derivative of xⁿ is n times x to the power n − 1.', 'The derivative of x⁵ is 5x⁴.'],
+    ['differentiate', 'q15', 'To work out the derivative of a function.', 'Differentiate x³ + 2x to get 3x² + 2.', ['differentiating', 'differentiated', 'differentiation']],
+    ['constant multiple rule', 'q15', 'A number multiplying a function stays in front when you take the derivative.', 'The derivative of 5x³ is 5 × 3x² = 15x².'],
+    ['sum rule', 'q15', 'The derivative of a sum of functions is the sum of their derivatives.', 'The derivative of x² + x³ is 2x + 3x².'],
+    ['difference rule', 'q15', 'The derivative of one function minus another is the first derivative minus the second.', 'The derivative of x³ − x² is 3x² − 2x.'],
+    ['velocity', 'q16', 'The rate of change of position: the derivative of position with respect to time, with a sign for direction.', 'If s(t) = 5t², the velocity is 10t, which is 20 m per second at t = 2.'],
+    ['acceleration', 'q16', 'The rate of change of velocity: the derivative of velocity, and so the second derivative of position.', 'If the velocity is 10t, the acceleration is 10 m per second each second.'],
+    ['second derivative', 'q16', 'The derivative of the derivative; it tells how fast the rate of change is itself changing.', 'For f(x) = x³: f′(x) = 3x² and f″(x) = 6x.'],
+    ['product rule', 'q18', 'The rule for the derivative of a product: (fg)′ = f′g + fg′.', 'For x² · sin x the derivative is 2x sin x + x² cos x.'],
+    ['quotient rule', 'q19', 'The rule for the derivative of a fraction: (f ÷ g)′ = (f′g − fg′) ÷ g².', 'For x ÷ (x + 1) the derivative is 1 ÷ (x + 1)².'],
+    ['chain rule', 'q20', 'The rule for a function inside another: the derivative of the outer one, at the inner one, times the derivative of the inner one.', 'For (3x + 1)² the derivative is 2(3x + 1) × 3.'],
+    ['inner function', 'q20', 'In a function inside another, the one that is worked out first: the part inside the brackets.', 'In (3x − 4)³ the inner function is 3x − 4.'],
+    ['outer function', 'q20', 'In a function inside another, the one applied last, to the result of the inner function.', 'In (3x − 4)³ the outer function is “cube it”.'],
+    ['radian', 'q21', 'A unit of angle: the angle whose arc on a circle is as long as the radius, so a full turn is 2π radians.', 'A half turn, 180°, is π radians, about 3.14.'],
+    ['unit circle', 'q21', 'The circle of radius 1 centred at the origin; the point at angle t on it is (cos t, sin t).', 'At angle 0 the point on the unit circle is (1, 0).'],
+    ['the number e', 'q22', 'A constant, about 2.718, used as a base because e^x is then its own derivative.', 'e² is about 7.389.'],
+    ['natural logarithm', 'q22', 'The logarithm with base e, written ln x: the power you raise e to in order to get x.', 'ln 1 = 0, because e⁰ = 1.', ['ln']],
+    ['implicit differentiation', 'q24', 'Differentiating both sides of an equation in x and y as it stands, treating y as a function of x.', 'From x² + y² = 25: 2x + 2y · dy/dx = 0, so dy/dx = −x ÷ y.'],
+    ['related rates', 'q25', 'Problems in which two changing quantities are tied by an equation, so the rate of one gives the rate of the other.', 'A balloon’s radius grows, so its volume grows at a rate tied to it.'],
+    ['linear approximation', 'q26', 'Estimating a function near a point by its tangent line there: f(a) + f′(a)(x − a).', '√4.1 is about 2 + 0.25 × 0.1 = 2.025.', ['linearization', 'linearisation']],
+    ['differential', 'q26', 'A small change measured along the tangent line: dx for the input and dy = f′(a) × dx for the output.', 'For f(x) = x² at a = 3 with dx = 0.1, dy = 6 × 0.1 = 0.6.'],
+    ['critical point', 'q27', 'An input where the derivative is zero or does not exist; highs and lows inside an interval can only occur there.', 'f(x) = x² − 4x has f′(x) = 2x − 4, so its critical point is x = 2.'],
+    ['increasing', 'q27', 'Rising as the input grows; a function is increasing where its derivative is positive.', 'f(x) = x² is increasing for x > 0.'],
+    ['decreasing', 'q27', 'Falling as the input grows; a function is decreasing where its derivative is negative.', 'f(x) = x² is decreasing for x < 0.'],
+    ['local maximum', 'q27', 'A point where a function is higher than at every input near it: a hilltop of the graph.', 'f(x) = −x² has a local maximum at x = 0.'],
+    ['local minimum', 'q27', 'A point where a function is lower than at every input near it: a valley floor of the graph.', 'f(x) = x² has a local minimum at x = 0.'],
+    ['first derivative test', 'q27', 'A critical point is a local maximum if f′ changes from positive to negative there, and a local minimum if from negative to positive.', 'For x², f′ = 2x goes from negative to positive at 0: a local minimum.'],
+    ['concave', 'q28', 'Bending one way: concave up means the slope is rising (f″ > 0), concave down means the slope is falling (f″ < 0).', 'y = x² is concave up everywhere, like a cup.', ['concavity', 'concave up', 'concave down']],
+    ['inflection point', 'q28', 'A point where a graph changes from concave up to concave down, or the other way round.', 'y = x³ has an inflection point at x = 0.'],
+    ['second derivative test', 'q28', 'At a critical point, f″ > 0 means a local minimum and f″ < 0 means a local maximum.', 'For x² − 4x, f″ = 2 > 0 at the critical point x = 2: a local minimum.'],
+    ['absolute maximum', 'q30', 'The largest value a function takes anywhere on the interval being considered.', 'On the interval from 0 to 3, f(x) = x² has absolute maximum 9, at x = 3.'],
+    ['absolute minimum', 'q30', 'The smallest value a function takes anywhere on the interval being considered.', 'On the interval from −1 to 3, f(x) = x² has absolute minimum 0, at x = 0.'],
+    ['closed interval', 'q30', 'An interval that includes both of its end points.', 'The closed interval from 0 to 3 contains 0, 3 and everything between.'],
+    ['Extreme Value Theorem', 'q30', 'A continuous function on a closed interval has both an absolute maximum and an absolute minimum.', 'On the closed interval from 0 to 3, x² has minimum 0 and maximum 9.'],
+    ['optimisation', 'q31', 'Finding the input that makes a quantity as large or as small as possible, often under a constraint.', 'Of all rectangles with perimeter 20 m, the 5 m by 5 m square has the largest area.', ['optimization']],
+    ['constraint', 'q31', 'A condition that the quantities in a problem must satisfy, which ties one of them to the others.', 'A fence of 20 m around a rectangle is the constraint 2x + 2y = 20.'],
+    ['Mean Value Theorem', 'q32', 'For a smooth curve on an interval, at some point inside it the tangent has the same slope as the secant line through the ends.', 'Averaging 60 km per hour over a trip, you drove at exactly 60 at some moment.'],
+    ['L’Hôpital’s rule', 'q33', 'For a limit of a fraction of the form 0 ÷ 0 or ∞ ÷ ∞, the limit of the derivatives’ fraction gives the same value.', 'As x approaches 0, sin x ÷ x has the same limit as cos x ÷ 1, which is 1.', ['L\'Hôpital\'s rule', 'L’Hopital’s rule']],
+    ['indeterminate', 'q33', 'Said of a limit whose form, such as 0 ÷ 0, does not by itself tell you its value.', 'As x approaches 0, sin x ÷ x has the indeterminate form 0 ÷ 0, yet its limit is 1.', ['indeterminate form']],
+    ['Newton’s method', 'q34', 'A way to close in on a root: follow the tangent line from the current guess down to where it crosses zero, and repeat.', 'For x² − 2 from the guess 1.5: 1.5 − 0.25 ÷ 3, about 1.4167.', ['Newton\'s method']],
+    ['antiderivative', 'q35', 'A function whose derivative is the given function; any constant may be added to it.', 'x³ is an antiderivative of 3x², and so is x³ + 7.'],
+    ['∫', 'q35', 'The integral sign, a tall S; ∫ f(t) dt stands for every antiderivative of f.', '∫ 2t dt = t² + C.', ['integral sign']],
+    ['initial value problem', 'q36', 'Finding a function from its derivative together with one known value, which fixes the constant.', 'If v(t) = 6t and s(0) = 4, then s(t) = 3t² + 4.'],
+    ['Riemann sum', 'q37', 'An estimate of the area under a curve: the sum of the areas of thin rectangles whose heights are values of the function.', 'With 4 rectangles of width 0.5 the area is 0.5 times the sum of the 4 heights.'],
+    ['left-endpoint sum', 'q37', 'A Riemann sum in which each rectangle’s height is the function’s value at the left end of its piece.', 'From 0 to 2 in 2 pieces, x² gives 1 × (0 + 1) = 1.'],
+    ['right-endpoint sum', 'q37', 'A Riemann sum in which each rectangle’s height is the function’s value at the right end of its piece.', 'From 0 to 2 in 2 pieces, x² gives 1 × (1 + 4) = 5.'],
+    ['integral', 'q38', 'The total built up from a rate: on a graph, the signed area between the curve and the horizontal axis.', 'A flow of 3 litres per minute for 4 minutes adds up to 12 litres.'],
+    ['definite integral', 'q38', 'The signed area between a curve and the horizontal axis from one input to another, written ∫ from a to b.', 'The definite integral of 2x from 0 to 3 is 9.'],
+    ['Fundamental Theorem of Calculus', 'q39', 'The definite integral of f from a to b equals F(b) − F(a) for any antiderivative F of f.', 'For 2x from 1 to 3: F(x) = x², so the integral is 9 − 1 = 8.'],
+    ['Net Change Theorem', 'q40', 'The amount at the end equals the amount at the start plus the integral of the rate of change over the interval.', 'A tank with 10 litres, filled at 3 litres per minute for 4 minutes, ends with 22 litres.'],
+    ['net change', 'q40', 'How much a quantity has changed overall: the integral of its rate of change over the interval.', 'Filling at 5 and then draining at 2 litres per minute, a minute each, is a net change of 3 litres.']
+  ];
   const build = rows => {
     const out = {};
     for (const [term, taught, means, example, also, avoid] of rows) out[term.toLowerCase()] = { term, taught, means, example, also: also || [], ...(avoid ? { avoid } : {}) };
     return out;
   };
-  window.VG_GLOSSARY = { found: build(FOUND), la: build(LA) };
+  window.VG_GLOSSARY = { found: build(FOUND), la: build(LA), calc1: build(CALC1) };
 
   /* ---------- matching (no page needed; qa/glossary.test.js uses it) ---------- */
   const escapeRe = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

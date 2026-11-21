@@ -27,5 +27,10 @@ window.VG_PACKS = {
   title: 'Foundations',
   styles: ['styles.css', 'update.css'],
   scripts: ['realms/found/pack.js', 'realms/found/missions-a.js', 'realms/found/missions-b.js', 'realms/found/missions-c.js', 'realms/found/missions-d.js', 'gen-core.js', 'realms/found/gen-a.js', 'realms/found/gen-b.js', 'realms/found/gen-c.js', 'realms/found/gen-d.js', 'gameplay.js', 'realms/found/experiments-a.js', 'realms/found/experiments-b.js', 'realms/found/experiments-c.js', 'realms/found/experiments-d.js', 'realms/found/variants-a.js', 'realms/found/variants-b.js', 'realms/found/variants-c.js', 'realms/found/variants-d.js', 'realms/found/practice-1.js', 'realms/found/practice-2.js', 'realms/found/practice-3.js', 'realms/found/practice-4.js', 'realms/found/practice-5.js', 'realms/found/practice-6.js', 'realms/found/practice-7.js', 'realms/found/practice-8.js', 'variants.js', 'concept-lab.js', 'chapters.js', 'skip.js', 'glossary.js']
+ },
+ calc1: {
+  title: 'Calculus 1: change',
+  styles: ['styles.css', 'update.css'],
+  scripts: ['realms/calc1/pack.js', 'realms/calc1/missions-a.js', 'realms/calc1/missions-b.js', 'realms/calc1/missions-c.js', 'realms/calc1/missions-d.js', 'gen-core.js', 'realms/calc1/gen-a.js', 'realms/calc1/gen-b.js', 'realms/calc1/gen-c.js', 'realms/calc1/gen-d.js', 'gameplay.js', 'realms/calc1/experiments-a.js', 'realms/calc1/experiments-b.js', 'realms/calc1/experiments-c.js', 'realms/calc1/experiments-d.js', 'realms/calc1/variants-a.js', 'realms/calc1/variants-b.js', 'realms/calc1/variants-c.js', 'realms/calc1/variants-d.js', 'realms/calc1/practice-1.js', 'realms/calc1/practice-2.js', 'realms/calc1/practice-3.js', 'realms/calc1/practice-4.js', 'realms/calc1/practice-5.js', 'realms/calc1/practice-6.js', 'realms/calc1/practice-7.js', 'realms/calc1/practice-8.js', 'variants.js', 'concept-lab.js', 'chapters.js', 'skip.js', 'glossary.js']
  }
 };
