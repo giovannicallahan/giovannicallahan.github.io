@@ -32,8 +32,22 @@ window.VGSave = (() => {
   const isText = x => typeof x === 'string' && x !== '';
   /* Writing the key "__proto__" would swap an object's prototype instead of adding a key, so it is never kept. */
   const safeKey = id => id !== '__proto__';
+  /* The daily review (2.3, game/daily.js, docs/COLLECTION.md "Daily review"). Kept only when the save has one, so an
+     older save loads unchanged. day: the last local calendar day (whole days since 1970) whose review was paid, or
+     null; streak: days in a row ending on that day; best: the longest streak; paid: the streak milestones already
+     paid; at: {day, n} problems done on a day that is not finished yet; seen: {"<realm>:<mission>": day last asked}. */
+  const dayNo = n => Number.isInteger(n) && n >= 0 && n < 1e7 ? n : null;
+  function tidyDaily(d) {
+    const day = dayNo(d.day), streak = day === null ? 0 : Math.max(1, count(d.streak)), seen = {};
+    if (isObject(d.seen)) for (const [id, n] of Object.entries(d.seen).filter(e => safeKey(e[0]) && dayNo(e[1]) !== null).sort((x, y) => y[1] - x[1]).slice(0, 400)) seen[id] = n;
+    const out = Object.assign(d, { day, streak, best: Math.max(count(d.best), streak), paid: unique(d.paid, n => Number.isInteger(n) && n > 0).sort((x, y) => x - y), seen });
+    const at = isObject(d.at) && dayNo(d.at.day) !== null && (day === null || d.at.day > day) && Number.isInteger(d.at.n) && d.at.n > 0 && d.at.n < 100 ? { day: d.at.day, n: d.at.n } : null;
+    if (at) out.at = at; else delete out.at;
+    return out;
+  }
   function tidyMeta(m) {
     const src = isObject(m) ? clone(m) : {}, owned = {}, paid = {}, looks = {};
+    if (isObject(src.daily)) src.daily = tidyDaily(src.daily); else delete src.daily;
     if (isObject(src.owned)) for (const [id, n] of Object.entries(src.owned)) if (safeKey(id) && Number.isInteger(n) && n > 0) owned[id] = n;
     if (isObject(src.paid)) for (const [id, p] of Object.entries(src.paid)) if (safeKey(id) && isObject(p)) paid[id] = { solved: unique(p.solved, isText), clean: unique(p.clean, isText), chapters: unique(p.chapters, n => Number.isInteger(n) && n >= 0) };
     if (isObject(src.looks)) for (const [id, l] of Object.entries(src.looks)) { const list = unique(l, isText); if (safeKey(id) && list.length) looks[id] = list; }

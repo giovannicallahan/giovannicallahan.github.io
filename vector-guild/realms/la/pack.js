@@ -41,11 +41,22 @@ window.REALM = {
   { name: 'Guild hall banner', at: [640, 170], art: '<path d="M-16 0V-14L0 -24L16 -14V0Z" fill="#496866" stroke="#b4cead"/><path d="M0 -24V-42L12 -37L0 -32" fill="#d4f36a" stroke="#d4f36a"/>' }
  ],
  landmarkCost: 6,
- /* A rank is held from `at` solved missions. top: the threshold is at least the number of missions. */
+ /* Practice missions (docs/PACK-FORMAT.md, "Practice missions" and "Linear algebra practice"): the letter that follows
+    the learn id, and the kind of practice it is. Every concept is planned to have one of each, so the full pack is
+    68 learn + 204 practice = 272 missions. Practice is optional: a chapter is complete when its learn missions are
+    solved, and mastered when its practice is solved as well. The 68 learn missions are those of 1.4.1, unchanged. */
+ practice: { kinds: { b: 'setting', c: 'applied', d: 'challenge' } },
+ /* Ranks count every solved mission, learn and practice; the top rank needs all 272. While some practice missions
+    are still unwritten, the engine scales the `at` steps down to the missions that exist (app.js, "ranks").
+    learnAt is the 1.4.1 step, counted in concepts learned: a rank is also held by that many learn missions alone, so
+    the 1.4.1 ladder is climbed by the learn missions exactly as before and no save is demoted. That includes
+    GUILD ARCHITECT, the top rank of 1.4.1, which all 68 concepts still earn. The `at` steps are set below four times
+    learnAt, so practice missions can also carry a player to a rank a little sooner, as in Foundations. The one new
+    rank, GUILD LUMINARY, has no learnAt: it needs every mission. */
  ranks: [
-  { at: 0, title: 'CADET' }, { at: 5, title: 'ENGINEER' }, { at: 12, title: 'SPECIALIST' }, { at: 20, title: 'CHIEF ENGINEER' },
-  { at: 30, title: 'VECTOR SAGE' }, { at: 40, title: 'SYSTEMS MASTER' }, { at: 50, title: 'PRINCIPAL DESIGNER' }, { at: 60, title: 'GUILD FELLOW' },
-  { at: 61, title: 'GUILD ARCHITECT', top: true }
+  { at: 0, title: 'CADET' }, { at: 12, learnAt: 5, title: 'ENGINEER' }, { at: 30, learnAt: 12, title: 'SPECIALIST' }, { at: 52, learnAt: 20, title: 'CHIEF ENGINEER' },
+  { at: 84, learnAt: 30, title: 'VECTOR SAGE' }, { at: 120, learnAt: 40, title: 'SYSTEMS MASTER' }, { at: 160, learnAt: 50, title: 'PRINCIPAL DESIGNER' }, { at: 204, learnAt: 60, title: 'GUILD FELLOW' },
+  { at: 244, learnAt: 68, title: 'GUILD ARCHITECT' }, { at: 272, title: 'GUILD LUMINARY', top: true }
  ],
  tiers: ['Basic', 'Intermediate', 'Advanced'],
  sourceRule: { publisherPattern: /MIT OpenCourseWare/, label: 'MIT OpenCourseWare' },

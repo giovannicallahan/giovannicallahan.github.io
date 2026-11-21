@@ -79,7 +79,10 @@ window.VGCollection = (() => {
        or the realm page says so; a realm without practice missions has no entry and its learn count is its mission count. */
     const missions = {}, learns = {};
     for (const node of Array.isArray(window.VG_REALMS) ? window.VG_REALMS : []) for (const p of (node && Array.isArray(node.parts) ? node.parts : [])) if (isObject(p) && isText(p.id) && Number.isInteger(p.missions) && p.missions > 0) { missions[p.id] = p.missions; if (Number.isInteger(p.learn) && p.learn > 0) learns[p.id] = p.learn; }
-    if (rc && rc.missions) missions[rc.id] = rc.missions;
+    /* The realm page counts the missions that are written. While a pack's planned practice missions are still being
+       written the registry plans more than the page has, and the larger number stands, so "every mission" is never
+       reached early. */
+    if (rc && rc.missions) missions[rc.id] = Math.max(rc.missions, has(missions, rc.id) ? missions[rc.id] : 0);
     if (rc && rc.learn) learns[rc.id] = rc.learn;
     const ctx = { solved: 0, practice: 0, stars: 0, chapters: 0, landmarks: 0, realmsWithSolves: 0, realms: {}, landmarkRealm: false,
       drills: m.drills, pulls: m.pulls, figures: 0, copiesMax: 0, legendary: false, equipped: !!m.equipped, fieldBest: { have: 0, need: 1 }, fieldDone: false };
@@ -172,6 +175,50 @@ window.VGCollection = (() => {
     m.drills++; m.dust += dust; m.earned += dust;
     const events = [{ type: 'drill', dust }, ...award(m, slices(), realmOf())];
     return commit(m, before) ? events : [];
+  }
+  /* The daily review of one local calendar day is finished (game/daily.js; docs/COLLECTION.md, "Daily review").
+     day: whole days since 1970 in local time. Pays DAILY.dust once per day and counts the day streak; a streak
+     milestone pays once ever. A day that is not later than the last paid day pays nothing, so a reload, a second
+     tab, or a device clock set back never pays twice. A missed day starts the streak again at 1; nothing is taken. */
+  const DAILY = Object.freeze({ dust: 15, problems: 3, unlock: 3, milestones: Object.freeze([[3, 20], [7, 40], [14, 80], [30, 150]].map(Object.freeze)) });
+  function onDailyDone(day) {
+    if (!store() || !Number.isInteger(day) || day < 0) return [];
+    /* Another tab may write the save between this call's read and its write. So the save is read once more just
+       before the write; if it is no longer what was read, nothing is written and the whole step starts again from
+       the newer save (which then usually shows the day as paid). finishDaily() below closes the gap completely
+       where the browser has cross-tab locks. */
+    for (let tries = 0; tries < 4; tries++) { const events = dailyOnce(day); if (events) return events; }
+    return [];
+  }
+  /* One attempt: the events, or null when the save changed underneath it. */
+  function dailyOnce(day) {
+    const m = read(), before = JSON.stringify(m), d = isObject(m.daily) ? m.daily : (m.daily = { day: null, streak: 0, best: 0, paid: [], seen: {} });
+    if (Number.isInteger(d.day) && day <= d.day) return [];
+    const streak = Number.isInteger(d.day) && day === d.day + 1 ? (Number.isInteger(d.streak) && d.streak > 0 ? d.streak : 1) + 1 : 1;
+    const paid = Array.isArray(d.paid) ? d.paid : [], events = [{ type: 'daily', day, streak, dust: DAILY.dust }];
+    for (const [days, dust] of DAILY.milestones) if (streak >= days && !paid.includes(days)) { paid.push(days); events.push({ type: 'streak', days, dust }); }
+    Object.assign(d, { day, streak, best: Math.max(Number.isInteger(d.best) ? d.best : 0, streak), paid }); delete d.at;
+    for (const e of events) { m.dust += e.dust; m.earned += e.dust; }
+    events.push(...award(m, slices(), realmOf()));
+    if (JSON.stringify(read()) !== before) return null;
+    return commit(m, before) ? events : [];
+  }
+  /* The same, as one step across tabs: done(events) is called once, with what onDailyDone returned. Where the browser
+     has Web Locks (navigator.locks), the read, the day check and the write run while this page holds the lock every
+     page takes for this step, so two tabs that finish at the same moment cannot both be paid or both say so. Without
+     locks (file://, older browsers, tests) it is onDailyDone straight away. If the lock does not come within a
+     moment, the step runs without it rather than leaving the player waiting. The interface shows the reward from
+     inside done, so it is only ever shown after the save holds it. */
+  function finishDaily(day, done) {
+    let fired = false;
+    const run = () => { if (fired) return; fired = true; let events = []; try { events = onDailyDone(day); } catch (e) { events = []; } if (typeof done === 'function') done(events); };
+    let locks = null; try { locks = window.navigator && window.navigator.locks; } catch (e) { locks = null; }
+    if (!locks || typeof locks.request !== 'function' || typeof window.setTimeout !== 'function') { run(); return; }
+    try {
+      const held = locks.request('mathcosmos-save', () => { run(); });
+      if (held && typeof held.then === 'function') held.then(null, run);
+      window.setTimeout(run, 1500);
+    } catch (e) { run(); }
   }
   /* Totals of a list of events, for a toast. */
   function summary(events) {
@@ -291,7 +338,7 @@ window.VGCollection = (() => {
   const earned = () => read().earned;
   const state = () => read();
   const stored = () => lastStored;
-  return { RULES, RARITIES, PERKS, settle, onDrillDone, summary, describe, pull, canPull, cost, odds, baseOdds, guarantees, rollRarity,
+  return { RULES, RARITIES, PERKS, DAILY, settle, onDrillDone, onDailyDone, finishDaily, summary, describe, pull, canPull, cost, odds, baseOdds, guarantees, rollRarity,
     equip, equipped, perk, perkInfo, secondLookAvailable, useSecondLook, figures, owned, counts, figure, achievements, context: () => context(read(), slices(), realmOf()),
     dust, earned, state, stored, pageRealm };
 })();

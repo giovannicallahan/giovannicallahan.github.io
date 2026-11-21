@@ -36,7 +36,9 @@ window.VG_ACHIEVEMENTS = (() => {
     /* Foundations has 40 concepts and 120 optional practice missions. "Solid ground" keeps its 2.1 meaning: the 40 learn missions. */
     once('found-done', 'Solid ground', 'Learn every concept in Foundations.', 120, c => complete(c, 'found')),
     once('found-master', 'Bedrock', 'Solve every mission in Foundations, practice included.', 150, c => finished(c, 'found')),
-    once('la-done', 'Master of arrows', 'Finish every mission in Linear algebra.', 150, c => finished(c, 'la')),
+    /* Linear algebra has 68 concepts and 204 optional practice missions. "Master of arrows" keeps its 2.1 meaning: the 68 learn missions. */
+    once('la-done', 'Master of arrows', 'Learn every concept in Linear algebra.', 150, c => complete(c, 'la')),
+    once('la-master', 'Full span', 'Solve every mission in Linear algebra, practice included.', 150, c => finished(c, 'la')),
     reach('two-realms', 'Explorer', 'Solve a mission in two realms.', 30, 2, c => c.realmsWithSolves),
     once('drill-1', 'Warm-up', 'Finish a review drill.', 15, c => c.drills >= 1),
     reach('drill-10', 'Keeping it fresh', 'Finish 10 review drills.', 40, 10, c => c.drills),

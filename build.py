@@ -319,7 +319,7 @@ page("experiment.html", "Experiment — which one is the best value?",
 
 # ── MathCosmos, formerly Vector Guild (introduction; the game itself is /vector-guild/) ───────────
 page("projects/vector-guild.html", "MathCosmos — learn maths from zero, one realm at a time",
-     "A free browser game for learning maths from the beginning: 228 missions across Foundations and linear algebra, and every first solve builds part of an outpost.",
+     "A free browser game for learning maths from the beginning: 432 missions across Foundations and linear algebra, and every first solve builds part of an outpost.",
      active="Tools", feedback=True, body="""
 <section class="page-hero">
   <div class="wrap">
@@ -336,7 +336,7 @@ page("projects/vector-guild.html", "MathCosmos — learn maths from zero, one re
   <div class="wrap">
     <div class="section-head"><h2 id="vg-h">What's inside</h2></div>
     <ul class="feature-list">
-      <li><strong>Two realms, 228 missions</strong><span>Foundations (40 concepts from place value to functions, each with three practice missions in new settings, 160 in all) needs no maths background. Linear algebra (68 missions) follows. Nine more realms are on the map and not built yet.</span></li>
+      <li><strong>Two realms, 432 missions</strong><span>Foundations (40 concepts from place value to functions, each with three practice missions in new settings, 160 in all) needs no maths background. Linear algebra (68 concepts, each with three practice missions, 272 in all) follows. Nine more realms are on the map and not built yet.</span></li>
       <li><strong>Collect the people behind the maths</strong><span>Solving missions earns stardust. Spend it to find 48 mathematicians, physicists and computing pioneers, each with a short checked biography. No real money, ever.</span></li>
       <li><strong>One calculation at a time</strong><span>Each mission has a purpose, a lesson and a worked example, ordered so every idea builds on the last.</span></li>
       <li><strong>Hints, guided steps and labs</strong><span>A graph lab and a 3D bench let you see the vectors before you commit to an answer.</span></li>

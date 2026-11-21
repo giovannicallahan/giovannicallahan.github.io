@@ -409,6 +409,10 @@ function mount(container,opts){
   S.cta=go(el('a','vg-primary vgh-cta',''));S.ctaNote=el('p','vgh-cta-note','');
   hero.appendChild(S.cta);hero.appendChild(S.ctaNote);main.appendChild(hero);
 
+  /* One slot for the daily review card (daily.js draws it and keeps it up to date; absent, the slot stays empty). */
+  S.daily=el('div','vgh-daily');main.appendChild(S.daily);
+  if(root.VGDaily&&typeof root.VGDaily.mount==='function'){try{root.VGDaily.mount(S.daily,{scope:'home',heading:'h2'})}catch(e){}}
+
   var pick=el('section','vgh-pick'),h2=el('h2',null,'Choose a realm');h2.id='vgh-pick-title';pick.setAttribute('aria-labelledby','vgh-pick-title');
   pick.appendChild(h2);
   if(!S.realms.length)pick.appendChild(el('p','vgh-note','The realm list did not load. Reload the page to try again.'));
@@ -459,6 +463,7 @@ function refresh(){
   buildModels();
   Object.keys(S.cards).forEach(updateCard);
   updateHero();
+  if(root.VGDaily&&typeof root.VGDaily.refresh==='function'){try{root.VGDaily.refresh()}catch(e){}}
   if(S.open){
     var inside=S.sheet.contains(document.activeElement);
     renderPanel();

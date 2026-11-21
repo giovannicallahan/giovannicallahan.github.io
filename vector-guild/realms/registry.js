@@ -2,7 +2,8 @@
    node      one shape on the star map
    needs     map nodes this one builds on (soft lock: a warning, never a block)
    parts     playable realms inside the node. status 'ready' = a pack exists; 'coming' = not built yet.
-             missions = every mission of the full pack, learn and practice (Foundations: 40 learn + 120 practice).
+             missions = every mission of the full pack, learn and practice (Foundations: 40 learn + 120 practice;
+             linear algebra: 68 learn + 204 practice).
              learn = the learn missions alone, one per concept, where a pack has practice missions as well.
    A part with status 'ready' has a pack id; its scripts are listed in VG_PACKS (realms/packs.js). */
 window.VG_REALMS = [
@@ -13,7 +14,7 @@ window.VG_REALMS = [
  {node:'alg',name:'Algebra',pos:[-8,2,3],color:'cyan',needs:['found'],
   learn:'Vectors, matrices and the structures behind them.',
   world:'Steer a spacecraft, compress a photo, rank web pages.',
-  parts:[{id:'la',name:'Linear algebra',status:'ready',missions:68},{id:'abstract',name:'Abstract algebra',status:'coming'}]},
+  parts:[{id:'la',name:'Linear algebra',status:'ready',missions:272,learn:68},{id:'abstract',name:'Abstract algebra',status:'coming'}]},
  {node:'calc',name:'Calculus',pos:[7,1,4],color:'violet',needs:['found'],
   learn:'How things change and how change adds up, first along a line and then across surfaces.',
   world:'Find the fastest route, the dose that lasts, the shape that uses least material.',

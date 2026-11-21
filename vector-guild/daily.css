@@ -1,0 +1,43 @@
+/* Daily review card (daily.js). One stylesheet for the home page and the realm page: it brings its own colours
+   (the same tokens both pages use, with fallbacks) and its own buttons, so it looks the same in both places.
+   Text is 12px or larger, controls are 44px or taller, nothing is wider than the column it sits in. */
+.vgd-slot{display:block;min-width:0;max-width:100%}
+.vgd-slot[hidden]{display:none}
+.vgd-frame{display:none}
+.vgd{box-sizing:border-box;min-width:0;max-width:100%;margin:18px 0 6px;padding:18px 22px;border:1px solid var(--line,#354448);border-radius:4px;background:#172428;color:var(--ivory,#edf0dd);font-family:inherit;text-align:left}
+.vgd *{box-sizing:border-box}
+.vgd-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 16px;margin:0 0 8px}
+.vgd-title{margin:0;font-size:20px;line-height:1.2;font-weight:600;letter-spacing:0;color:var(--ivory,#edf0dd)}
+.vgd-streak{font-size:13px;line-height:1.4;font-weight:700;color:var(--amber,#ffbf5e);white-space:nowrap}
+.vgd-body{display:flex;flex-direction:column;gap:10px;min-width:0}
+.vgd-body p{margin:0;overflow-wrap:anywhere}
+.vgd-text{font-size:15px;line-height:1.5;color:var(--ivory,#edf0dd)}
+.vgd-text:focus{outline:none}
+.vgd-note,.vgd-hint{font-size:13px;line-height:1.5;color:#b8c7be}
+.vgd-step{font-size:12px;line-height:1.4;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--cyan,#8cddd4)}
+.vgd-field{display:flex;flex-direction:column;gap:6px;max-width:280px}
+.vgd-label{font-size:12px;line-height:1.4;font-weight:700;letter-spacing:.6px;color:#b8c7be}
+.vgd-input{width:100%;min-height:48px;padding:10px 12px;border:1px solid #66766c;border-radius:3px;background:#0f191c;color:var(--ivory,#edf0dd);font:inherit;font-size:16px}
+.vgd-input:focus-visible{outline:2px solid var(--cyan,#8cddd4);outline-offset:2px}
+.vgd-input[readonly]{opacity:.75}
+.vgd-actions{display:flex;flex-wrap:wrap;gap:10px}
+.vgd-btn{min-height:48px;margin:0;padding:12px 18px;border:1px solid #66766c;border-radius:3px;background:transparent;color:var(--ivory,#edf0dd);font:inherit;font-size:14px;font-weight:700;letter-spacing:.2px;cursor:pointer;white-space:normal}
+.vgd-btn.vgd-primary{border-color:var(--lime,#d4f36a);background:var(--lime,#d4f36a);color:#17221c}
+.vgd-btn.vgd-primary:hover{background:#e1fa90}
+.vgd-btn:focus-visible{outline:2px solid var(--cyan,#8cddd4);outline-offset:3px}
+.vgd-btn:disabled{opacity:.5;cursor:default}
+.vgd-btn[hidden]{display:none}
+.vgd-btn:active{transform:translateY(1px)}
+.vgd-feedback{min-height:22px;font-size:14px;line-height:1.5;color:var(--ivory,#edf0dd)}
+.vgd-feedback[data-ok="yes"]{color:var(--lime,#d4f36a)}
+.vgd-feedback[data-ok="no"]{color:var(--amber,#ffbf5e)}
+.vgd[data-state="done"] .vgd-streak{color:var(--lime,#d4f36a)}
+/* Home page: the card is one of the page's sections, so the page's own gap does the spacing. */
+.vgh .vgd{margin:0}
+.vgh .vgd-title{font-size:27px;font-weight:500;letter-spacing:-.5px}
+@media(max-width:520px){
+  .vgd{padding:14px}
+  .vgd-field{max-width:none}
+  .vgd-actions .vgd-btn{width:100%}
+}
+@media(prefers-reduced-motion:reduce){.vgd-btn:active{transform:none}}

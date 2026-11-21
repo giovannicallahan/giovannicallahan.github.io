@@ -55,7 +55,8 @@
 .board-problem .primary{margin-top:14px}
 .board-feedback{min-height:20px;color:var(--lime)!important}
 .board-locked{color:var(--muted)!important;font-size:13px!important}
-.board-explain{border-left:2px solid var(--cyan);padding-left:12px}
+/* A full thin outline and a tint, not a stripe down one side. */
+.board-explain{padding:10px 12px;border:1px solid #2f5560;border-radius:6px;background:#14262b}
 
 @media(max-width:950px){
   /* All six sections stay visible: a 3 × 2 grid instead of a row that scrolls out of view. */
@@ -95,7 +96,7 @@
 .nb-count{color:#f3c37b}
 .nb-none{color:var(--muted)!important}
 @media(max-width:650px){.notebook{padding:14px}.notebook-list{grid-template-columns:1fr}}
-.reference-problem{margin:8px 0;padding:10px 12px;border-left:2px solid var(--cyan);background:#14262b;font-size:14px}
+.reference-problem{margin:8px 0;padding:10px 12px;border:1px solid #2f5560;border-radius:6px;background:#14262b;font-size:14px}
 
 /* MathCosmos 2.0: the way back to the star map, beside the brand. */
 .brand-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
@@ -225,3 +226,40 @@
 /* Headings in the lists keep a sans-serif face when the display font is not installed (the game is offline). */
 .dd .sector-number,.concept .quest h4{font-family:'Space Grotesk','DM Sans',sans-serif}
 .dd .guide-body h4,.dd .worked-example strong,.dd .badge{font-size:13px}
+
+/* Skip-ahead check (skip.js): the offer at the top of a chapter drop-down, and the check in the dialog. */
+.skip-offer{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;padding:14px 22px;border-bottom:1px solid var(--line);background:#172428}
+.skip-offer p{margin:0;flex:1 1 260px;font-size:14px;line-height:1.5;color:#c9d6cf}
+.skip-offer p b{color:var(--ivory)}
+.skip-offer .skip-start{min-height:44px;font-size:13px}
+.skip-offer .skip-start:disabled{opacity:.55;cursor:not-allowed}
+.skip-miss{display:flex;flex-wrap:wrap;gap:8px;flex:1 1 100%}
+.skip-miss .skip-lesson{min-height:44px;font-size:13px;text-align:left}
+.skip-intro{font-size:15px;line-height:1.55}
+.skip-item{margin-top:14px}
+.skip-item h3{font-size:13px}
+.skip-mark{margin:8px 0 0;font-size:13px}
+.skip-mark:empty{display:none}
+.skip-mark.right{color:var(--lime)}
+.skip-mark.retry{color:#f3c37b}
+.skip-fail{margin-top:14px;padding:16px;border:1px solid var(--line);background:#172428}
+.skip-fail h3{margin:0 0 8px;font-size:17px}
+.skip-fail p{font-size:14px;line-height:1.5}
+.skip-fail .skip-miss{margin:12px 0}
+@media(max-width:650px){.skip-offer{padding:12px 14px}.skip-offer .skip-start{flex:1 1 100%}}
+
+/* Tap-to-define words (glossary.js). The word keeps its place in the line; the padding and the negative margin
+   cancel out in the layout and leave a tap area at least 44 px high, and ::after makes it at least 44 px wide. */
+button.gloss{display:inline-block;position:relative;min-height:0;margin:-15px -3px;padding:15px 3px;border:0;border-radius:4px;background:none;color:inherit;font:inherit;letter-spacing:inherit;text-transform:none;text-align:inherit;line-height:inherit;cursor:help;text-decoration:underline dotted var(--cyan);text-decoration-thickness:2px;text-underline-offset:4px;-webkit-tap-highlight-color:transparent}
+button.gloss::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:max(100%,44px);transform:translateX(-50%)}
+button.gloss:hover,button.gloss[aria-expanded="true"]{color:var(--cyan)}
+button.gloss:focus-visible{outline:2px solid var(--cyan);outline-offset:-11px}
+.gloss-pop{position:fixed;z-index:60;left:0;top:0;width:min(320px,calc(100vw - 16px));margin:0;padding:14px 16px;border:1px solid #5d7a76;border-radius:10px;background:#12201f;color:var(--ivory);box-shadow:0 12px 32px rgba(0,0,0,.5);text-align:left;animation:gloss-in .14s ease-out}
+.gloss-pop p{margin:0 0 6px;font-size:14px;line-height:1.5;color:#dbe5dc}
+.gloss-pop .gloss-term{font-size:15px;font-weight:800;color:var(--cyan)}
+.gloss-pop .gloss-example{color:#c9d6cf}
+.gloss-pop .gloss-taught{margin:8px 0 0;padding-top:8px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+@keyframes gloss-in{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.gloss-pop{animation:none}}
+/* The result heading takes focus so it is read out; it is not a control, so it shows no focus ring. */
+.skip-payoff h3:focus,.skip-fail h3:focus{outline:none}
