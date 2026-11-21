@@ -95,6 +95,16 @@ button.vgh-card:active{border-color:var(--realm);box-shadow:0 6px 26px -6px var(
 .vgh-more>.vgh-grid{margin:0;padding:4px 16px 16px}
 
 .vgh-foot{display:flex;flex-wrap:wrap;gap:10px;padding-top:20px;border-top:1px solid var(--line)}
+/* The Collection button (collection/ui.js draws the emblem, the word and the stardust count into it). */
+.vgh .vgh-action.vg-coll{color:var(--ivory);border-color:#6f8a4e;background:linear-gradient(120deg,rgba(212,243,106,.16),rgba(255,191,94,.1)),rgba(8,17,20,.72)}
+.vgh .vgh-action.vg-coll:hover{border-color:var(--lime)}
+.vgh .vgh-action.vg-coll .vgc-chip-dust{font-size:14px;color:var(--lime)}
+/* Arriving from the wormhole: the page comes up out of the flash. shell.js sets and clears .vgh-arrive. */
+.vgh-arrive .vgh{animation:vgh-in .7s ease-out both}
+.vgh-arrive::after{content:'';position:fixed;inset:0;z-index:11;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at 50% 50%,#fff 0%,var(--lime) 26%,rgba(140,221,212,.35) 48%,transparent 72%);animation:vgh-flash 1s ease-out both}
+@keyframes vgh-in{from{opacity:0}to{opacity:1}}
+@keyframes vgh-flash{from{opacity:1}to{opacity:0}}
 
 /* Details panel: bottom sheet on a phone, side panel from 760px */
 .vgh-scrim{position:absolute;inset:0;z-index:5;display:flex;align-items:flex-end;justify-content:center;background:#091113cf}
@@ -107,6 +117,7 @@ button.vgh-card:active{border-color:var(--realm);box-shadow:0 6px 26px -6px var(
 .vgh-sheet.vg-realm h2{font-size:27px;font-weight:600}
 .vgh .vg-learn{font-size:16px}
 .vgh .vg-world,.vgh .vg-lock{font-size:15px}
+.vgh .vg-lock{border:1px solid rgba(255,148,102,.45);border-radius:6px;background:rgba(255,148,102,.1);padding:10px 12px}
 .vgh .vg-world{color:#b8c7be}
 .vgh .vg-progress,.vgh .vg-soon{font-size:13px}
 .vgh .vg-progress{color:var(--realm,var(--cyan))}
@@ -121,6 +132,17 @@ button.vgh-card:active{border-color:var(--realm);box-shadow:0 6px 26px -6px var(
 
 @media(max-width:420px){
   .vgh .vgh-cta{align-self:stretch}
+}
+/* Phone: each realm you can play gets a full-width row of its own, with a large icon beside the words. */
+@media(max-width:559px){
+  .vgh-pick .vgh-grid{grid-template-columns:minmax(0,1fr);gap:20px}
+  .vgh-pick .vgh-card{display:grid;grid-template-columns:116px minmax(0,1fr);grid-template-rows:auto auto 1fr auto;column-gap:16px;row-gap:6px;align-items:start;min-height:168px;padding:20px 18px 20px 14px;
+    background:radial-gradient(circle 120px at 72px 50%,var(--tint),transparent 100%),linear-gradient(120deg,var(--tint),transparent 60%),rgba(25,38,42,.92)}
+  .vgh-pick .vgh-icon{grid-column:1;grid-row:1/-1;align-self:center;width:116px;height:116px;margin:0}
+  .vgh-pick .vgh-name,.vgh-pick .vgh-line,.vgh-pick .vgh-status,.vgh-pick .vgh-barhost{grid-column:2}
+  .vgh-pick .vgh-name{font-size:23px}
+  .vgh-pick .vgh-line{font-size:15px}
+  .vgh-pick .vgh-status{align-self:end;font-size:14px}
 }
 @media(min-width:700px){
   .vgh-scroll{padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px));padding-top:max(24px,env(safe-area-inset-top,0px))}
@@ -140,6 +162,8 @@ button.vgh-card:active{border-color:var(--realm);box-shadow:0 6px 26px -6px var(
 }
 @media(prefers-reduced-motion:reduce){
   .vgh:before,.vgh:after,.vgh .vgh-cta,.vgh .vg-bar span,.vgh-sheet{animation:none}
+  .vgh-arrive .vgh{animation:none}
+  .vgh-arrive::after{display:none}
   .vgh:before,.vgh:after{opacity:.7}
   .vgh *{transition:none!important}
   button.vgh-card:active,.vgh .vg-primary:active,.vgh .vg-secondary:active{transform:none}

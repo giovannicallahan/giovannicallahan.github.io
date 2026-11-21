@@ -63,7 +63,7 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid 
 .vg-realm h2:focus{outline:none}
 .vg-learn{line-height:1.6;color:#d9e2d3}
 .vg-world{line-height:1.6;color:var(--muted);font-size:13px}
-.vg-lock{border-left:2px solid var(--warn);padding:2px 0 2px 10px;color:#ffc2a6;font-size:13px;line-height:1.5}
+.vg-lock{border:1px solid rgba(255,148,102,.45);border-radius:4px;background:rgba(255,148,102,.1);padding:8px 10px;color:#ffc2a6;font-size:13px;line-height:1.5}
 .vg-progress{font:11px var(--mono);letter-spacing:.5px;color:var(--cyan)}
 .vg-soon{font:11px var(--mono);letter-spacing:.5px;color:var(--muted)}
 .vg-bar{height:4px;background:#34433d}.vg-bar span{display:block;height:100%;background:var(--lime)}

@@ -16,6 +16,8 @@
      isOpen()         whether the overlay is open.
      back()           what Escape and Android Back do: figure card -> grid, else close. true if it did something.
    While the overlay is open, window.VectorGuildBack is wrapped so Android Back closes the overlay first.
+   To keep the lists short, figures not found yet and achievements already earned sit in closed drop-downs
+   (<details>); whether each is open is remembered while the page lives.
    The pure helpers at the top touch no DOM; qa/shell.test.js runs them under Node. */
 (function (root) {
   'use strict';
@@ -108,6 +110,15 @@
 
   var dlg = null, native = false, isOpen = false, tab = 'summon', detail = null, reveal = null, fresh = false, message = '', returnTo = null;
   var titleEl, dustEl, paneEl, liveEl, tabEls = {}, toastBox = null, chips = [], escAt = 0, quotedCost = 0;
+  var lockedOpen = false, earnedOpen = false;
+  function still() { try { return !!(root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches); } catch (e) { return false; } }
+  /* A closed drop-down with a count in its title. It tells `keep` when it is opened or closed. */
+  function dropDown(cls, title, open, keep, body) {
+    var d = el('details', 'vgc-more' + (cls ? ' ' + cls : '')), sum = el('summary', null, title);
+    if (open) d.open = true;
+    d.addEventListener('toggle', function () { keep(!!d.open); });
+    return add(d, sum, body);
+  }
 
   /* ---------- Chips ---------- */
   function drawChip(c) {
@@ -206,7 +217,7 @@
       if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); escAt = Date.now(); back(); return; }
       if (e.key !== 'Tab') return;
       /* Keep Tab inside the overlay (the native dialog does most of this; the plain fallback needs it). */
-      var f = Array.prototype.filter.call(dlg.querySelectorAll('button,a[href],[tabindex="0"]'), function (n) { return !n.disabled && n.tabIndex >= 0 && n.getClientRects().length; });
+      var f = Array.prototype.filter.call(dlg.querySelectorAll('button,a[href],summary,[tabindex="0"]'), function (n) { return !n.disabled && n.tabIndex >= 0 && n.getClientRects().length; });
       if (!f.length) { e.preventDefault(); return; }
       var first = f[0], last = f[f.length - 1], at = document.activeElement;
       if (e.shiftKey && (at === first || !dlg.contains(at))) { e.preventDefault(); focusOn(last); }
@@ -346,8 +357,34 @@
     if (row && row.owned && !row.equipped) acts.appendChild(button('vgc-secondary', 'Equip', function () { doEquip(f.id, 'vgc-reveal'); }));
     else if (row && row.equipped) acts.appendChild(el('span', 'vgc-pill', 'Equipped'));
     text.appendChild(acts);
+    /* The emblem on its halo. A fresh summon also gets sparks: twelve dots that fly out (collection.css). */
+    var artBox = el('span', 'vgc-reveal-art'); artBox.setAttribute('aria-hidden', 'true');
+    artBox.appendChild(emblem(f, 'vgc-reveal-emblem'));
+    if (fresh) {
+      var burst = el('span', 'vgc-burst'), far = r.rarity === 'legendary' ? 150 : r.rarity === 'rare' ? 120 : 96;
+      for (var i = 0; i < 12; i++) { var dot = el('i'); dot.style.setProperty('--vgc-a', (i * 30 + (i % 2) * 9) + 'deg'); dot.style.setProperty('--vgc-d', (far - (i % 3) * 22) + 'px'); burst.appendChild(dot); }
+      artBox.appendChild(burst);
+    }
     fresh = false;
-    return add(box, emblem(f, 'vgc-reveal-emblem'), text);
+    return add(box, artBox, text);
+  }
+  /* Draws the emblem's lines in, one after another, then inks its filled shapes. Lengths are measured here
+     because every emblem is different. Nothing is touched under reduced motion, and the inline styles are
+     taken off afterwards so the emblem ends exactly as figures.js wrote it. */
+  function drawIn(box) {
+    var svg = box && box.querySelector('.vgc-reveal-emblem svg');
+    if (!svg || still()) return;
+    var shapes = svg.querySelectorAll('path,circle,ellipse,line,polyline,polygon,rect'), touched = [];
+    for (var i = 0; i < shapes.length; i++) {
+      var sh = shapes[i], len = 0;
+      try { len = typeof sh.getTotalLength === 'function' ? sh.getTotalLength() : 0; } catch (e) { len = 0; }
+      if (!(len > 0) || !isFinite(len)) continue;
+      var delay = (0.15 + Math.min(i, 14) * 0.05).toFixed(2);
+      sh.style.strokeDasharray = len + ' ' + len; sh.style.strokeDashoffset = String(len);
+      sh.style.animation = 'vgc-draw .9s ease-out ' + delay + 's forwards, vgc-ink .45s ease-out ' + (+delay + 0.35).toFixed(2) + 's both';
+      touched.push(sh);
+    }
+    setTimeout(function () { touched.forEach(function (sh) { sh.style.strokeDasharray = ''; sh.style.strokeDashoffset = ''; sh.style.animation = ''; }); }, 2200);
   }
   function doPull() {
     var C = core(); if (!C) return;
@@ -357,7 +394,7 @@
     drawChips(); render();
     if (r.ok) {
       say(rarityName(r.rarity) + ' figure: ' + r.figure.name + '. ' + pullText(r, maxStars()));
-      var box = document.getElementById('vgc-reveal'); paneEl.scrollTop = 0; focusOn(box);
+      var box = document.getElementById('vgc-reveal'); paneEl.scrollTop = 0; drawIn(box); focusOn(box);
     } else { say(message); var go = document.getElementById('vgc-pull'); focusOn(go && !go.disabled ? go : tabEls[tab]); }
   }
   function doEquip(id, focusId) {
@@ -380,9 +417,9 @@
       add(none, el('p', null, 'No figures yet. ' + (C.cost() > 0 ? 'Summon one to start your collection.' : 'Your first summon is free.')), button('vgc-primary', 'Go to Summon', function () { show('summon'); focusOn(tabEls[tab]); }));
       paneEl.appendChild(none);
     }
-    /* Found figures first, each group in list order. */
-    var ul = el('ul', 'vgc-grid');
-    rows.filter(function (x) { return x.owned; }).concat(rows.filter(function (x) { return !x.owned; })).forEach(function (x) {
+    /* Found figures in a grid, in list order; the ones not found yet in a closed drop-down under it. */
+    var ul = el('ul', 'vgc-grid'), rest = el('ul', 'vgc-grid is-locked'), missing = 0;
+    rows.forEach(function (x) {
       var li = el('li'), t;
       if (x.owned) {
         t = button('vgc-tile is-' + x.rarity + (x.equipped ? ' is-equipped' : ''), null, function () { detail = x.id; message = ''; render(); paneEl.scrollTop = 0; focusOn(document.getElementById('vgc-card-name')); });
@@ -391,10 +428,12 @@
       } else {
         t = el('div', 'vgc-tile is-locked is-' + x.rarity);
         add(t, art('vgc-tile-emblem', UNKNOWN), el('span', 'vgc-tile-name', 'Not found yet'), el('span', 'vgc-tile-meta', rarityName(x.rarity)));
+        missing++;
       }
-      li.appendChild(t); ul.appendChild(li);
+      li.appendChild(t); (x.owned ? ul : rest).appendChild(li);
     });
-    paneEl.appendChild(ul);
+    if (n.owned) paneEl.appendChild(ul);
+    if (missing) paneEl.appendChild(dropDown('', 'Not found yet (' + missing + ')', lockedOpen, function (v) { lockedOpen = v; }, rest));
   }
   function fact(dl, name, value) { if (!value) return; var d = el('div'); add(d, el('dt', null, name), el('dd', null, value)); dl.appendChild(d); }
   function part(card, title, text) { if (!text) return; add(card, el('h4', 'vgc-h', title), el('p', 'vgc-text', text)); }
@@ -438,20 +477,25 @@
     if (!all.length) { paneEl.appendChild(el('p', 'vgc-empty', 'The achievement list did not load. Reload the page to try again.')); return; }
     var sum = el('p', 'vgc-count'); sum.appendChild(el('b', null, all.filter(function (a) { return a.earned; }).length + ' of ' + all.length + ' earned'));
     paneEl.appendChild(sum);
-    var ul = el('ul', 'vgc-ach');
+    /* Still to earn first; the earned ones in a closed drop-down under them (open when nothing else is left). */
+    var ul = el('ul', 'vgc-ach'), done = el('ul', 'vgc-ach'), earned = 0;
     all.forEach(function (a) {
-      var li = el('li', 'vgc-ach-item' + (a.earned ? ' is-earned' : '')), text = el('div', 'vgc-ach-text'), side = el('div', 'vgc-ach-side');
+      var began = !a.earned && a.progress && a.progress.have > 0;
+      var li = el('li', 'vgc-ach-item' + (a.earned ? ' is-earned' : began ? ' is-started' : '')), text = el('div', 'vgc-ach-text'), side = el('div', 'vgc-ach-side');
       add(text, el('strong', null, a.name), el('p', null, a.text));
       side.appendChild(el('span', 'vgc-ach-reward', '+' + a.reward + ' stardust'));
       if (a.earned) side.appendChild(el('span', 'vgc-pill', 'Earned'));
       else if (a.progress) {
         var bar = el('span', 'vgc-bar'), fill = el('span'); bar.setAttribute('aria-hidden', 'true');
-        fill.style.width = Math.round(100 * a.progress.have / a.progress.need) + '%'; bar.appendChild(fill);
+        var pct = Math.max(0, Math.min(100, Math.round(100 * a.progress.have / a.progress.need))) || 0;
+        fill.style.width = pct + '%'; fill.style.setProperty('--vgc-p', String(Math.max(1, pct))); bar.appendChild(fill);
         add(side, el('span', 'vgc-ach-progress', a.progress.have + ' of ' + a.progress.need), bar);
       } else side.appendChild(el('span', 'vgc-ach-progress', 'Not yet'));
-      add(li, text, side); ul.appendChild(li);
+      add(li, text, side); (a.earned ? done : ul).appendChild(li);
+      if (a.earned) earned++;
     });
-    paneEl.appendChild(ul);
+    if (earned < all.length) paneEl.appendChild(ul);
+    if (earned) paneEl.appendChild(dropDown('is-earned', 'Earned (' + earned + ')', earnedOpen || earned === all.length, function (v) { earnedOpen = v; }, done));
   }
 
   root.addEventListener('storage', function (e) { if (!e.key || /^vector-guild-save/.test(e.key)) refresh(); });

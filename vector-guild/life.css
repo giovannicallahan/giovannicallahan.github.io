@@ -1,0 +1,179 @@
+/* MathCosmos 2.2: colour and life for the realm page. Loaded last, after the pack's stylesheets (realm.html).
+   Looks only: no rule here changes the size or the place of a control. life.js adds the moving parts.
+   Everything that moves is switched off under prefers-reduced-motion (the block at the end). */
+
+/* ---- Palette. Light tints that all pass WCAG AA (4.5:1) as text on the dark panels (qa/styles.test.js checks).
+   One colour per chapter, in rainbow order so neighbours sit well together. The -rgb twin is for soft washes. ---- */
+:root{
+  --ch-1:#d4f36a;--ch-1-rgb:212,243,106;   /* lime */
+  --ch-2:#7fe3c8;--ch-2-rgb:127,227,200;   /* mint */
+  --ch-3:#7cc9f5;--ch-3-rgb:124,201,245;   /* sky */
+  --ch-4:#a9b4ff;--ch-4-rgb:169,180,255;   /* periwinkle */
+  --ch-5:#d5a6f7;--ch-5-rgb:213,166,247;   /* orchid */
+  --ch-6:#ff9fb8;--ch-6-rgb:255,159,184;   /* rose */
+  --ch-7:#ffb37a;--ch-7-rgb:255,179,122;   /* apricot */
+  --ch-8:#f6d868;--ch-8-rgb:246,216,104;   /* gold */
+  --ch:var(--ch-1);--ch-rgb:var(--ch-1-rgb);
+  /* Tiers */
+  --tier-basic:#8fe39a;--tier-basic-rgb:143,227,154;
+  --tier-intermediate:#f6c467;--tier-intermediate-rgb:246,196,103;
+  --tier-advanced:#ff9d8a;--tier-advanced-rgb:255,157,138;
+  /* Practice kinds */
+  --kind-setting:#7fe3c8;--kind-setting-rgb:127,227,200;
+  --kind-applied:#ffc266;--kind-applied-rgb:255,194,102;
+  --kind-challenge:#c3aaff;--kind-challenge-rgb:195,170,255;
+  /* Counters */
+  --xp:#f6d868;--sp:#7cc9f5;--dust:#c9b8ff;
+}
+[data-ch="1"]{--ch:var(--ch-1);--ch-rgb:var(--ch-1-rgb)}
+[data-ch="2"]{--ch:var(--ch-2);--ch-rgb:var(--ch-2-rgb)}
+[data-ch="3"]{--ch:var(--ch-3);--ch-rgb:var(--ch-3-rgb)}
+[data-ch="4"]{--ch:var(--ch-4);--ch-rgb:var(--ch-4-rgb)}
+[data-ch="5"]{--ch:var(--ch-5);--ch-rgb:var(--ch-5-rgb)}
+[data-ch="6"]{--ch:var(--ch-6);--ch-rgb:var(--ch-6-rgb)}
+[data-ch="7"]{--ch:var(--ch-7);--ch-rgb:var(--ch-7-rgb)}
+[data-ch="8"]{--ch:var(--ch-8);--ch-rgb:var(--ch-8-rgb)}
+
+/* The contract and graph panels size their text in rem: one step up here makes them about 10% larger too,
+   and lifts their smallest label (0.72rem) over the 12 px floor. Everything else on the page is sized in px. */
+html{font-size:110%}
+
+/* ---- Starfield: two fixed layers behind the page. Small dots that drift a little and twinkle slowly. ---- */
+body::before,body::after{content:'';position:fixed;left:0;right:0;top:-90px;bottom:-90px;z-index:-1;pointer-events:none}
+body::before{
+  background-image:
+    radial-gradient(1.4px 1.4px at 31px 47px,rgba(237,240,221,.75) 50%,transparent 52%),
+    radial-gradient(1px 1px at 149px 113px,rgba(237,240,221,.55) 50%,transparent 52%),
+    radial-gradient(1.2px 1.2px at 211px 29px,rgba(124,201,245,.8) 50%,transparent 52%),
+    radial-gradient(1px 1px at 83px 197px,rgba(237,240,221,.5) 50%,transparent 52%),
+    radial-gradient(1.5px 1.5px at 263px 181px,rgba(246,216,104,.7) 50%,transparent 52%),
+    radial-gradient(1px 1px at 37px 259px,rgba(237,240,221,.6) 50%,transparent 52%),
+    radial-gradient(1px 1px at 173px 283px,rgba(213,166,247,.75) 50%,transparent 52%);
+  background-size:307px 311px,233px 239px,419px 401px,281px 347px,461px 433px,353px 293px,389px 449px;
+  opacity:.55;animation:life-drift 140s ease-in-out infinite alternate}
+body::after{
+  background-image:
+    radial-gradient(1.6px 1.6px at 97px 71px,rgba(237,240,221,.9) 50%,transparent 52%),
+    radial-gradient(1.3px 1.3px at 311px 223px,rgba(127,227,200,.85) 50%,transparent 52%),
+    radial-gradient(1.4px 1.4px at 199px 331px,rgba(255,159,184,.8) 50%,transparent 52%),
+    radial-gradient(60vw 46vh at 88% 6%,rgba(124,201,245,.07),transparent 70%),
+    radial-gradient(55vw 50vh at 4% 96%,rgba(213,166,247,.06),transparent 70%);
+  background-size:467px 409px,523px 487px,571px 541px,100% 100%,100% 100%;
+  background-repeat:repeat,repeat,repeat,no-repeat,no-repeat;
+  opacity:.75;animation:life-twinkle 9s ease-in-out infinite alternate}
+@keyframes life-drift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-28px,-70px,0)}}
+@keyframes life-twinkle{from{opacity:.4}to{opacity:.85}}
+
+/* ---- Chapter colour: the drop-down header, its number, its bars, its badge and what is inside. ---- */
+.dd[data-ch]{border-color:rgba(var(--ch-rgb),.3)}
+.dd[data-ch] .dd-toggle{background:linear-gradient(100deg,rgba(var(--ch-rgb),.14),rgba(var(--ch-rgb),0) 64%)}
+.dd[data-ch] .dd-toggle:hover,.dd[data-ch] .dd-toggle[aria-expanded=true]{background:linear-gradient(100deg,rgba(var(--ch-rgb),.2),rgba(var(--ch-rgb),.03) 70%)}
+.dd[data-ch] .dd-toggle:focus-visible{outline-color:var(--ch)}
+.dd[data-ch] .sector-number{flex:0 0 auto;display:grid;place-items:center;width:42px;height:42px;border:1px solid rgba(var(--ch-rgb),.6);border-radius:12px;background:rgba(var(--ch-rgb),.12);color:var(--ch);font-weight:600}
+.dd-complete[data-ch] .sector-number,.dd-mastered[data-ch] .sector-number{background:var(--ch);border-color:var(--ch);color:#14201f}
+.dd[data-ch] .dd-bar{background:rgba(var(--ch-rgb),.16)}
+.dd[data-ch] .dd-bar i{background:linear-gradient(90deg,rgba(var(--ch-rgb),.6),var(--ch))}
+.dd[data-ch] .dd-bar-practice{height:4px}
+.dd[data-ch] .dd-bar-practice i{background:rgba(var(--ch-rgb),.72)}
+.dd[data-ch] .dd-badge{color:var(--ch)}
+.dd-mastered[data-ch] .dd-badge,.dd[data-ch] .chapter-mastered{color:var(--ch-8)}
+.dd-complete[data-ch],.dd-mastered[data-ch]{border-color:rgba(var(--ch-rgb),.6)}
+.dd[data-ch] .dd-chev{border-color:var(--ch)}
+.dd[data-ch] .dd-panel{border-top-color:rgba(var(--ch-rgb),.25)}
+.dd[data-ch] .chapter-note{color:var(--ch);border-top-color:rgba(var(--ch-rgb),.25)}
+
+/* Mission cards in the chapter colour. */
+.dd[data-ch] .quest-top>span:first-child{color:var(--ch)}
+.dd[data-ch] .quest .status{color:var(--ch)}
+.dd[data-ch] .quest.done .status{color:var(--ivory)}
+.dd[data-ch] .quest.done{background:rgba(var(--ch-rgb),.05)}
+.dd[data-ch] .quest:hover{background:rgba(var(--ch-rgb),.1)}
+.dd[data-ch] .quest,.dd[data-ch] .concept{border-color:rgba(var(--ch-rgb),.18)}
+.dd[data-ch] .quest p{color:#a9b8b4;line-height:1.9}
+.dd[data-ch] .practice-label{color:var(--ch)}
+.dd[data-ch] .tree-node{border-color:rgba(var(--ch-rgb),.3)}
+.dd[data-ch] .tree-node.ready span{color:var(--ch)}
+.dd[data-ch] .tree-node.mastered{background:rgba(var(--ch-rgb),.1)}
+.dd[data-ch] .tree-node.mastered span{color:var(--ivory)}
+.dd[data-ch] .tree-node:hover{background:rgba(var(--ch-rgb),.14)}
+.dd[data-ch] .guide-id,.dd[data-ch] .guide-list summary:after{color:var(--ch)}
+.dd[data-ch] .guide-body h4,.dd[data-ch] .worked-example strong{color:var(--ch)}
+.dd[data-ch] .worked-example{border-color:rgba(var(--ch-rgb),.35);background:rgba(var(--ch-rgb),.07)}
+.dd[data-ch] .card .symbol{color:var(--ch)}
+.dd[data-ch] .card .badge{color:var(--ch);border-color:rgba(var(--ch-rgb),.5)}
+
+/* ---- Tier badges on the mission cards. ---- */
+.tier-badge{display:inline-block;padding:0 9px;border:1px solid;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.3px;line-height:1.6;white-space:nowrap;color:var(--ivory)}
+.tier-badge[data-tier=basic]{color:var(--tier-basic);border-color:rgba(var(--tier-basic-rgb),.55);background:rgba(var(--tier-basic-rgb),.12)}
+.tier-badge[data-tier=intermediate]{color:var(--tier-intermediate);border-color:rgba(var(--tier-intermediate-rgb),.55);background:rgba(var(--tier-intermediate-rgb),.12)}
+.tier-badge[data-tier=advanced]{color:var(--tier-advanced);border-color:rgba(var(--tier-advanced-rgb),.55);background:rgba(var(--tier-advanced-rgb),.12)}
+
+/* ---- Practice chips: one colour per kind (new setting, applied problem, challenge). ---- */
+.practice-chip{--kind:var(--ch);--kind-rgb:var(--ch-rgb)}
+.practice-chip[data-kind=setting]{--kind:var(--kind-setting);--kind-rgb:var(--kind-setting-rgb)}
+.practice-chip[data-kind=applied]{--kind:var(--kind-applied);--kind-rgb:var(--kind-applied-rgb)}
+.practice-chip[data-kind=challenge]{--kind:var(--kind-challenge);--kind-rgb:var(--kind-challenge-rgb)}
+.practice-chip .pc-letter{background:var(--kind);color:#14201f}
+.practice-chip .pc-kind,.practice-chip .pc-state{color:var(--kind)}
+.practice-chip.ready{border-color:rgba(var(--kind-rgb),.65);background:rgba(var(--kind-rgb),.07)}
+.practice-chip.ready:hover,.practice-chip.done:hover{background:rgba(var(--kind-rgb),.16)}
+.practice-chip.done{border-color:rgba(var(--kind-rgb),.4);background:rgba(var(--kind-rgb),.12)}
+.practice-chip.done .pc-letter{background:var(--kind)}
+.practice-chip.done .pc-state{color:var(--kind)}
+.practice-chip.locked{border-color:rgba(var(--kind-rgb),.35)}
+.practice-chip.locked .pc-letter{background:#3a4a4a;color:#cfdad5}
+.practice-chip.locked .pc-state{color:#d8ba85}
+.practice-intro b{color:var(--kind-applied)}
+
+/* ---- Counters: XP gold, skill points sky, stardust violet. ---- */
+.top-stats>span{font-size:13px}
+.top-stats b{font-size:15px;font-variant-numeric:tabular-nums}
+.top-stats>span:nth-of-type(1) i,.top-stats #xp{color:var(--xp)}
+.top-stats>span:nth-of-type(2) i,.top-stats #points{color:var(--sp)}
+.collection-chip .vgc-chip-dust,.collection-chip>b,.collection-chip>i,.collection-chip .vgc-chip-emblem.is-spark{color:var(--dust)}
+.collection-chip.vgc-chip{border-color:rgba(201,184,255,.4)}
+.life-tick{text-shadow:0 0 12px currentColor}
+
+/* The four numbers under the outpost, the six sections of the console and the page headings. */
+.strip>div:nth-child(1) strong{color:var(--ch-1)}
+.strip>div:nth-child(2) strong{color:var(--ch-3)}
+.strip>div:nth-child(3) strong{color:var(--sp)}
+.strip>div:nth-child(4) strong{color:var(--xp)}
+.strip strong{font-variant-numeric:tabular-nums}
+.sidebar .nav:nth-child(1) span{color:var(--ch-1)}
+.sidebar .nav:nth-child(2) span{color:var(--ch-2)}
+.sidebar .nav:nth-child(3) span{color:var(--ch-3)}
+.sidebar .nav:nth-child(4) span{color:var(--ch-5)}
+.sidebar .nav:nth-child(5) span{color:var(--ch-7)}
+.sidebar .nav:nth-child(6) span{color:var(--ch-6)}
+.review-bar{border-color:rgba(124,201,245,.35);background:linear-gradient(100deg,rgba(124,201,245,.1),rgba(124,201,245,0) 60%),#172428}
+.review-bar strong{color:var(--ch-3)}
+.notebook .nb-entry.is-open .badge{color:var(--ch-7);border-color:rgba(var(--ch-7-rgb),.5)}
+
+/* ---- Life. Bars slide to their new width (life.js sets the old width first). ---- */
+.dd-bar i,.progressbar span{transition:width .75s cubic-bezier(.2,.8,.2,1)}
+/* Cards lift on press: a shadow and a little light. Nothing changes size or place. */
+.quest,.practice-chip,.tree-node,.dd-toggle,.primary,.secondary{transition:box-shadow .14s ease-out,filter .14s ease-out,background-color .14s ease-out}
+.quest:active,.practice-chip:active,.tree-node:active{position:relative;z-index:1;box-shadow:0 10px 24px -8px rgba(0,0,0,.75),inset 0 0 0 1px rgba(var(--ch-rgb),.55);filter:brightness(1.14)}
+.dd-toggle:active{filter:brightness(1.16)}
+.primary:active,.secondary:active{box-shadow:0 8px 20px -8px rgba(0,0,0,.8);filter:brightness(1.1)}
+/* A chapter that has just been completed glows once (life.js adds the class). */
+.life-glow{animation:life-glow 1.5s ease-out 1}
+@keyframes life-glow{0%{box-shadow:0 0 0 0 rgba(var(--ch-rgb),0)}30%{box-shadow:0 0 34px 2px rgba(var(--ch-rgb),.55)}100%{box-shadow:0 0 0 0 rgba(var(--ch-rgb),0)}}
+/* The burst when a mission is solved: a canvas over the page that takes no taps (life.js draws it). */
+.life-burst{position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;z-index:2147483000}
+
+/* Text floor: notes written in the page code with their own small size still render at 12 px. */
+[style*="font-size:11px"],[style*="font-size:10px"],[style*="font-size: 11px"],[style*="font-size: 10px"]{font-size:12px!important}
+
+@media(max-width:650px){
+  .dd[data-ch] .sector-number{width:38px;height:38px;border-radius:10px}
+  .dd-panel>.guide-list details .guide-body{padding:0 14px 18px}
+  .top-stats>span{font-size:12px}
+  .top-stats b{font-size:14px}
+}
+@media(prefers-reduced-motion:reduce){
+  body::before,body::after,.life-glow{animation:none!important}
+  .dd-bar i,.progressbar span,.quest,.practice-chip,.tree-node,.dd-toggle,.primary,.secondary{transition:none!important}
+  .life-burst{display:none!important}
+}

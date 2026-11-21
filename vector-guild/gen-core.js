@@ -4,7 +4,9 @@
      draw(R)    returns a fresh, well-behaved parameter set from the seeded random source R
      build(p)   returns {prompt, answer, hints, solution, guidance} for parameters p
    Labels, tolerance, lesson, worked example and sources always come from the authored mission.
-   Generator files (gen-a.js ... gen-d.js) register themselves on window.MISSION_GEN. */
+   Generator files (gen-a.js ... gen-d.js) register themselves on window.MISSION_GEN.
+   A practice mission (id q01b, docs/PACK-FORMAT.md §10) has its own generator under its own id; the random
+   numbers hash that id, so q01 and q01b never share a draw. */
 window.MISSION_GEN = window.MISSION_GEN || {};
 window.Gen = (() => {
   'use strict';

@@ -1,8 +1,8 @@
-/* MathCosmos shell (index.html): wormhole intro, 3D star map of the realms, and a flat list of the same realms.
+/* MathCosmos shell (index.html): the wormhole intro, which ends on the home view (shell/home.js, window.VGHome).
    Reads window.VG_REALMS (realms/registry.js) and window.VGSave (save-store.js, contract in docs/SAVE-V2.md).
-   The flat list is the fallback when three.js or WebGL is missing, the "List view" over the map, and the
-   screen-reader copy of the map while 3D runs. The pure helpers below touch no DOM and no three.js;
-   qa/shell.test.js runs them under Node. */
+   The home view is what the player sees: with or without WebGL, it has its own flat icons. The 3D star map and
+   the flat list further down are the fallback for when home.js did not load, and are never started otherwise.
+   The pure helpers below touch no DOM and no three.js; qa/shell.test.js runs them under Node. */
 (function(root){
 'use strict';
 
@@ -20,23 +20,32 @@ function progressText(solved,total){
   return solved+' / '+total+' solved'+(solved>=total?' · complete':'');
 }
 function enterHref(id){return 'realm.html?realm='+encodeURIComponent(id)}
+/* A pack with practice missions lists its learn missions in `learn` (registry.js). Practice is optional and its ids
+   end in a letter (q07b), so such a part is learned once that many other missions are solved. */
+function learnedAll(part,slice){
+  var need=part.learn|0;if(!(need>0)||!slice||!Array.isArray(slice.solved))return false;
+  var seen={},n=0;
+  slice.solved.forEach(function(id){if(typeof id==='string'&&!/\d[a-z]$/.test(id)&&!Object.prototype.hasOwnProperty.call(seen,id)){seen[id]=1;n++}});
+  return n>=need;
+}
 function partInfo(part,getSlice){
   var ready=part.status==='ready'&&!!part.id,total=ready?Math.max(0,part.missions|0):0,
       solved=ready?solvedCount(safeSlice(getSlice,part.id),total):0;
   return {id:part.id,name:part.name||part.id,ready:ready,solved:solved,total:total,
-    finished:ready&&total>0&&solved>=total,started:solved>0,
+    finished:ready&&total>0&&solved>=total,learned:ready&&learnedAll(part,safeSlice(getSlice,part.id)),started:solved>0,
     text:ready?progressText(solved,total):'Not built yet',href:ready?enterHref(part.id):null};
 }
 function nodeParts(node,getSlice){return (node.parts||[]).map(function(p){return partInfo(p,getSlice)})}
-/* A node counts as unfinished only when it has a ready part with missions left; "coming" parts never lock anything. */
-function nodeUnfinished(node,getSlice){return nodeParts(node,getSlice).some(function(p){return p.ready&&!p.finished})}
+/* A node counts as unfinished only when it has a ready part with missions left to learn; optional practice and
+   "coming" parts never lock anything. */
+function nodeUnfinished(node,getSlice){return nodeParts(node,getSlice).some(function(p){return p.ready&&!p.finished&&!p.learned})}
 function joinNames(a){return a.length<2?(a[0]||''):a.slice(0,-1).join(', ')+' and '+a[a.length-1]}
 /* Soft lock: a warning and a way to the earlier realm, never a block. */
 function softLock(node,realms,getSlice){
   var byId={};(realms||[]).forEach(function(r){byId[r.node]=r});
   var missing=(node.needs||[]).map(function(id){return byId[id]}).filter(function(r){return r&&nodeUnfinished(r,getSlice)});
   if(!missing.length)return {locked:false,missing:[],sentence:'',goName:'',goHref:''};
-  var first=missing[0],target=nodeParts(first,getSlice).filter(function(p){return p.ready&&!p.finished})[0];
+  var first=missing[0],target=nodeParts(first,getSlice).filter(function(p){return p.ready&&!p.finished&&!p.learned})[0];
   return {locked:true,missing:missing.map(function(r){return r.node}),
     sentence:node.name+' builds on '+joinNames(missing.map(function(r){return r.name}))+', which you have not finished yet, but you can go in now.',
     goName:first.name,goHref:target.href};
@@ -62,13 +71,15 @@ function chooseMode(o){
   return {mode:'3d',intro:!o.introSeen&&!o.reducedMotion};
 }
 /* Android Back: close the innermost open thing; null means nothing is open and Back should leave the app.
-   The collection overlay covers everything else, so it goes first. */
-function backAction(s){s=s||{};return s.collectionOpen?'collection':s.dialogOpen?'dialog':s.cardOpen?'card':s.listOpen?'list':null}
+   The collection overlay covers everything else, so it goes first; then the backup dialog; then the home
+   view's details panel. */
+function backAction(s){s=s||{};return s.collectionOpen?'collection':s.dialogOpen?'dialog':s.homePanelOpen?'home':s.cardOpen?'card':s.listOpen?'list':null}
 /* What Back and Escape may close. A card cannot be open under the list, and a list shown because the
    WebGL context is lost cannot be closed (there is no map to go back to), so Back then leaves the app. */
 function overlayState(s){
   s=s||{};
-  return {collectionOpen:!!s.collectionOpen,dialogOpen:!!s.dialogOpen,cardOpen:!!s.cardOpen&&!s.listOverlay,listOpen:!!s.listOverlay&&!s.contextLost};
+  return {collectionOpen:!!s.collectionOpen,dialogOpen:!!s.dialogOpen,homePanelOpen:!!s.homePanelOpen,
+    cardOpen:!!s.cardOpen&&!s.listOverlay&&!s.homeOn,listOpen:!!s.listOverlay&&!s.contextLost&&!s.homeOn};
 }
 /* The Android wrapper saves through a system file picker: the file exists only after the player confirms,
    under the name they pick, so the page must not claim a file was made. */
@@ -236,23 +247,56 @@ if(choice.mode==='3d'){
 }
 
 var selected=null,lastLabel=null,contextLost=false;
-function openThings(){return overlayState({collectionOpen:collOpen(),dialogOpen:!!(dlg&&dlg.open),cardOpen:!!selected,listOverlay:listOverlay,contextLost:contextLost})}
+
+/* ---------- Home view (shell/home.js): what the wormhole leads into ----------
+   showHome returns false when home.js did not load; the star map or the flat list is used then. */
+var homeHost=$('vg-home'),homeOn=false,replayBtn=null,arriveTimer=0;
+function homePanelOpen(){try{return homeOn&&!!root.VGHome.isOpen()}catch(e){return false}}
+function canReplay(){return !!renderer&&!reduced&&!contextLost}
+function syncReplay(){if(replayBtn)replayBtn.hidden=!canReplay()}
+function replayIntro(){
+  if(!homeOn||!canReplay())return;
+  root.VGHome.unmount();homeOn=false;replayBtn=null;stage.hidden=false;resize();startTunnel();start();
+  $('vg-skip').focus({preventScroll:true});
+}
+function showHome(arrive){
+  if(!root.VGHome||typeof root.VGHome.mount!=='function'||!homeHost)return false;
+  var actions=[];
+  /* The Collection button is drawn by collection/ui.js: emblem, the word and the stardust count. Pressing it opens the overlay. */
+  if(hasColl)actions.push({label:'Collection',place:'top',className:'vg-coll',setup:function(b){CollUI.chip(b,{label:'Collection'})}});
+  if(renderer)actions.push({label:'Replay intro',onClick:replayIntro,setup:function(b){replayBtn=b;syncReplay()}});
+  if(canBackup)actions.push({label:'Back up or restore save',onClick:openBackup});
+  try{root.VGHome.mount(homeHost,{realms:REALMS,save:Save,three:forceFlat?null:THREE,actions:actions})}
+  catch(e){try{root.VGHome.unmount()}catch(err){}replayBtn=null;return false}
+  homeOn=true;list.hidden=true;
+  /* Only after the tunnel ran to its end: the page fades in out of the flash (home.css; nothing under reduced motion). */
+  clearTimeout(arriveTimer);homeHost.classList.toggle('vgh-arrive',!!arrive);
+  if(arrive)arriveTimer=setTimeout(function(){homeHost.classList.remove('vgh-arrive')},1400);
+  return true;
+}
+
+function openThings(){return overlayState({collectionOpen:collOpen(),dialogOpen:!!(dlg&&dlg.open),homePanelOpen:homePanelOpen(),homeOn:homeOn,cardOpen:!!selected,listOverlay:listOverlay,contextLost:contextLost})}
 window.VectorGuildBack=function(){
   var a=backAction(openThings());
   if(a==='collection'){CollUI.back();return true}
   if(a==='dialog'){dlg.close();return true}
+  if(a==='home')return !!root.VGHome.back();
   if(a==='card'){closeCard();return true}
   if(a==='list'){closeList();return true}
   return false;
 };
 var closeCard=function(){},closeList=function(){},refreshMap=function(){};
-function refresh(){buildModels();renderList();refreshMap();showXp();settleAwards()}
+function refresh(){buildModels();renderList();refreshMap();showXp();if(homeOn)root.VGHome.refresh();settleAwards()}
+/* Coming back from a realm: the page is either restored as it was (pageshow), or was only hidden (the Android
+   app and a tab switch), or another tab saved. Each time the progress and the stardust are read again. */
 root.addEventListener('pageshow',function(e){if(e.persisted)refresh()});
 root.addEventListener('storage',function(e){if(!e.key||/^vector-guild-save/.test(e.key))refresh()});
+document.addEventListener('visibilitychange',function(){if(!document.hidden)refresh()});
 
 buildModels();showXp();settleAwards();
 if(choice.mode==='flat'){
   document.body.classList.add('vg-flat');
+  if(showHome(false)){document.body.classList.remove('vg-booting');return}
   if(!forceFlat&&REALMS.length)$('vg-list-note').hidden=false;
   renderList();
   document.body.classList.remove('vg-booting');
@@ -523,6 +567,15 @@ function startTunnel(){
 }
 /* flashIn: the tunnel ran to its end, so the map fades in from the flash; a skip or a direct start does not flash. */
 function startMap(flashIn){
+  if(showHome(flashIn)){
+    /* Hiding the stage drops focus from any of its buttons, and when the tunnel ends by itself nothing may be focused:
+       either way move to the home heading so the change of page is announced. A direct start (no tunnel) with nothing
+       focused is left alone, and so is focus outside the stage (the backup dialog, the Collection). */
+    var a=document.activeElement,move=a===$('vg-skip')||(!!a&&stage.contains(a))||(!!flashIn&&(!a||a===document.body));
+    phase='home';stop();flash.style.opacity='0';stage.hidden=true;
+    if(move){var h1=document.getElementById('vgh-title');if(h1)h1.focus({preventScroll:true})}
+    return;
+  }
   phase='map';mapT=clock;mapFlash=!!flashIn;if(!mapFlash)flash.style.opacity='0';tunnel.visible=false;map.visible=true;stars.visible=true;scene.fog.density=0.0035;
   camera.fov=58;camera.updateProjectionMatrix();
   hint.textContent=narrow&&narrow.matches?'Drag to turn. Tap a realm.':'Drag to turn the map. Pick a realm.';
@@ -533,7 +586,7 @@ function startMap(flashIn){
 }
 $('vg-skip').addEventListener('click',function(){startMap(false)});
 $('vg-replay').addEventListener('click',function(){if(!reduced)startTunnel()});
-if(reducedMQ){var onMQ=function(e){reduced=e.matches;if(phase==='map')$('vg-replay').hidden=reduced;if(reduced&&phase==='tunnel')startMap(false)};
+if(reducedMQ){var onMQ=function(e){reduced=e.matches;syncReplay();if(phase==='map')$('vg-replay').hidden=reduced;if(reduced&&phase==='tunnel')startMap(false)};
   if(reducedMQ.addEventListener)reducedMQ.addEventListener('change',onMQ);else if(reducedMQ.addListener)reducedMQ.addListener(onMQ)}
 
 function tunnelFrame(dt){
@@ -597,12 +650,12 @@ function frame(now){
   renderer.render(scene,camera);
   raf=requestAnimationFrame(frame);
 }
-function start(){if(running||contextLost||listOverlay||document.hidden)return;running=true;last=0;raf=requestAnimationFrame(frame)}
+function start(){if(running||contextLost||listOverlay||homeOn||document.hidden)return;running=true;last=0;raf=requestAnimationFrame(frame)}
 function stop(){running=false;if(raf){cancelAnimationFrame(raf);raf=0}}
 document.addEventListener('visibilitychange',function(){if(document.hidden)stop();else start()});
-canvas.addEventListener('webglcontextlost',function(e){e.preventDefault();contextLost=true;stop();if(phase==='tunnel')startMap(false);
+canvas.addEventListener('webglcontextlost',function(e){e.preventDefault();contextLost=true;stop();syncReplay();if(!homeOn&&phase==='tunnel')startMap(false);if(homeOn)return;
   if(listOverlay){var hadBack=document.activeElement===listBack;showPaused();if(hadBack)listTitle.focus({preventScroll:true})}else openList(true)},false);
-canvas.addEventListener('webglcontextrestored',function(){contextLost=false;resize();if(listAuto)closeList();else{if(listOverlay)showPaused();start()}},false);
+canvas.addEventListener('webglcontextrestored',function(){contextLost=false;resize();syncReplay();if(homeOn)return;if(listAuto)closeList();else{if(listOverlay)showPaused();start()}},false);
 
 if(choice.intro)startTunnel();else startMap(false);
 start();

@@ -2,8 +2,10 @@
    ctx is built by game/collection/core.js from the save only (docs/COLLECTION-API.md, "Achievement context"):
      solved, stars, chapters, landmarks      totals over every realm
      realmsWithSolves                        realms with at least one solved mission
-     realms[id]                              { solved, stars, chapters, landmarks, missions, finished }
-     landmarkRealm                           true when one finished realm has every landmark built
+     practice                                practice missions solved (ids like q01b), part of `solved`
+     realms[id]                              { solved, stars, chapters, landmarks, missions, finished, learn, learned, complete }
+                                             complete: every concept learned; finished: every mission solved, practice too
+     landmarkRealm                           true when one realm with every concept learned has every landmark built
      drills, pulls                           counters
      figures, copiesMax, legendary, equipped distinct figures owned, highest copy count, owns a legendary, has one equipped
      fieldBest {have, need}, fieldDone       the field closest to complete, and whether one is complete
@@ -18,6 +20,7 @@ window.VG_ACHIEVEMENTS = (() => {
   /* An achievement that is simply done or not done. */
   const once = (id, name, text, reward, test) => ({ id, name, text, reward, test: ctx => !!test(ctx) });
   const finished = (ctx, id) => !!(ctx.realms[id] && ctx.realms[id].finished);
+  const complete = (ctx, id) => !!(ctx.realms[id] && ctx.realms[id].complete);
   return [
     once('solve-1', 'First light', 'Solve your first mission.', 15, c => c.solved >= 1),
     reach('solve-5', 'Finding your feet', 'Solve 5 missions.', 20, 5, c => c.solved),
@@ -30,7 +33,9 @@ window.VG_ACHIEVEMENTS = (() => {
     reach('star-25', 'A sky of stars', 'Earn 25 first-try stars.', 80, 25, c => c.stars),
     once('chapter-1', 'Chapter closed', 'Finish a chapter.', 25, c => c.chapters >= 1),
     reach('chapter-3', 'Three chapters', 'Finish 3 chapters.', 50, 3, c => c.chapters),
-    once('found-done', 'Solid ground', 'Finish every mission in Foundations.', 120, c => finished(c, 'found')),
+    /* Foundations has 40 concepts and 120 optional practice missions. "Solid ground" keeps its 2.1 meaning: the 40 learn missions. */
+    once('found-done', 'Solid ground', 'Learn every concept in Foundations.', 120, c => complete(c, 'found')),
+    once('found-master', 'Bedrock', 'Solve every mission in Foundations, practice included.', 150, c => finished(c, 'found')),
     once('la-done', 'Master of arrows', 'Finish every mission in Linear algebra.', 150, c => finished(c, 'la')),
     reach('two-realms', 'Explorer', 'Solve a mission in two realms.', 30, 2, c => c.realmsWithSolves),
     once('drill-1', 'Warm-up', 'Finish a review drill.', 15, c => c.drills >= 1),

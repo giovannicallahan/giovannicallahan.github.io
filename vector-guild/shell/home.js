@@ -2,9 +2,13 @@
    realm cards with a turning 3D icon each, a closed drop-down for realms that are not built yet, and a details
    panel (bottom sheet on a phone, side panel on a wide screen) with the parts of a realm and its Enter buttons.
    Reads window.VG_REALMS (realms/registry.js) and window.VGSave (save-store.js). Classic script, no network.
-   window.VGHome = { mount(container, opts), unmount(), refresh(), back() }
+   window.VGHome = { mount(container, opts), unmount(), refresh(), back(), isOpen() }
      opts: realms, save, three (pass null for no 3D), reducedMotion, onEnter(href),
-           actions: [{label, onClick | href, place: 'top' | 'foot'}]  extra buttons (Collection, Replay intro, backup)
+           actions: [{label, onClick | href, place: 'top' | 'foot', className, setup(button)}]  extra buttons
+           (Collection, Replay intro, backup). setup is called once with the new button, so the host can draw into
+           it (the collection chip) or keep it to hide later.
+     back() closes the details panel and returns true, or returns false when none is open; isOpen() says which.
+   Mission counts come from the registry (part.missions); nothing here knows how many there are.
    The pure helpers touch no DOM and no three.js; qa/home.test.js runs them under Node.
    The card wording and soft-lock logic are a copy of shell/shell.js (cardModel, softLock, renderRealm): keep them in step. */
 (function(root){
@@ -23,22 +27,30 @@ function progressText(solved,total){
   return solved+' / '+total+' solved'+(solved>=total?' · complete':'');
 }
 function enterHref(id){return 'realm.html?realm='+encodeURIComponent(id)}
+/* A pack with practice missions lists its learn missions in `learn` (registry.js). Practice is optional and its ids
+   end in a letter (q07b), so such a part is learned once that many other missions are solved. */
+function learnedAll(part,slice){
+  var need=part.learn|0;if(!(need>0)||!slice||!Array.isArray(slice.solved))return false;
+  var seen={},n=0;
+  slice.solved.forEach(function(id){if(typeof id==='string'&&!/\d[a-z]$/.test(id)&&!Object.prototype.hasOwnProperty.call(seen,id)){seen[id]=1;n++}});
+  return n>=need;
+}
 function partInfo(part,getSlice){
   var ready=part.status==='ready'&&!!part.id,total=ready?Math.max(0,part.missions|0):0,
       solved=ready?solvedCount(safeSlice(getSlice,part.id),total):0;
   return {id:part.id,name:part.name||part.id,ready:ready,solved:solved,total:total,
-    finished:ready&&total>0&&solved>=total,started:solved>0,
+    finished:ready&&total>0&&solved>=total,learned:ready&&learnedAll(part,safeSlice(getSlice,part.id)),started:solved>0,
     text:ready?progressText(solved,total):'Not built yet',href:ready?enterHref(part.id):null};
 }
 function nodeParts(node,getSlice){return (node.parts||[]).map(function(p){return partInfo(p,getSlice)})}
-function nodeUnfinished(node,getSlice){return nodeParts(node,getSlice).some(function(p){return p.ready&&!p.finished})}
+function nodeUnfinished(node,getSlice){return nodeParts(node,getSlice).some(function(p){return p.ready&&!p.finished&&!p.learned})}
 function joinNames(a){return a.length<2?(a[0]||''):a.slice(0,-1).join(', ')+' and '+a[a.length-1]}
 /* Soft lock: a warning and a way to the earlier realm, never a block. */
 function softLock(node,realms,getSlice){
   var byId={};(realms||[]).forEach(function(r){byId[r.node]=r});
   var missing=(node.needs||[]).map(function(id){return byId[id]}).filter(function(r){return r&&nodeUnfinished(r,getSlice)});
   if(!missing.length)return {locked:false,missing:[],sentence:'',goName:'',goHref:''};
-  var first=missing[0],target=nodeParts(first,getSlice).filter(function(p){return p.ready&&!p.finished})[0];
+  var first=missing[0],target=nodeParts(first,getSlice).filter(function(p){return p.ready&&!p.finished&&!p.learned})[0];
   return {locked:true,missing:missing.map(function(r){return r.node}),
     sentence:node.name+' builds on '+joinNames(missing.map(function(r){return r.name}))+', which you have not finished yet, but you can go in now.',
     goName:first.name,goHref:target.href};
@@ -88,10 +100,11 @@ function cardStatus(model){
   if(model.startHere&&!model.started)return 'Start here';
   return nodeProgress(model).text;
 }
-/* The one primary button. The save keeps no "last played" time, so "continue" goes to the unfinished part with the
-   most missions solved (registry order breaks ties); when every started part is finished it goes to the next
-   unfinished part. With no progress at all it is "Start here" on the first realm that builds on nothing.
-   null when nothing is playable. */
+/* The one primary button. The save keeps no "last played" time, so "continue" goes to the part still being learned
+   with the most missions solved (registry order breaks ties); when every started part is done it goes to the next
+   part that is not. A part is done here when every mission is solved or every learn mission is (practice is
+   optional, as on the cards' soft lock). Only when nothing is left to learn does it offer a part with practice left.
+   With no progress at all it is "Start here" on the first realm that builds on nothing. null when nothing is playable. */
 function continueTarget(realms,getSlice){
   var list=[];
   (realms||[]).forEach(function(r){(r.parts||[]).forEach(function(p){
@@ -103,10 +116,12 @@ function continueTarget(realms,getSlice){
   function out(kind,c){return {kind:kind,id:c.info.id,node:c.node.node,name:c.info.name,href:c.info.href,
     label:(kind==='start'?'Start here: ':'Continue: ')+c.info.name,progress:c.info.text}}
   function bySolved(a,b){return b.info.solved-a.info.solved||a.order-b.order}
-  var open=list.filter(function(c){return c.active&&!c.info.finished}).sort(bySolved);
+  function done(c){return c.info.finished||c.info.learned}
+  var open=list.filter(function(c){return c.active&&!done(c)}).sort(bySolved);
   if(open.length)return out('continue',open[0]);
   if(list.some(function(c){return c.active})){
-    var next=list.filter(function(c){return !c.info.finished})[0];
+    var next=list.filter(function(c){return !done(c)})[0]||
+      list.filter(function(c){return !c.info.finished}).sort(bySolved)[0];
     return out('continue',next||list.slice().sort(bySolved)[0]);
   }
   return out('start',list.filter(function(c){return !(c.node.needs&&c.node.needs.length)})[0]||list[0]);
@@ -175,7 +190,9 @@ function makeCard(r){
   return li;
 }
 function updateCard(id){
-  var c=S.cards[id],m=S.models[id],text=cardStatus(m),p=nodeProgress(m);
+  var c=S.cards[id],m=S.models[id],text=cardStatus(m),p=nodeProgress(m),key=text+'|'+p.solved+'|'+p.total;
+  if(c.key===key)return; /* unchanged: leave the bar alone so it does not fill in again on every refresh */
+  c.key=key;
   c.status.textContent=text;
   c.el.classList.toggle('is-start',text==='Start here');
   c.barHost.textContent='';
@@ -296,7 +313,7 @@ function buildIcons(T){
     });
     var k=1.6/(far||sphere.radius||1),fit=new T.Group(),holder=new T.Group(),scene=new T.Scene();
     shape.position.sub(sphere.center);fit.scale.setScalar(k);fit.add(shape);holder.add(fit);scene.add(holder);
-    S.icons.push({el:card.icon,scene:scene,holder:holder,spin:0.6+i*0.9});
+    S.icons.push({el:card.icon,more:card.more||null,scene:scene,holder:holder,spin:0.6+i*0.9});
   });
 }
 function setupGL(){
@@ -325,8 +342,11 @@ function draw(dt){
   var cr=S.root.getBoundingClientRect();
   S.icons.forEach(function(ic){
     if(!S.reduced)ic.spin+=dt*0.45;
+    /* Inside the closed drop-down: not drawn. The open flag is asked directly, because a browser may keep
+       the boxes of a closed drop-down's content (content-visibility) and then the rectangle is not empty. */
+    if(ic.more&&!ic.more.open)return;
     var b=ic.el.getBoundingClientRect();
-    /* Off screen, or inside the closed drop-down: not drawn. */
+    /* Off screen: not drawn. */
     if(!b.width||!b.height||b.bottom<=cr.top||b.top>=cr.bottom||b.right<=cr.left||b.left>=cr.right)return;
     ic.holder.rotation.set(0.38+0.12*Math.sin(ic.spin*0.6),ic.spin,0);
     var x=b.left-cr.left,y=cr.bottom-b.bottom;
@@ -353,7 +373,9 @@ function requestDraw(){if(!S||!S.renderer||S.lost||document.hidden||S.raf)return
 function actionButton(a){
   var b=a.href?el('a','vg-ghost vgh-action',a.label):el('button','vg-ghost vgh-action',a.label);
   if(a.href)b.href=a.href;else b.type='button';
+  if(typeof a.className==='string'&&a.className)b.className+=' '+a.className;
   if(typeof a.onClick==='function')b.addEventListener('click',a.onClick);
+  if(typeof a.setup==='function'){try{a.setup(b)}catch(e){}}
   return b;
 }
 function mount(container,opts){
@@ -398,7 +420,7 @@ function mount(container,opts){
   main.appendChild(pick);
   if(split.coming.length){
     var more=el('details','vgh-more'),sum=el('summary',null,moreTitle(split.coming.length)),g2=el('ul','vgh-grid');
-    split.coming.forEach(function(r){g2.appendChild(makeCard(r))});
+    split.coming.forEach(function(r){g2.appendChild(makeCard(r));S.cards[r.node].more=more});
     more.appendChild(sum);more.appendChild(g2);main.appendChild(more);
     on(more,'toggle',requestDraw);
   }
@@ -456,5 +478,5 @@ function unmount(){
 }
 
 root.VGHomeLogic=Logic;
-root.VGHome={mount:mount,unmount:unmount,refresh:refresh,back:back};
+root.VGHome={mount:mount,unmount:unmount,refresh:refresh,back:back,isOpen:function(){return !!(S&&S.open)}};
 })(this);

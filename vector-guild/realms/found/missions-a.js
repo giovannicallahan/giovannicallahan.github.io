@@ -108,7 +108,7 @@ window.QUESTS.push(
   id: 'q03', title: 'Racking the water jugs', topic: 'Multiplying', tier: 'Basic', sector: 'Supply Depot',
   brief: 'The water jugs are racked, and the depot needs the total without counting every jug.',
   lesson: 'Multiplying counts equal groups at once: rows times how many in each row.',
-  prompt: 'The depot stacks water jugs on racks. One rack has 7 shelves with 18 jugs on each shelf. Enter the number of jugs on one rack, then the number of jugs on 4 identical racks.',
+  prompt: 'The depot stacks water jugs on racks. One rack has 7 shelves with 18 jugs on each shelf. Enter the number of jugs on one rack, then the number of jugs on 4 identical racks. Type each number without commas.',
   answer: [126, 504], labels: ['jugs on one rack', 'jugs on all racks'], tolerance: 0.01,
   hints: [
    'Split 18 into 10 and 8. Work out 7 × 10 and 7 × 8, then add the two results.',
@@ -433,7 +433,7 @@ window.QUESTS.push(
   id: 'q11', title: 'Reading the tank gauge', topic: 'Percent', tier: 'Basic', sector: 'Ration Kitchen',
   brief: 'The kitchen’s water tank gauge shows a percent, and the cooks need litres.',
   lesson: 'Percent means out of every hundred: find 1% by dividing by 100, then multiply.',
-  prompt: 'The kitchen\'s water tank holds 400 L when full, and the gauge reads 35% full. Enter the litres of water in the tank, then how many more litres would fill it.',
+  prompt: 'The kitchen\'s water tank holds 400 L when full, and the gauge reads 35% full. Enter the litres of water in the tank, then how many more litres would fill it. Type each number without commas.',
   answer: [140, 260], labels: ['litres in tank', 'litres to fill'], tolerance: 0.01,
   hints: [
    'Find 1% first: 400 ÷ 100 = 4 litres.',

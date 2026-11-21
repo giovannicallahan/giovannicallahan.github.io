@@ -26,6 +26,7 @@ window.VGCollection = (() => {
   const isObject = o => !!o && typeof o === 'object' && !Array.isArray(o);
   const has = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
   const isText = x => typeof x === 'string' && x !== '';
+  const PRACTICE_ID = /^q\d+[a-z]$/;
   /* Realm ids index plain objects. Writing the key "__proto__" would swap the object's prototype instead of
      adding a key, so a slice with that name (only a damaged or hand-edited backup has one) is left alone.
      Every read of a realm's record goes through has(), so names like "constructor" are ordinary keys. */
@@ -61,22 +62,26 @@ window.VGCollection = (() => {
     const R = window.REALM, chapters = window.CHAPTERS, quests = window.QUESTS;
     if (!isObject(R) || !Array.isArray(chapters) || !Array.isArray(quests)) return null;
     const id = R.saveId || R.id; if (!isText(id)) return null;
-    return { id, missions: quests.length, ids: quests.map(q => q.id), chapters: chapters.map((c, i) => ({ index: i, name: c.name, ids: (c.ids || []).slice() })) };
+    /* learn: the learn missions, one per concept. A mission with a parent is practice for that concept (docs/PACK-FORMAT.md). */
+    return { id, missions: quests.length, learn: quests.filter(q => !(q && q.parent)).length, ids: quests.map(q => q.id), chapters: chapters.map((c, i) => ({ index: i, name: c.name, ids: (c.ids || []).slice() })) };
   }
   function tidyRealm(rc) {
     if (!isObject(rc) || !isText(rc.id)) return null;
     const chapters = (Array.isArray(rc.chapters) ? rc.chapters : []).map((c, i) => isObject(c) ? { index: Number.isInteger(c.index) && c.index >= 0 ? c.index : i, name: isText(c.name) ? c.name : '', ids: texts(c.ids) } : null).filter(Boolean);
-    return { id: rc.id, missions: Number.isInteger(rc.missions) && rc.missions > 0 ? rc.missions : null, ids: Array.isArray(rc.ids) ? new Set(texts(rc.ids)) : null, chapters };
+    return { id: rc.id, missions: Number.isInteger(rc.missions) && rc.missions > 0 ? rc.missions : null, learn: Number.isInteger(rc.learn) && rc.learn > 0 ? rc.learn : null, ids: Array.isArray(rc.ids) ? new Set(texts(rc.ids)) : null, chapters };
   }
   const realmOf = rc => tidyRealm(rc === undefined || rc === null ? pageRealm() : rc);
   function slices() { try { const s = store(), all = s && s.exportAll(); return all && isObject(all.realms) ? all.realms : {}; } catch (e) { return {}; } }
 
   /* ---------- achievement context: built from the save only ---------- */
   function context(m, realms, rc) {
-    const missions = {};
-    for (const node of Array.isArray(window.VG_REALMS) ? window.VG_REALMS : []) for (const p of (node && Array.isArray(node.parts) ? node.parts : [])) if (isObject(p) && isText(p.id) && Number.isInteger(p.missions) && p.missions > 0) missions[p.id] = p.missions;
+    /* missions: every mission of a realm, learn and practice. learns: its learn missions alone, where the registry
+       or the realm page says so; a realm without practice missions has no entry and its learn count is its mission count. */
+    const missions = {}, learns = {};
+    for (const node of Array.isArray(window.VG_REALMS) ? window.VG_REALMS : []) for (const p of (node && Array.isArray(node.parts) ? node.parts : [])) if (isObject(p) && isText(p.id) && Number.isInteger(p.missions) && p.missions > 0) { missions[p.id] = p.missions; if (Number.isInteger(p.learn) && p.learn > 0) learns[p.id] = p.learn; }
     if (rc && rc.missions) missions[rc.id] = rc.missions;
-    const ctx = { solved: 0, stars: 0, chapters: 0, landmarks: 0, realmsWithSolves: 0, realms: {}, landmarkRealm: false,
+    if (rc && rc.learn) learns[rc.id] = rc.learn;
+    const ctx = { solved: 0, practice: 0, stars: 0, chapters: 0, landmarks: 0, realmsWithSolves: 0, realms: {}, landmarkRealm: false,
       drills: m.drills, pulls: m.pulls, figures: 0, copiesMax: 0, legendary: false, equipped: !!m.equipped, fieldBest: { have: 0, need: 1 }, fieldDone: false };
     for (const [id, slice] of Object.entries(realms)) {
       if (!isObject(slice) || !safeId(id)) continue;
@@ -84,11 +89,15 @@ window.VGCollection = (() => {
       const landmarks = Array.isArray(slice.landmarks) ? new Set(slice.landmarks.filter(n => Number.isInteger(n) && n >= 0)).size : 0;
       const chapters = has(m.paid, id) ? m.paid[id].chapters.length : 0, total = has(missions, id) ? missions[id] : null;
       const finished = total !== null && solved.length >= total;
-      ctx.realms[id] = { solved: solved.length, stars, chapters, landmarks, missions: total, finished };
-      ctx.solved += solved.length; ctx.stars += stars; ctx.chapters += chapters; ctx.landmarks += landmarks;
+      /* A practice mission's id is its learn mission's id and a letter (q01b). complete: every concept is learned,
+         which is what finishes the chapters; finished: every mission is solved, practice included. */
+      const learned = solved.filter(q => !PRACTICE_ID.test(q)).length, learn = total === null ? null : has(learns, id) ? Math.min(learns[id], total) : total;
+      const complete = learn !== null && learned >= learn;
+      ctx.realms[id] = { solved: solved.length, stars, chapters, landmarks, missions: total, finished, learn, learned, complete };
+      ctx.solved += solved.length; ctx.practice += solved.length - learned; ctx.stars += stars; ctx.chapters += chapters; ctx.landmarks += landmarks;
       if (solved.length) ctx.realmsWithSolves++;
-      /* Each chapter has one landmark, and a finished realm has every chapter paid. */
-      if (finished && chapters > 0 && landmarks >= chapters) ctx.landmarkRealm = true;
+      /* Each chapter has one landmark, and a realm with every concept learned has every chapter paid. */
+      if (complete && chapters > 0 && landmarks >= chapters) ctx.landmarkRealm = true;
     }
     const counts = Object.values(m.owned);
     ctx.figures = counts.length; ctx.copiesMax = counts.length ? Math.max(...counts) : 0;

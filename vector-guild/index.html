@@ -1,6 +1,7 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081114"><meta name="description" content="MathCosmos: a star map of math realms. Pick a realm and learn by building."><title>MathCosmos — Realms</title><link rel="stylesheet" href="shell/shell.css"><link rel="stylesheet" href="collection/collection.css"></head>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081114"><meta name="description" content="MathCosmos: learn maths from zero. Pick a realm and learn by building."><title>MathCosmos — Realms</title><link rel="stylesheet" href="shell/shell.css"><link rel="stylesheet" href="shell/home.css"><link rel="stylesheet" href="collection/collection.css"></head>
 <body class="vg-booting">
-<!-- 3D shell: wormhole intro, then the star map. shell/shell.js shows it only when three.js and WebGL work. -->
+<!-- 3D stage: the wormhole intro. shell/shell.js shows it only when three.js and WebGL work, then hands over to the home view below.
+     The star map, its card and the list further down are only reached if shell/home.js did not load. -->
 <div class="vg-stage" id="vg-stage" hidden>
   <canvas id="vg-gl" aria-hidden="true"></canvas>
   <div id="vg-labels" role="group" aria-label="Star map of realms"></div>
@@ -20,6 +21,8 @@
     <aside class="vg-card" id="vg-card" hidden aria-labelledby="vg-card-title"></aside>
   </div>
 </div>
+<!-- Home view (shell/home.js): welcome, start/continue, realm cards. The wormhole ends here. -->
+<div id="vg-home"></div>
 <!-- Flat list of the same realms: the page itself when 3D cannot run, a "List view" over the map, and the screen-reader copy of the map. -->
 <main class="vg-list" id="vg-list" aria-labelledby="vg-list-title">
   <header class="vg-list-head">
@@ -68,5 +71,6 @@ if(!window.VGSave)window.VGSave=(function(){
 <script src="collection/core.js"></script>
 <script src="collection/ui.js"></script>
 <script src="shell/vendor/three.min.js"></script>
+<script src="shell/home.js"></script>
 <script src="shell/shell.js"></script>
 </body></html>

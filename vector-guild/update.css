@@ -24,17 +24,17 @@
 .chapter[open]>summary::after{content:'▴'}
 .chapter:not([open])>summary{border-bottom:0}
 .chapter>summary:focus-visible{outline:2px solid var(--lime);outline-offset:-2px}
-.chapter-note{margin:0;padding:14px 22px;border-top:1px solid var(--line);color:var(--cyan);font-size:12px}
+.chapter-note{margin:0;padding:14px 22px;border-top:1px solid var(--line);color:var(--cyan);font-size:13px}
 
 /* Review drill bar */
 .review-bar{display:flex;align-items:center;gap:18px;justify-content:space-between;flex-wrap:wrap;margin:18px 0 6px;padding:16px 22px;border:1px solid var(--line);background:#172428}
-.review-bar p{margin:6px 0 0;color:var(--muted);font-size:12px}
+.review-bar p{margin:6px 0 0;color:var(--muted);font-size:13px}
 
 /* Outpost status list: readable replacement for the in-picture labels on small screens. */
 .outpost-status{display:none;list-style:none;margin:10px 0 0;padding:0;grid-template-columns:1fr 1fr;gap:6px}
 .outpost-status li{padding:9px 10px;border:1px solid #3d5a59;border-radius:8px;background:#152b31;display:grid;gap:3px}
-.outpost-status b{font-size:12px}
-.outpost-status span{font-size:11px;color:#9bb5af}
+.outpost-status b{font-size:13px}
+.outpost-status span{font-size:12px;color:#9bb5af}
 .outpost-status .building span{color:var(--cyan)}
 .outpost-status .online span{color:var(--lime)}
 .outpost>p{margin-top:22px}
@@ -47,14 +47,14 @@
 .board-card{padding:18px;border:1px solid var(--line);background:#14201f;min-width:0}
 .board-card.is-open{border-color:var(--lime)}
 .board-card.is-done{border-color:#4d9f8d}
-.board-card h3{margin:12px 0 8px;font-size:17px}
-.board-card p{color:#bdd1c8;line-height:1.55;font-size:13px}
+.board-card h3{margin:12px 0 8px;font-size:19px}
+.board-card p{color:#bdd1c8;line-height:1.55;font-size:14px}
 .board-needs{list-style:none;margin:12px 0;padding:0;display:grid;gap:8px}
-.board-needs li{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;min-height:44px}
-.board-problem h4{font-size:11px;letter-spacing:1.6px;color:var(--lime);margin:14px 0 8px}
+.board-needs li{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:13px;min-height:44px}
+.board-problem h4{font-size:12px;letter-spacing:1.6px;color:var(--lime);margin:14px 0 8px}
 .board-problem .primary{margin-top:14px}
 .board-feedback{min-height:20px;color:var(--lime)!important}
-.board-locked{color:var(--muted)!important;font-size:12px!important}
+.board-locked{color:var(--muted)!important;font-size:13px!important}
 .board-explain{border-left:2px solid var(--cyan);padding-left:12px}
 
 @media(max-width:950px){
@@ -74,11 +74,11 @@
 }
 
 /* ---- 1.4: fractions note, error notebook, pitfall chips ---- */
-.entry-note{font-size:12px;color:var(--muted);margin:10px 0 0}
-.entry-note .text-link{font-size:12px;min-height:0;padding:12px 4px;margin:-12px 0}
-.pitfall-ask{margin:14px 0;padding:14px;border:1px solid #6b5a3a;border-left:3px solid #f3c37b;background:#221f18;display:grid;gap:8px}
-.pitfall-ask b{font-size:11px;letter-spacing:1.6px;color:#f3c37b}
-.pitfall-ask p{margin:0;font-size:13px}
+.entry-note{font-size:13px;color:var(--muted);margin:10px 0 0}
+.entry-note .text-link{font-size:13px;min-height:0;padding:12px 4px;margin:-12px 0}
+.pitfall-ask{margin:14px 0;padding:14px;border:1px solid #8a7445;background:#221f18;display:grid;gap:8px}
+.pitfall-ask b{font-size:12px;letter-spacing:1.6px;color:#f3c37b}
+.pitfall-ask p{margin:0;font-size:14px}
 .pit-chip{text-align:left;white-space:normal;line-height:1.4;padding:10px 12px}
 .pit-chip[aria-pressed=true]{border-color:#f3c37b;color:#f3c37b}
 .pit-chip[aria-pressed=true]::before{content:'✓ '}
@@ -90,29 +90,29 @@
 .nb-entry.is-open{border-color:#8a7445}
 .nb-entry.is-closed{opacity:.8}
 .nb-head{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
-.nb-entry p{margin:8px 0;font-size:13px;color:#bdd1c8}
-.nb-entry ul{margin:8px 0;padding-left:18px;font-size:13px;line-height:1.5}
+.nb-entry p{margin:8px 0;font-size:14px;color:#bdd1c8}
+.nb-entry ul{margin:8px 0;padding-left:18px;font-size:14px;line-height:1.5}
 .nb-count{color:#f3c37b}
 .nb-none{color:var(--muted)!important}
 @media(max-width:650px){.notebook{padding:14px}.notebook-list{grid-template-columns:1fr}}
-.reference-problem{margin:8px 0;padding:10px 12px;border-left:2px solid var(--cyan);background:#14262b;font-size:13px}
+.reference-problem{margin:8px 0;padding:10px 12px;border-left:2px solid var(--cyan);background:#14262b;font-size:14px}
 
 /* MathCosmos 2.0: the way back to the star map, beside the brand. */
 .brand-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
-.map-link{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:22px;color:var(--ivory);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:.3px}
-.map-link span{color:var(--lime);font-size:15px}
+.map-link{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:22px;color:var(--ivory);text-decoration:none;font-size:13px;font-weight:600;letter-spacing:.3px}
+.map-link span{color:var(--lime);font-size:17px}
 .map-link:hover,.map-link:focus-visible{border-color:var(--lime);color:var(--lime)}
-.chapter-empty{color:var(--muted);font-size:13px;padding:0 20px 18px}
+.chapter-empty{color:var(--muted);font-size:14px;padding:0 20px 18px}
 
 /* Text floor: nothing a player has to read is under 11 px. */
-.quest-top{font-size:11px;letter-spacing:.5px;gap:8px}
+.quest-top{font-size:12px;letter-spacing:.5px;gap:8px}
 .quest-top .status{white-space:nowrap}
-.sector-heading .sector-count,.guide-id,.tree-legend,.tree-node small,.art-label,.art-caption{font-size:11px}
+.sector-heading .sector-count,.guide-id,.tree-legend,.tree-node small,.art-label,.art-caption{font-size:12px}
 
-/* Outpost picture labels: 13 units in the 720-wide picture, so they stay at 11 px or more
+/* Outpost picture labels: 15 units in the 720-wide picture, so they stay at 12 px or more
    wherever they show. Where the picture is narrower than about 610 px (phones, and the
    first few widths after the sidebar moves to the side) the status list replaces them. */
-.outpost-scene .op-label text,.outpost-scene text.op-label{font-size:13px}
+.outpost-scene .op-label text,.outpost-scene text.op-label{font-size:15px}
 .outpost-scene .op-label text:first-of-type{transform:translateY(-1px)}
 .outpost-scene .op-label text:last-of-type{transform:translateY(2px)}
 @media(max-width:760px),(min-width:951px) and (max-width:990px){
@@ -139,3 +139,89 @@
   .topbar>div:first-child{display:none}
   .topbar{justify-content:flex-end}
 }
+
+/* ---- MathCosmos 2.2: drop-down menus (one per chapter) and practice missions (docs/PACK-FORMAT.md) ---- */
+/* A drop-down is a button with aria-expanded over a panel. app.js draws it in the campaign, the skill tree,
+   the field guide and the artifacts; the panel is hidden with the hidden attribute. */
+.dd{margin-bottom:12px}
+.dd-head{margin:0;font:inherit}
+.dd-toggle{display:flex;align-items:center;gap:14px;width:100%;min-height:64px;padding:14px 20px;border:0;background:none;color:var(--ivory);text-align:left;font:inherit}
+.dd-toggle:hover{background:#1d2e31}
+.dd-toggle:focus-visible{outline:2px solid var(--lime);outline-offset:-2px}
+.dd-title{display:grid;gap:3px;min-width:0;flex:1 1 auto}
+.dd-name{font:600 20px 'Space Grotesk',sans-serif;letter-spacing:-.2px}
+.dd-blurb{color:var(--muted);font-size:14px;line-height:1.4}
+.dd-meta{display:grid;gap:6px;flex:0 0 250px;min-width:0}
+.dd-count{font-size:13px;color:#c9d6cf;text-align:right;letter-spacing:.3px}
+.dd-badge{font-weight:700;color:var(--cyan);margin-left:4px;white-space:nowrap}
+.dd-bar{display:block;height:6px;border-radius:3px;background:#2c3c3b;overflow:hidden}
+.dd-bar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#9fd65a,#d4f36a)}
+.dd-bar-practice i{background:linear-gradient(90deg,#4fb8c9,#8cddd4)}
+.dd-chev{flex:0 0 auto;width:10px;height:10px;margin:0 6px 5px 2px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .15s}
+.dd-toggle[aria-expanded=true] .dd-chev{transform:rotate(-135deg);margin:5px 6px 0 2px}
+.dd-toggle[aria-expanded=true]{background:#1a2b2e}
+.dd-panel{border-top:1px solid var(--line)}
+.dd-panel[hidden]{display:none}
+/* Colour by progress: started, complete (every concept learned), mastered (every practice mission too). */
+.dd-started .sector-number{color:var(--lime)}
+.dd-complete{border-color:#3f6f69}
+.dd-complete .sector-number{color:var(--cyan)}
+.dd-mastered{border-color:#8a7445}
+.dd-mastered .sector-number,.dd-mastered .dd-badge{color:#f3c37b}
+.dd-mastered .dd-bar i{background:linear-gradient(90deg,#e0a955,#f3c37b)}
+.chapter-mastered{color:#f3c37b}
+@media(prefers-reduced-motion:reduce){.dd-chev{transition:none}}
+
+/* Campaign: one row per concept. The learn mission on top, its practice missions as chips under it. */
+.concept{border-bottom:1px solid var(--line);padding-bottom:14px}
+.concept:last-child{border-bottom:0}
+.concept .quest{display:block;width:100%;min-height:0;border:0;padding:16px 20px 12px}
+.concept .quest h4{margin:8px 0 4px;font-size:18px}
+.practice-row{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;padding:0 20px}
+.practice-label{flex:0 0 100%;font-size:13px;font-weight:700;letter-spacing:1px;color:var(--muted)}
+.practice-chip{display:flex;align-items:center;gap:10px;flex:1 1 210px;min-width:0;min-height:48px;padding:6px 12px;border:1px solid #40534b;border-radius:10px;background:#1a2a2c;color:var(--ivory);text-align:left;font:inherit}
+.practice-chip:hover{background:#213331}
+.pc-letter{flex:0 0 28px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--lime);color:#14201f;font:700 14px 'Space Grotesk',sans-serif}
+.pc-text{display:grid;gap:1px;min-width:0;flex:1 1 auto}
+.pc-kind{font-size:13px;color:var(--muted);letter-spacing:.4px}
+.pc-title{font-size:14px;line-height:1.3;overflow-wrap:anywhere}
+.pc-state{flex:0 0 auto;font-size:13px;font-weight:700;color:var(--lime);white-space:nowrap}
+.practice-chip.ready{border-color:#7f9a45}
+.practice-chip.done{border-color:#3f6f69;background:#16302f}
+.practice-chip.done .pc-letter{background:var(--cyan)}
+.practice-chip.done .pc-state{color:var(--cyan)}
+/* Locked: a dashed outline, a grey letter and the word LOCKED. Still a button: it opens the lesson. */
+.practice-chip.locked{border-style:dashed;background:none;color:#b3c1bc}
+.practice-chip.locked .pc-letter{background:#3a4a4a;color:#cfdad5}
+.practice-chip.locked .pc-state{color:#d8ba85}
+
+/* Skill tree, field guide and artifacts inside a chapter drop-down. */
+.tree-chapter{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding:16px}
+.tree-chapter .tree-node{margin:0;min-height:44px}
+.dd-panel>.guide-list{padding:12px}
+.dd-panel>.guide-list details:last-child{margin-bottom:0}
+.dd-cards{padding:14px}
+
+/* A practice mission in the dialog. */
+.practice-intro{margin:8px 0 16px;font-size:15px;line-height:1.5;color:#c9d6cf}
+.practice-intro b{color:#f3c37b}
+.practice-uses{font-size:14px;color:var(--cyan)}
+
+/* Text floor for the lists drawn above: 12 px. */
+.quest-top,.quest p,.tree-node small,.tree-legend,.guide-id{font-size:13px}
+
+@media(max-width:950px){.tree-chapter{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){
+  .dd-toggle{flex-wrap:wrap;gap:10px;padding:12px 14px}
+  .dd-title{flex:1 1 0}
+  .dd-meta{flex:1 1 100%;order:3}
+  .dd-count{text-align:left}
+  .concept .quest{padding:14px 14px 10px}
+  .practice-row{padding:0 14px}
+  .practice-chip{flex:1 1 100%}
+  .tree-chapter{grid-template-columns:1fr;padding:12px}
+  .dd-panel>.guide-list,.dd-cards{padding:10px}
+}
+/* Headings in the lists keep a sans-serif face when the display font is not installed (the game is offline). */
+.dd .sector-number,.concept .quest h4{font-family:'Space Grotesk','DM Sans',sans-serif}
+.dd .guide-body h4,.dd .worked-example strong,.dd .badge{font-size:13px}

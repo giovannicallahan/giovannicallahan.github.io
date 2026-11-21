@@ -14,14 +14,14 @@ Object.assign(window.MISSION_GEN, {
  q01: {
   canonical: { a: 3, b: 5, c: 0, d: 7 },
   draw: R => ({ a: R.int(1, 9), b: R.int(1, 9), c: R.int(0, 9), d: R.int(0, 9) }),
-  build: ({ a, b, c, d }) => { const total = 1000 * a + 100 * b + 10 * c + d, hund = 100 * b; return {
+  build: ({ a, b, c, d }) => { const total = 1000 * a + 100 * b + 10 * c + d, hund = 100 * b, /* "1 ten" / "3 tens" */ one = (k, word) => `${n(k)} ${word}${k === 1 ? '' : 's'}`; return {
    prompt: `Depot tally of rivets: full crates of 1000, ${n(a)}; boxes of 100, ${n(b)}; bags of 10, ${n(c)}; loose rivets, ${n(d)}. Enter the total number of rivets (type it without commas). Then enter how many rivets the hundreds digit of your total stands for.`,
    answer: [total, hund],
    hints: ['Write one digit for each place, thousands first, then hundreds, tens and ones. Write 0 for a place that has none.', 'Find the hundreds digit, the second from the left. Each hundred is 100 rivets.'],
-   solution: `${n(a)} thousands, ${n(b)} hundreds, ${n(c)} tens and ${n(d)} ones are written ${n(total)}. The hundreds digit ${n(b)} stands for ${n(b)} hundreds, which is ${n(hund)} rivets.`,
+   solution: `${one(a, 'thousand')}, ${one(b, 'hundred')}, ${one(c, 'ten')} and ${one(d, 'one')} are written ${n(total)}. The hundreds digit ${n(b)} stands for ${one(b, 'hundred')}, which is ${n(hund)} rivets.`,
    guidance: [
-    { prompt: `Write the digits in order: thousands, hundreds, tens, ones. What number do ${n(a)} thousands, ${n(b)} hundreds, ${n(c)} tens and ${n(d)} ones make?`, answer: [total], explanation: `The digits ${n(a)}, ${n(b)}, ${n(c)}, ${n(d)} in that order make ${n(total)}. Each digit sits in the place it counts.` },
-    { prompt: `The hundreds digit is ${n(b)}. How many rivets do ${n(b)} hundreds make?`, answer: [hund], explanation: `Each hundred is one hundred rivets, so ${n(b)} hundreds are ${n(hund)} rivets.` }
+    { prompt: `Write the digits in order: thousands, hundreds, tens, ones. What number do ${one(a, 'thousand')}, ${one(b, 'hundred')}, ${one(c, 'ten')} and ${one(d, 'one')} make?`, answer: [total], explanation: `The digits ${n(a)}, ${n(b)}, ${n(c)}, ${n(d)} in that order make ${n(total)}. Each digit sits in the place it counts.` },
+    { prompt: `The hundreds digit is ${n(b)}. How many rivets ${b === 1 ? 'does 1 hundred' : `do ${n(b)} hundreds`} make?`, answer: [hund], explanation: `Each hundred is one hundred rivets, so ${b === 1 ? '1 hundred is' : `${n(b)} hundreds are`} ${n(hund)} rivets.` }
    ] }; }
  },
  q02: {
@@ -47,7 +47,7 @@ Object.assign(window.MISSION_GEN, {
    const times = list(parts.map(x => `${n(x)} × ${n(r)} = ${n(x * r)}`)), sum = parts.map(x => n(x * r)).join(' + ');
    const split = parts.length < 2 ? `${n(one)} × ${n(r)} = ${n(all)}` : `Split ${n(one)} into ${list(parts.map(n))}: ${times}`;
    return {
-   prompt: `The depot stacks water jugs on racks. One rack has ${n(k)} shelves with ${n(m)} jugs on each shelf. Enter the number of jugs on one rack, then the number of jugs on ${n(r)} identical racks.`,
+   prompt: `The depot stacks water jugs on racks. One rack has ${n(k)} shelves with ${n(m)} jugs on each shelf. Enter the number of jugs on one rack, then the number of jugs on ${n(r)} identical racks. Type each number without commas.`,
    answer: [one, all],
    hints: [`Split ${n(m)} into ${n(t)} and ${n(o)}. Work out ${n(k)} × ${n(t)} and ${n(k)} × ${n(o)}, then add the two results.`, `Then multiply the jugs on one rack by ${n(r)}, the number of racks.`],
    solution: `One rack: ${n(k)} × ${n(m)}. Split ${n(m)} into ${n(t)} and ${n(o)}: ${n(k)} × ${n(t)} = ${n(k * t)} and ${n(k)} × ${n(o)} = ${n(k * o)}, and ${n(k * t)} + ${n(k * o)} = ${n(one)} jugs. ${n(r)} racks: ${parts.length < 2 ? `${split} jugs.` : `${n(one)} × ${n(r)}. ${split}, and ${sum} = ${n(all)} jugs.`}`,
@@ -94,21 +94,21 @@ Object.assign(window.MISSION_GEN, {
    guidance: [
     { prompt: `The thermometer starts at ${n(s)}. How many degrees warmer must it get to read 0?`, answer: [-s], explanation: `${n(s)} is ${n(-s)} steps left of 0 on the number line, so ${n(-s)} degrees warmer brings it to 0.` },
     { prompt: `It gets ${n(u)} degrees warmer in all. What does it read at noon?`, answer: [noon], explanation: `${n(-s)} of the ${n(u)} degrees reach 0, and the other ${n(noon)} go past it: ${n(s)} + ${n(u)} = ${n(noon)}.` },
-    { prompt: `From ${n(noon)} it falls ${n(w)} degrees. What does it read at night?`, answer: [night], explanation: `${n(noon)} degrees down reach 0, and the other ${n(w - noon)} go below it: ${n(noon)} − ${n(w)} = ${n(night)}.` }
+    { prompt: `From ${n(noon)} it falls ${n(w)} degrees. What does it read at night?`, answer: [night], explanation: `${noon === 1 ? '1 degree down reaches' : `${n(noon)} degrees down reach`} 0, and the other ${w - noon === 1 ? '1 goes' : `${n(w - noon)} go`} below it: ${n(noon)} − ${n(w)} = ${n(night)}.` }
    ] }; }
  },
  q07: {
   canonical: { d: 8, k: 3, w: 5 },
   draw: R => { const d = R.pick([4, 5, 6, 8, 10, 12]); return { d, k: R.int(1, d - 1), w: R.int(3, 9) }; },
   build: ({ d, k, w }) => { const bar = d * w, kw = k * w; return {
-   prompt: `A ${n(bar)} g ration bar is scored into ${n(d)} equal pieces, and a recruit eats ${n(k)} pieces. Enter the fraction of the bar eaten, numerator then denominator, using the number of pieces the bar is scored into. Then enter the grams eaten.`,
+   prompt: `A ${n(bar)} g ration bar is scored into ${n(d)} equal pieces, and a recruit eats ${k === 1 ? '1 piece' : `${n(k)} pieces`}. Enter the fraction of the bar eaten, numerator then denominator, using the number of pieces the bar is scored into. Then enter the grams eaten.`,
    answer: [k, d, kw],
    hints: ['The denominator counts the equal pieces in the whole bar. The numerator counts the pieces eaten.', `One piece weighs ${n(bar)} ÷ ${n(d)} grams. Multiply that by the pieces eaten.`],
-   solution: `The bar has ${n(d)} equal pieces and ${n(k)} were eaten, so ${n(k)}/${n(d)} of the bar was eaten. One piece weighs ${n(bar)} ÷ ${n(d)} = ${n(w)} g, so ${n(k)} pieces weigh ${n(k)} × ${n(w)} = ${n(kw)} g.`,
+   solution: `The bar has ${n(d)} equal pieces and ${k === 1 ? '1 was' : `${n(k)} were`} eaten, so ${n(k)}/${n(d)} of the bar was eaten. One piece weighs ${n(bar)} ÷ ${n(d)} = ${n(w)} g, so ${k === 1 ? '1 piece weighs' : `${n(k)} pieces weigh`} ${n(k)} × ${n(w)} = ${n(kw)} g.`,
    guidance: [
     { prompt: `Into how many equal pieces is the bar scored?`, answer: [d], explanation: `The whole is cut into ${n(d)} equal pieces, so the denominator is ${n(d)}.` },
     { prompt: `How much does one piece weigh? Work out ${n(bar)} ÷ ${n(d)}.`, answer: [w], explanation: `${n(bar)} g shared into ${n(d)} equal pieces is ${n(w)} g each.` },
-    { prompt: `How many grams do ${n(k)} pieces of ${n(w)} g weigh?`, answer: [kw], explanation: `${n(k)} × ${n(w)} = ${n(kw)} g, which is ${n(k)}/${n(d)} of the bar.` }
+    { prompt: `How many grams ${k === 1 ? 'does 1 piece' : `do ${n(k)} pieces`} of ${n(w)} g weigh?`, answer: [kw], explanation: `${n(k)} × ${n(w)} = ${n(kw)} g, which is ${n(k)}/${n(d)} of the bar.` }
    ] }; }
  },
  q08: {
@@ -163,7 +163,7 @@ Object.assign(window.MISSION_GEN, {
   canonical: { C: 400, p: 35 },
   draw: R => ({ C: R.pick([200, 300, 400, 500, 600, 800, 1000, 1200]), p: 5 * R.int(1, 19) }),
   build: ({ C, p }) => { const o = C / 100, L = p * o, E = C - L; return {
-   prompt: `The kitchen's water tank holds ${n(C)} L when full, and the gauge reads ${n(p)}% full. Enter the litres of water in the tank, then how many more litres would fill it.`,
+   prompt: `The kitchen's water tank holds ${n(C)} L when full, and the gauge reads ${n(p)}% full. Enter the litres of water in the tank, then how many more litres would fill it. Type each number without commas.`,
    answer: [L, E],
    hints: [`Find 1% first: ${n(C)} ÷ 100 = ${n(o)} litres.`, `${n(p)}% is ${n(p)} times 1%. The empty part is the rest of the ${n(C)} L.`],
    solution: `1% of ${n(C)} L is ${n(C)} ÷ 100 = ${n(o)} L, so ${n(p)}% is ${n(p)} × ${n(o)} = ${n(L)} L. To fill the tank: ${n(C)} − ${n(L)} = ${n(E)} L, which is the other ${n(100 - p)}%.`,
