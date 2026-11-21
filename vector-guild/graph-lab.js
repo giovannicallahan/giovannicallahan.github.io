@@ -1,4 +1,4 @@
-/* Vector Guild: offline, dependency-free matrix and least-squares laboratories. */
+/* MathCosmos: offline, dependency-free matrix and least-squares laboratories. */
 (function () {
   'use strict';
   const EPS = 1e-10;

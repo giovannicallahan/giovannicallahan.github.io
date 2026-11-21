@@ -1,1 +1,65 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101b20"><meta name="description" content="A hands-on linear algebra adventure for engineers."><title>Vector Guild — Engineering begins here</title><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="docking.css"><link rel="stylesheet" href="update.css"><link rel="stylesheet" href="handson.css"></head><body><div class="app"><aside class="sidebar"><a class="brand" href="#" aria-label="Vector Guild home: campaign"><span class="brandmark">◇<i>✳</i></span><span>VECTOR<br>GUILD<small>ENGINEERING ACADEMY</small></span></a><div class="nav-label">YOUR CONSOLE <span>01—06</span></div><nav aria-label="Main navigation"><button data-view="campaign" class="nav active"><span>◈</span> Campaign <b>01</b></button><button data-view="skills" class="nav"><span>✳</span> Skill tree <b>02</b></button><button data-view="workshop" class="nav"><span>⌁</span> Workshop <b>03</b></button><button data-view="artifacts" class="nav"><span>⬡</span> Artifacts <b>04</b></button><button data-view="guide" class="nav"><span>▤</span> Field guide <b>05</b></button><button data-view="visual" class="nav"><span>⬢</span> Visual lab <b>06</b></button></nav><div class="sidebar-bottom"><div class="rank-icon">✦</div><div><strong id="side-rank">CADET</strong><small>GUILD RANK · LEVEL <span id="level">1</span></small></div><button class="icon-btn" id="settings" aria-label="Save and settings">⚙</button></div></aside><main><header class="topbar"><div><span class="online-dot"></span> SYSTEM ONLINE <span class="slash">/</span> <span id="top-view">CAMPAIGN</span></div><div class="top-stats"><span><i>✦</i> <b id="xp">0</b> XP</span><span><i>◇</i> <b id="points">0</b> SP</span><button id="settings-mobile" class="help-btn" aria-label="Save and settings">⚙</button><button id="help" class="help-btn" aria-label="Open help">?</button></div></header><div id="content"></div><footer><span>VECTOR GUILD © FIELD OPERATIONS</span><span>LEARN THE LANGUAGE. BUILD THE FUTURE. <i>✳</i></span></footer></main></div><dialog id="dialog" aria-label="Vector Guild dialog"><div id="dialog-content"></div></dialog><script src="curriculum.js"></script><script src="extra-quests.js"></script><script src="chapters.js"></script><script src="gen-core.js"></script><script src="gen-a.js"></script><script src="gen-b.js"></script><script src="gen-c.js"></script><script src="gen-d.js"></script><script src="reading-links.js"></script><script src="gameplay.js"></script><script src="lab3d.js"></script><script src="graph-lab.js"></script><script src="experiment-low.js"></script><script src="experiment-high.js"></script><script src="variants.js"></script><script src="concept-lab.js"></script><script src="docking.js"></script><script src="handson.js"></script><script src="contracts.js"></script><script src="board.js"></script><script src="app.js"></script></body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#081114"><meta name="description" content="MathCosmos: a star map of math realms. Pick a realm and learn by building."><title>MathCosmos — Realms</title><link rel="stylesheet" href="shell/shell.css"></head>
+<body class="vg-booting">
+<!-- 3D shell: wormhole intro, then the star map. shell/shell.js shows it only when three.js and WebGL work. -->
+<div class="vg-stage" id="vg-stage" hidden>
+  <canvas id="vg-gl" aria-hidden="true"></canvas>
+  <div id="vg-labels" role="group" aria-label="Star map of realms"></div>
+  <div id="vg-flash" aria-hidden="true"></div>
+  <div class="vg-ui">
+    <div class="vg-top">
+      <div class="vg-brand"><span class="vg-mark" aria-hidden="true">◇<i>✳</i></span><div><strong>MATHCOSMOS</strong><span class="vg-hint" id="vg-hint" aria-live="polite"></span></div></div>
+      <div class="vg-tools">
+        <span class="vg-xp"><i aria-hidden="true">✦</i> <b data-xp>0</b> XP</span>
+        <button class="vg-ghost" id="vg-skip" type="button" hidden>Skip intro</button>
+        <button class="vg-ghost" id="vg-replay" type="button" hidden>Replay intro</button>
+        <button class="vg-ghost" id="vg-listbtn" type="button" hidden>List view</button>
+        <button class="vg-ghost" data-backup type="button" hidden>Back up or restore save</button>
+      </div>
+    </div>
+    <aside class="vg-card" id="vg-card" hidden aria-labelledby="vg-card-title"></aside>
+  </div>
+</div>
+<!-- Flat list of the same realms: the page itself when 3D cannot run, a "List view" over the map, and the screen-reader copy of the map. -->
+<main class="vg-list" id="vg-list" aria-labelledby="vg-list-title">
+  <header class="vg-list-head">
+    <div class="vg-brand"><span class="vg-mark" aria-hidden="true">◇<i>✳</i></span><div>
+      <span class="vg-eyebrow">MathCosmos · Realms</span>
+      <h1 id="vg-list-title">Choose a realm</h1>
+      <p class="vg-list-intro">Every realm can be entered. If one builds on a realm you have not finished, its card says so.</p>
+      <p class="vg-list-note" id="vg-list-note" hidden>The 3D star map could not start on this device, so the realms are listed here instead.</p>
+    </div></div>
+    <div class="vg-tools">
+      <span class="vg-xp"><i aria-hidden="true">✦</i> <b data-xp>0</b> XP</span>
+      <button class="vg-ghost" data-backup type="button" hidden>Back up or restore save</button>
+      <button class="vg-ghost" id="vg-list-back" type="button" hidden>Back to map</button>
+    </div>
+  </header>
+  <noscript><p class="vg-list-note">MathCosmos needs JavaScript to run.</p></noscript>
+  <div class="vg-list-grid" id="vg-list-grid"></div>
+</main>
+<dialog class="vg-dialog" id="vg-backup" aria-labelledby="vg-backup-title"><div class="vg-modal">
+  <div class="vg-modal-head"><span class="vg-eyebrow">Save</span><button class="vg-close" type="button" data-close aria-label="Close">×</button></div>
+  <h2 id="vg-backup-title">Back up or restore your save</h2>
+  <p>Your progress in every realm is kept on this device. Download a backup file, or restore one you made before. Restoring replaces the progress on this device.</p>
+  <div class="vg-actions"><button class="vg-primary" id="vg-export" type="button">Download backup</button><button class="vg-secondary" id="vg-import" type="button">Restore from file</button></div>
+  <input type="file" id="vg-file" accept="application/json,.json" hidden>
+  <p class="vg-feedback" id="vg-backup-msg" aria-live="polite"></p>
+</div></dialog>
+<script src="realms/registry.js"></script>
+<script src="save-store.js"></script>
+<script>
+/* Read-only stand-in used only if save-store.js failed to load: it never writes the v2 save,
+   so the real store can still migrate a 1.x save later. No backup without the real store. */
+if(!window.VGSave)window.VGSave=(function(){
+  var intro=false;
+  function get(k){try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}}
+  function read(){var s=get('vector-guild-save-v2');if(s&&s.v===2&&s.realms&&typeof s.realms==='object')return s;
+    var o=get('vector-guild-save-v1');return {v:2,seed:0,intro:false,realms:o&&Array.isArray(o.solved)?{la:o}:{}}}
+  return {fallback:true,load:read,realm:function(id){var r=read().realms;return Object.prototype.hasOwnProperty.call(r,id)?r[id]:null},
+    seed:function(){return read().seed||0},totalXp:function(){var r=read().realms,t=0;for(var k in r)if(r[k]&&isFinite(r[k].xp))t+=+r[k].xp;return t},
+    introSeen:function(){return intro||read().intro===true},setIntroSeen:function(){intro=true}};
+})();
+</script>
+<script src="shell/vendor/three.min.js"></script>
+<script src="shell/shell.js"></script>
+</body></html>

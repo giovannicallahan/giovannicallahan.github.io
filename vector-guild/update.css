@@ -1,13 +1,19 @@
-/* Vector Guild 1.3 additions. Loaded after styles.css and docking.css. */
+/* MathCosmos 1.3 additions. Loaded after styles.css and docking.css. */
 
 /* Touch targets: every control is at least 44 px in both directions. */
-.help-btn{width:44px;height:44px}
+.help-btn{width:44px;height:44px;flex:0 0 44px;min-width:44px}
+/* The round top-bar buttons keep their size; the status text on the left gives way instead. */
+.topbar{gap:10px}
+.top-stats{flex:0 0 auto}
+.top-stats>span{white-space:nowrap}
+.topbar>div:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .close{width:44px;height:44px}
 .icon-btn{min-width:44px;min-height:44px}
 .nav{min-height:44px}
 .secondary,.primary{min-height:44px}
 .text-link{min-height:44px;padding:0 4px}
-.tool-form input,.answer-grid input{min-height:44px}
+.tool-form input,.answer-grid input,.vector-edit input{min-height:44px}
+.operation-label select,section.concept-lab select,select[data-gl-model],select[data-gl-preset]{min-height:44px}
 .lesson-sources a{display:inline-block;padding:12px 0}
 .guide-list summary{min-height:44px}
 
@@ -45,7 +51,7 @@
 .board-card p{color:#bdd1c8;line-height:1.55;font-size:13px}
 .board-needs{list-style:none;margin:12px 0;padding:0;display:grid;gap:8px}
 .board-needs li{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:12px;min-height:44px}
-.board-problem h4{font-size:10px;letter-spacing:1.6px;color:var(--lime);margin:14px 0 8px}
+.board-problem h4{font-size:11px;letter-spacing:1.6px;color:var(--lime);margin:14px 0 8px}
 .board-problem .primary{margin-top:14px}
 .board-feedback{min-height:20px;color:var(--lime)!important}
 .board-locked{color:var(--muted)!important;font-size:12px!important}
@@ -59,8 +65,6 @@
   .board-grid{grid-template-columns:1fr}
 }
 @media(max-width:650px){
-  .outpost-scene .op-label{display:none}
-  .outpost-status{display:grid}
   .vg-board{padding:14px}
   .review-bar{padding:14px}
   .review-bar button{width:100%}
@@ -73,7 +77,7 @@
 .entry-note{font-size:12px;color:var(--muted);margin:10px 0 0}
 .entry-note .text-link{font-size:12px;min-height:0;padding:12px 4px;margin:-12px 0}
 .pitfall-ask{margin:14px 0;padding:14px;border:1px solid #6b5a3a;border-left:3px solid #f3c37b;background:#221f18;display:grid;gap:8px}
-.pitfall-ask b{font-size:10px;letter-spacing:1.6px;color:#f3c37b}
+.pitfall-ask b{font-size:11px;letter-spacing:1.6px;color:#f3c37b}
 .pitfall-ask p{margin:0;font-size:13px}
 .pit-chip{text-align:left;white-space:normal;line-height:1.4;padding:10px 12px}
 .pit-chip[aria-pressed=true]{border-color:#f3c37b;color:#f3c37b}
@@ -92,3 +96,26 @@
 .nb-none{color:var(--muted)!important}
 @media(max-width:650px){.notebook{padding:14px}.notebook-list{grid-template-columns:1fr}}
 .reference-problem{margin:8px 0;padding:10px 12px;border-left:2px solid var(--cyan);background:#14262b;font-size:13px}
+
+/* MathCosmos 2.0: the way back to the star map, beside the brand. */
+.brand-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.map-link{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:22px;color:var(--ivory);text-decoration:none;font-size:12px;font-weight:600;letter-spacing:.3px}
+.map-link span{color:var(--lime);font-size:15px}
+.map-link:hover,.map-link:focus-visible{border-color:var(--lime);color:var(--lime)}
+.chapter-empty{color:var(--muted);font-size:13px;padding:0 20px 18px}
+
+/* Text floor: nothing a player has to read is under 11 px. */
+.quest-top{font-size:11px;letter-spacing:.5px;gap:8px}
+.quest-top .status{white-space:nowrap}
+.sector-heading .sector-count,.guide-id,.tree-legend,.tree-node small,.art-label,.art-caption{font-size:11px}
+
+/* Outpost picture labels: 13 units in the 720-wide picture, so they stay at 11 px or more
+   wherever they show. Where the picture is narrower than about 610 px (phones, and the
+   first few widths after the sidebar moves to the side) the status list replaces them. */
+.outpost-scene .op-label text,.outpost-scene text.op-label{font-size:13px}
+.outpost-scene .op-label text:first-of-type{transform:translateY(-1px)}
+.outpost-scene .op-label text:last-of-type{transform:translateY(2px)}
+@media(max-width:760px),(min-width:951px) and (max-width:990px){
+  .outpost-scene .op-label{display:none}
+  .outpost-status{display:grid}
+}

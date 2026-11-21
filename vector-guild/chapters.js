@@ -1,10 +1,22 @@
 /* Recommended path and chapters.
-   Missions are put in one dependency-respecting order (earlier tiers first), then cut into
-   eight chapters. A chapter finishes roughly every eight missions, which gives the campaign
-   regular milestones; sectors stay as the thematic places shown in the outpost. */
+   A pack either declares its chapters (REALM.chapters: names, blurbs and mission ids, in order) or leaves
+   them null. With null, missions are put in one dependency-respecting order (earlier tiers first), then cut
+   into the pack's computedChapters; for linear algebra a chapter finishes roughly every eight missions,
+   which gives the campaign regular milestones. Sectors stay as the thematic places shown in the outpost. */
 (function(){
 'use strict';
-const quests=window.QUESTS||[],tier={Basic:0,Intermediate:1,Advanced:2},done=new Set(),order=[];
+const R=window.REALM||{},quests=window.QUESTS||[];
+if(Array.isArray(R.chapters)){
+  /* Declared chapters. A declared id with no mission yet is left out; an empty chapter keeps its place
+     (and its landmark index) and simply shows no missions. Missions in no chapter go last; the harness reports them. */
+  const byId=new Map(quests.map(q=>[q.id,q])),placed=new Set(),order=[];
+  const chapters=R.chapters.map((c,i)=>{const ids=(c.ids||[]).filter(id=>byId.has(id)&&!placed.has(id));ids.forEach(id=>{placed.add(id);byId.get(id).chapter=i;order.push(byId.get(id))});return {index:i,name:c.name,blurb:c.blurb,ids}});
+  for(const q of quests)if(!placed.has(q.id))order.push(q);
+  quests.splice(0,quests.length,...order);
+  window.CHAPTERS=chapters;
+  return;
+}
+const tier=Object.fromEntries((R.tiers||['Basic','Intermediate','Advanced']).map((t,i)=>[t,i])),done=new Set(),order=[];
 while(order.length<quests.length){
   const ready=quests.map((q,i)=>({q,i})).filter(({q})=>!done.has(q.id)&&(q.prereqs||[]).every(id=>done.has(id)))
     .sort((a,b)=>(tier[a.q.tier]??3)-(tier[b.q.tier]??3)||a.i-b.i)[0];
@@ -13,16 +25,7 @@ while(order.length<quests.length){
 }
 for(const q of quests)if(!done.has(q.id))order.push(q);
 quests.splice(0,quests.length,...order);
-const names=[
-['Vectors and transformations','Add, measure and turn vectors; multiply matrices.'],
-['Systems and spaces','Solve linear systems and describe rank, nullspace and bases.'],
-['Orthogonality and first modes','Project, fit by least squares and meet eigenvalues.'],
-['Factorizations and spectra','LU, diagonalization, the spectral theorem and the SVD.'],
-['Stability and complex modes','Conditioning, definiteness, complex and defective matrices.'],
-['Networks and optimization','Markov chains, graphs and constrained minimization.'],
-['Signals and dynamics','Low-rank models, Fourier analysis and differential systems.'],
-['Numerical engineering','Block, sparse and iterative methods for larger problems.']
-];
+const names=R.computedChapters||[['Campaign','Every mission in order.']];
 const count=names.length,chapters=[];let start=0;
 for(let i=0;i<count;i++){
   const size=Math.floor(order.length/count)+(i<order.length%count?1:0),slice=order.slice(start,start+size);start+=size;

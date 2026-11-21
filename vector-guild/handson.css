@@ -12,7 +12,7 @@
 }
 .hands-on .hands-on-eyebrow {
   margin: 0;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.6px;
   color: var(--cyan, #8cddd4);
@@ -162,6 +162,12 @@
 
 @media (max-width: 650px) {
   .hands-on { padding: 12px; }
+  /* The 320-unit picture renders about 0.7x on a phone: larger user-unit text keeps
+     axis numbers and point labels at 11 px or more. The shift keeps the taller numbers
+     clear of the axis line and centred on their grid line. */
+  .hands-on .hands-on-scene { margin-left: -6px; margin-right: -6px; }
+  .hands-on .hands-on-tick { font-size: 16px; transform: translateY(3px); }
+  .hands-on .hands-on-label { font-size: 18px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hands-on, .hands-on * { transition: none !important; animation: none !important; }

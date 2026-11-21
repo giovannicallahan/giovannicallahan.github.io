@@ -46,10 +46,10 @@ WORK = [
      "A planner for psychology experiments: compare designs, plan the analysis and export the plan.",
      "", ["Python", "Streamlit"],
      "CogViz Research Studio preview"),
-    ("vector-guild", "/projects/vector-guild.html", "Vector Guild",
-     "A linear algebra game. Work through 68 engineering missions and build an outpost as you solve them.",
+    ("vector-guild", "/projects/vector-guild.html", "MathCosmos",
+     "A maths game that starts from zero. Pick a realm on a 3D star map and build an outpost as you solve its missions.",
      "", ["JavaScript", "Free, no account"],
-     "Vector Guild campaign screen"),
+     "MathCosmos campaign screen"),
 ]
 
 
@@ -317,17 +317,17 @@ page("experiment.html", "Experiment — which one is the best value?",
 </section>
 """)
 
-# ── Vector Guild (introduction; the game itself is /vector-guild/) ───────────
-page("projects/vector-guild.html", "Vector Guild — a linear algebra adventure",
-     "A free browser game for learning linear algebra: 68 engineering missions, and every first solve builds part of an outpost.",
+# ── MathCosmos, formerly Vector Guild (introduction; the game itself is /vector-guild/) ───────────
+page("projects/vector-guild.html", "MathCosmos — learn maths from zero, one realm at a time",
+     "A free browser game for learning maths from the beginning: 108 missions across Foundations and linear algebra, and every first solve builds part of an outpost.",
      active="Tools", feedback=True, body="""
 <section class="page-hero">
   <div class="wrap">
-    <h1>Vector Guild</h1>
-    <p class="lede">A linear algebra adventure. Work through 68 engineering missions, and every first
-    solve builds another part of your outpost.</p>
+    <h1>MathCosmos</h1>
+    <p class="lede">A maths game that starts from zero. Choose a realm on a 3D star map, work through its
+    missions, and every first solve builds another part of your outpost. It was called Vector Guild until version 2.0.</p>
     <div class="actions">
-      <a class="btn btn-primary" href="/vector-guild/">Play Vector Guild</a>
+      <a class="btn btn-primary" href="/vector-guild/">Play MathCosmos</a>
     </div>
     <p class="note">Free. No account. Runs in your browser.</p>
   </div>
@@ -336,9 +336,10 @@ page("projects/vector-guild.html", "Vector Guild — a linear algebra adventure"
   <div class="wrap">
     <div class="section-head"><h2 id="vg-h">What's inside</h2></div>
     <ul class="feature-list">
-      <li><strong>68 missions in eight chapters</strong><span>Each mission is one calculation with a purpose, ordered so every idea builds on the last.</span></li>
+      <li><strong>Two realms, 108 missions</strong><span>Foundations (40 missions, from place value to functions) needs no maths background. Linear algebra (68 missions) follows. Nine more realms are on the map and not built yet.</span></li>
+      <li><strong>One calculation at a time</strong><span>Each mission has a purpose, a lesson and a worked example, ordered so every idea builds on the last.</span></li>
       <li><strong>Hints, guided steps and labs</strong><span>A graph lab and a 3D bench let you see the vectors before you commit to an answer.</span></li>
-      <li><strong>Linked to the source</strong><span>Missions point to the matching MIT OpenCourseWare 18.06 lecture.</span></li>
+      <li><strong>Linked to the source</strong><span>Foundations missions point to the matching OpenStax section, and linear algebra missions to the MIT OpenCourseWare 18.06 lecture.</span></li>
       <li><strong>Your progress stays with you</strong><span>The game saves in your browser, and you can export a backup from its settings.</span></li>
     </ul>
   </div>
