@@ -23,6 +23,9 @@ a:focus-visible,button:focus-visible,[tabindex]:focus-visible{outline:2px solid 
 .vg-ghost:hover{color:var(--ivory);border-color:var(--ivory)}
 .vg-xp{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 4px;font-size:11px;font-weight:700;letter-spacing:1.5px;color:var(--muted)}
 .vg-xp i{color:var(--lime);font-style:normal;font-size:15px}.vg-xp b{color:var(--ivory)}
+/* Collection button: collection/ui.js fills it with the equipped emblem (or a spark), the word and the stardust count */
+.vg-coll{border-color:#5d7350;color:var(--ivory)}
+.vg-coll:hover{border-color:var(--lime)}
 .vg-mark{width:36px;height:36px;min-width:36px;border:1px solid var(--lime);color:var(--lime);display:grid;place-items:center;font-size:33px;line-height:1;position:relative}
 .vg-mark i{font:normal 11px sans-serif;position:absolute}
 

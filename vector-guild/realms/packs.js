@@ -4,7 +4,16 @@
    A feature that is off in a pack's REALM config has no script here, so its module is never loaded.
    title   the realm's display name (the star map registry, realms/registry.js, has the card text)
    styles  stylesheets, in cascade order
-   scripts classic scripts, in load order, without app.js */
+   scripts classic scripts, in load order, without app.js
+   VG_REALM_SHARED is loaded on every realm page, whatever the pack: the collection (docs/COLLECTION.md).
+   styles  after the pack's stylesheets
+   before  classic scripts before the pack's scripts (data and logic, no page code; save-store.js is already loaded)
+   after   classic scripts after the pack's scripts and before app.js (page code) */
+window.VG_REALM_SHARED = {
+ styles: ['collection/collection.css'],
+ before: ['realms/registry.js', 'collection/figures.js', 'collection/achievements.js', 'collection/core.js'],
+ after: ['collection/ui.js']
+};
 window.VG_PACKS = {
  la: {
   title: 'Linear algebra',

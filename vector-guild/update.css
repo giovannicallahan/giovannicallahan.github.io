@@ -119,3 +119,23 @@
   .outpost-scene .op-label{display:none}
   .outpost-status{display:grid}
 }
+
+/* MathCosmos 2.1: the collection chip in the top bar, beside XP and SP (docs/COLLECTION.md).
+   collection/ui.js draws it and collection.css styles it (.vgc-chip); this places it and keeps it from shrinking.
+   Without ui.js the button is off and shows the stardust count as plain text, like XP and SP. */
+.collection-chip{min-height:44px;min-width:44px;flex:0 0 auto;justify-content:center}
+.collection-chip[hidden]{display:none}
+.collection-chip:disabled{display:inline-flex;align-items:center;gap:5px;padding:0;border:0;background:none;color:inherit;font:inherit;letter-spacing:inherit;opacity:1;cursor:default}
+/* On a phone the bar has no room for the status words, so only the name of the view stays, and the chip keeps
+   to its emblem and number (its word is in the button's label and title). Every control stays 44px. */
+@media(max-width:650px){
+  .collection-chip{padding:0 4px}
+  .collection-chip-word,.collection-chip .vgc-chip-label{display:none}
+  .topbar .online-dot,.topbar .top-sys,.topbar .slash{display:none}
+  .top-stats{gap:6px}
+}
+/* Narrower still, the view name cannot fit either. The lit tab in the navigation row already names the view. */
+@media(max-width:420px){
+  .topbar>div:first-child{display:none}
+  .topbar{justify-content:flex-end}
+}

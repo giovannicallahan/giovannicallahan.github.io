@@ -1,5 +1,6 @@
 /* Save format 2 (docs/SAVE-V2.md). One localStorage entry holds every realm's progress:
-   { v: 2, seed, seeds?: { <packId>: seed }, intro, realms: { <packId>: <slice> } }
+   { v: 2, seed, seeds?: { <packId>: seed }, intro, realms: { <packId>: <slice> }, meta?: <collection> }
+   meta (since 2.1, docs/COLLECTION.md) is the global collection: stardust, figures, achievements.
    A slice is the 1.4.1 save object without its seed, with the pack's local mission ids.
    This module never normalises a slice: only the realm page that loaded a pack validates that pack's slice.
    The 1.x entry is read once for migration and is never deleted or rewritten.
@@ -24,10 +25,28 @@ window.VGSave = (() => {
   const isV2Backup = o => isV2(o) && Object.values(o.realms).every(isSlice);
   /* Per-realm seed overrides: only whole numbers >= 0 are kept. Most saves have none. */
   function tidySeeds(o) { const out = {}; if (isObject(o)) for (const [id, s] of Object.entries(o)) if (validSeed(s)) out[id] = s; return out; }
-  /* A stored or imported v2 object, with only its top-level fields made safe. Slices are kept as they are. */
+  /* The collection (2.1). Every known field is made safe; figure and achievement ids this build does not know,
+     and fields a later build may add, are kept. Anything that is not an object becomes an empty collection. */
+  const count = n => Number.isInteger(n) && n >= 0 ? n : 0;
+  const unique = (a, ok) => Array.isArray(a) ? [...new Set(a.filter(ok))] : [];
+  const isText = x => typeof x === 'string' && x !== '';
+  /* Writing the key "__proto__" would swap an object's prototype instead of adding a key, so it is never kept. */
+  const safeKey = id => id !== '__proto__';
+  function tidyMeta(m) {
+    const src = isObject(m) ? clone(m) : {}, owned = {}, paid = {}, looks = {};
+    if (isObject(src.owned)) for (const [id, n] of Object.entries(src.owned)) if (safeKey(id) && Number.isInteger(n) && n > 0) owned[id] = n;
+    if (isObject(src.paid)) for (const [id, p] of Object.entries(src.paid)) if (safeKey(id) && isObject(p)) paid[id] = { solved: unique(p.solved, isText), clean: unique(p.clean, isText), chapters: unique(p.chapters, n => Number.isInteger(n) && n >= 0) };
+    if (isObject(src.looks)) for (const [id, l] of Object.entries(src.looks)) { const list = unique(l, isText); if (safeKey(id) && list.length) looks[id] = list; }
+    return Object.assign(src, { v: 1, dust: count(src.dust), earned: count(src.earned), owned,
+      equipped: isText(src.equipped) && Object.prototype.hasOwnProperty.call(owned, src.equipped) ? src.equipped : null,
+      ach: unique(src.ach, isText), pulls: count(src.pulls), sinceRare: count(src.sinceRare), sinceLegend: count(src.sinceLegend), paid, drills: count(src.drills), looks });
+  }
+  /* A stored or imported v2 object, with only its top-level fields made safe. Slices are kept as they are.
+     A save without a collection (2.0) stays without one until something is earned. */
   function tidyV2(o) {
     const d = { v: 2, seed: validSeed(o.seed) ? o.seed : 0, intro: o.intro === true, realms: clone(o.realms) }, seeds = tidySeeds(o.seeds);
     if (Object.keys(seeds).length) d.seeds = seeds;
+    if (isObject(o.meta)) d.meta = tidyMeta(o.meta);
     return d;
   }
   /* A 1.x save becomes the linear algebra slice. Its seed moves to the top (missing means 0, the authored
@@ -69,16 +88,23 @@ window.VGSave = (() => {
   const totalXp = () => Object.values(current().realms).reduce((n, s) => n + (Number.isFinite(s && s.xp) ? s.xp : 0), 0);
   const introSeen = () => current().intro === true;
   function setIntroSeen() { const d = current(); d.intro = true; cache = d; return write(d); }
+  /* The collection: a normalised copy (an empty collection when the save has none yet). */
+  const meta = () => tidyMeta(current().meta);
+  /* Stores the collection and leaves everything else untouched. Returns false if it could not be stored. */
+  function putMeta(m) { const d = current(); d.meta = tidyMeta(m); cache = d; return write(d); }
   const exportAll = () => clone(current());
   /* Accepts a v2 backup (replaces the whole save) or a 1.x backup (replaces the linear algebra slice and
      gives that realm the backup's seed, so it keeps the numbers it had). For a 1.x file every other realm,
-     and the global seed their numbers come from, stay as they are.
+     the collection, and the global seed their numbers come from, stay as they are.
+     A v2 backup brings its own collection; one made before 2.1 has none, and then the collection on this
+     device is kept (its record of what was already paid goes with it, so nothing is paid twice).
      Nothing is changed, and ok is false, when the file is not a complete save or the device could not store it. */
   const NOT_STORED = 'This device could not store the save. Your progress was not changed.';
   function importAny(o) {
     if (isObject(o) && o.v === 2) {
       if (!isV2Backup(o)) return { ok: false, error: 'That file is not a complete MathCosmos save.' };
-      const d = tidyV2(o); if (!write(d)) return { ok: false, error: NOT_STORED, kind: 2 };
+      const d = tidyV2(o); if (!d.meta) { const now = current().meta; if (isObject(now)) d.meta = tidyMeta(now); }
+      if (!write(d)) return { ok: false, error: NOT_STORED, kind: 2 };
       cache = d; return { ok: true, error: null, kind: 2 };
     }
     if (isV1(o)) {
@@ -90,9 +116,10 @@ window.VGSave = (() => {
     }
     return { ok: false, error: 'That file is not a MathCosmos save.' };
   }
-  /* A reset realm also drops its seed override, so it starts again from the global seed. */
+  /* A reset realm also drops its seed override, so it starts again from the global seed. The collection stays:
+     stardust already paid for that realm's missions is not paid again when they are solved again. */
   function reset(id) { const d = current(); delete d.realms[id]; if (d.seeds) { delete d.seeds[id]; if (!Object.keys(d.seeds).length) delete d.seeds; } cache = d; return write(d); }
-  /* Everything goes, including the seed and the intro flag. The 1.x entry is still left alone. */
+  /* Everything goes, including the seed, the intro flag and the collection. The 1.x entry is still left alone. */
   function resetAll() { const d = fresh(); cache = d; return write(d); }
-  return { KEY, V1_KEY, load, realm, putRealm, seed, totalXp, introSeen, setIntroSeen, exportAll, importAny, reset, resetAll };
+  return { KEY, V1_KEY, load, realm, putRealm, seed, totalXp, introSeen, setIntroSeen, meta, putMeta, exportAll, importAny, reset, resetAll };
 })();

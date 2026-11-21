@@ -337,6 +337,7 @@ page("projects/vector-guild.html", "MathCosmos — learn maths from zero, one re
     <div class="section-head"><h2 id="vg-h">What's inside</h2></div>
     <ul class="feature-list">
       <li><strong>Two realms, 108 missions</strong><span>Foundations (40 missions, from place value to functions) needs no maths background. Linear algebra (68 missions) follows. Nine more realms are on the map and not built yet.</span></li>
+      <li><strong>Collect the people behind the maths</strong><span>Solving missions earns stardust. Spend it to find 48 mathematicians, physicists and computing pioneers, each with a short checked biography. No real money, ever.</span></li>
       <li><strong>One calculation at a time</strong><span>Each mission has a purpose, a lesson and a worked example, ordered so every idea builds on the last.</span></li>
       <li><strong>Hints, guided steps and labs</strong><span>A graph lab and a 3D bench let you see the vectors before you commit to an answer.</span></li>
       <li><strong>Linked to the source</strong><span>Foundations missions point to the matching OpenStax section, and linear algebra missions to the MIT OpenCourseWare 18.06 lecture.</span></li>

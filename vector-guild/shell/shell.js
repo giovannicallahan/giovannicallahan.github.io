@@ -61,13 +61,14 @@ function chooseMode(o){
   if(o.forceFlat||!o.three||!o.webgl)return {mode:'flat',intro:false};
   return {mode:'3d',intro:!o.introSeen&&!o.reducedMotion};
 }
-/* Android Back: close the innermost open thing; null means nothing is open and Back should leave the app. */
-function backAction(s){s=s||{};return s.dialogOpen?'dialog':s.cardOpen?'card':s.listOpen?'list':null}
+/* Android Back: close the innermost open thing; null means nothing is open and Back should leave the app.
+   The collection overlay covers everything else, so it goes first. */
+function backAction(s){s=s||{};return s.collectionOpen?'collection':s.dialogOpen?'dialog':s.cardOpen?'card':s.listOpen?'list':null}
 /* What Back and Escape may close. A card cannot be open under the list, and a list shown because the
    WebGL context is lost cannot be closed (there is no map to go back to), so Back then leaves the app. */
 function overlayState(s){
   s=s||{};
-  return {dialogOpen:!!s.dialogOpen,cardOpen:!!s.cardOpen&&!s.listOverlay,listOpen:!!s.listOverlay&&!s.contextLost};
+  return {collectionOpen:!!s.collectionOpen,dialogOpen:!!s.dialogOpen,cardOpen:!!s.cardOpen&&!s.listOverlay,listOpen:!!s.listOverlay&&!s.contextLost};
 }
 /* The Android wrapper saves through a system file picker: the file exists only after the player confirms,
    under the name they pick, so the page must not claim a file was made. */
@@ -152,6 +153,20 @@ var models={};
 function buildModels(){REALMS.forEach(function(r){models[r.node]=cardModel(r,REALMS,getSlice)})}
 function showXp(){var xp=+call('totalXp',0)||0;Array.prototype.forEach.call(document.querySelectorAll('[data-xp]'),function(e){e.textContent=String(xp)})}
 
+/* ---------- Collection (collection/core.js and collection/ui.js; docs/COLLECTION.md) ----------
+   The button shows the stardust count and opens the overlay. It stays hidden if any part did not load or the
+   real save store is missing. settleAwards pays stardust for work not yet paid (a returning 2.0 player gets it
+   for every mission already solved) and says so in one toast; it pays nothing twice. */
+var Coll=root.VGCollection,CollUI=root.VGCollectionUI,
+    hasColl=!!(Coll&&CollUI&&!Save.fallback&&typeof Save.meta==='function'&&typeof Save.putMeta==='function');
+function collOpen(){try{return hasColl&&CollUI.isOpen()}catch(e){return false}}
+function settleAwards(){
+  if(!hasColl)return;
+  var events=[];try{events=Coll.settle()||[]}catch(e){events=[]}
+  try{if(events.length)CollUI.toast(events);else CollUI.refresh()}catch(e){}
+}
+if(hasColl)Array.prototype.forEach.call(document.querySelectorAll('[data-collection]'),function(b){b.hidden=false;CollUI.chip(b,{label:'Collection'})});
+
 /* ---------- Flat list ---------- */
 var list=$('vg-list'),grid=$('vg-list-grid'),listOverlay=false,listTabbable=true;
 function renderList(){
@@ -221,20 +236,21 @@ if(choice.mode==='3d'){
 }
 
 var selected=null,lastLabel=null,contextLost=false;
-function openThings(){return overlayState({dialogOpen:!!(dlg&&dlg.open),cardOpen:!!selected,listOverlay:listOverlay,contextLost:contextLost})}
+function openThings(){return overlayState({collectionOpen:collOpen(),dialogOpen:!!(dlg&&dlg.open),cardOpen:!!selected,listOverlay:listOverlay,contextLost:contextLost})}
 window.VectorGuildBack=function(){
   var a=backAction(openThings());
+  if(a==='collection'){CollUI.back();return true}
   if(a==='dialog'){dlg.close();return true}
   if(a==='card'){closeCard();return true}
   if(a==='list'){closeList();return true}
   return false;
 };
 var closeCard=function(){},closeList=function(){},refreshMap=function(){};
-function refresh(){buildModels();renderList();refreshMap();showXp()}
+function refresh(){buildModels();renderList();refreshMap();showXp();settleAwards()}
 root.addEventListener('pageshow',function(e){if(e.persisted)refresh()});
 root.addEventListener('storage',function(e){if(!e.key||/^vector-guild-save/.test(e.key))refresh()});
 
-buildModels();showXp();
+buildModels();showXp();settleAwards();
 if(choice.mode==='flat'){
   document.body.classList.add('vg-flat');
   if(!forceFlat&&REALMS.length)$('vg-list-note').hidden=false;
@@ -428,7 +444,7 @@ closeCard=function(){
   if(lastLabel&&!lastLabel.hidden)lastLabel.focus({preventScroll:true});
 };
 document.addEventListener('keydown',function(e){
-  if(e.key!=='Escape'||(dlg&&dlg.open))return;
+  if(e.key!=='Escape'||(dlg&&dlg.open)||collOpen())return;
   var a=backAction(openThings());
   if(a==='card'){closeCard();e.preventDefault()}else if(a==='list'){closeList();e.preventDefault()}
 });
@@ -575,6 +591,7 @@ function mapFrame(dt){
 var raf=0,last=0,running=false;
 function frame(now){
   raf=0;if(!running)return;
+  if(collOpen()){last=now;raf=requestAnimationFrame(frame);return} /* the collection covers the map: draw nothing until it closes */
   var dt=last?Math.min(0.05,Math.max(0,(now-last)/1000)):0;last=now;clock+=dt;
   if(phase==='tunnel')tunnelFrame(dt);else mapFrame(dt);
   renderer.render(scene,camera);

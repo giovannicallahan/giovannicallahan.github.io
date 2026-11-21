@@ -1,0 +1,146 @@
+/* MathCosmos home view (shell/home.js). Loaded after shell.css: colours, fonts, buttons (.vg-primary, .vg-secondary,
+   .vg-ghost), eyebrow labels and the realm text styles (.vg-learn, .vg-parts, ...) come from there.
+   The view is its own fixed, scrolling layer, so it works whether or not the body scrolls.
+   Type is a step larger than the shell (body 16px, nothing under 12px). Each card and the details panel are tinted
+   with the realm's registry colour through --realm. All motion stops under prefers-reduced-motion. */
+.vgh{position:fixed;inset:0;z-index:10;color:var(--ivory);font:16px/1.5 var(--body);
+  background:
+    radial-gradient(ellipse 70% 40% at 12% 0%,rgba(182,156,255,.13),transparent 70%),
+    radial-gradient(ellipse 60% 36% at 95% 8%,rgba(140,221,212,.11),transparent 70%),
+    radial-gradient(ellipse 80% 40% at 50% 105%,rgba(255,191,94,.08),transparent 70%),
+    radial-gradient(ellipse at 50% 30%,#10232a 0%,var(--void) 72%) var(--void)}
+/* Starfield: two fixed layers of dots that fade in and out against each other. */
+.vgh:before,.vgh:after{content:'';position:absolute;inset:0;z-index:-1;pointer-events:none}
+.vgh:before{background:
+    radial-gradient(1.3px 1.3px at 40px 60px,rgba(237,240,221,.8) 50%,transparent 52%) 0 0/230px 190px,
+    radial-gradient(1.1px 1.1px at 150px 30px,rgba(140,221,212,.75) 50%,transparent 52%) 0 0/310px 270px,
+    radial-gradient(1.6px 1.6px at 300px 210px,rgba(255,191,94,.7) 50%,transparent 52%) 0 0/430px 370px;
+  animation:vgh-twinkle 5.5s ease-in-out infinite alternate}
+.vgh:after{background:
+    radial-gradient(1.1px 1.1px at 90px 200px,rgba(237,240,221,.7) 50%,transparent 52%) 0 0/170px 250px,
+    radial-gradient(1.5px 1.5px at 260px 140px,rgba(182,156,255,.8) 50%,transparent 52%) 0 0/390px 330px,
+    radial-gradient(1.2px 1.2px at 20px 120px,rgba(212,243,106,.6) 50%,transparent 52%) 0 0/350px 410px;
+  animation:vgh-twinkle 7s ease-in-out -3s infinite alternate-reverse}
+@keyframes vgh-twinkle{from{opacity:.25}to{opacity:1}}
+.vgh-scroll{position:absolute;inset:0;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(40px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.vgh-page{max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:28px;min-width:0}
+/* One WebGL canvas over the whole view; home.js draws each visible card's icon into its own rectangle. */
+.vgh-gl{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;display:none}
+.vgh-3d .vgh-gl{display:block}
+
+.vgh-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px 12px;min-width:0}
+.vgh-tools{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px;min-width:0}
+.vgh-action{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.vgh-main{display:flex;flex-direction:column;gap:28px;min-width:0}
+.vgh .vg-xp,.vgh .vg-eyebrow,.vgh .vg-ghost{font-size:12px}
+.vgh .vg-xp i{font-size:16px}
+.vgh .vg-ghost{color:#b8c7be}
+
+.vgh-hero{display:flex;flex-direction:column;align-items:flex-start;gap:14px}
+.vgh-hero h1{font-size:clamp(36px,9vw,60px);line-height:1.04;letter-spacing:-1.2px;font-weight:600;color:var(--amber)}
+@supports ((-webkit-background-clip:text) or (background-clip:text)){
+  .vgh-hero h1{background:linear-gradient(100deg,var(--amber) 0%,var(--cyan) 52%,var(--violet) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+}
+.vgh-hero h1:focus{outline:none}
+.vgh-lead{font-size:17px;line-height:1.6;color:#d9e2d3;max-width:580px}
+.vgh .vgh-cta{min-height:54px;padding:0 26px;font-size:15px;margin-top:4px;animation:vgh-pulse 2.8s ease-out infinite}
+@keyframes vgh-pulse{0%{box-shadow:0 0 0 0 rgba(212,243,106,.45)}70%,100%{box-shadow:0 0 0 14px rgba(212,243,106,0)}}
+.vgh-cta-note{font:13px var(--mono);letter-spacing:.4px;color:#b8c7be}
+
+.vgh-pick{display:flex;flex-direction:column;gap:10px}
+.vgh-pick h2{font-size:27px;line-height:1.15;letter-spacing:-.5px;font-weight:500}
+.vgh-note{color:#b8c7be;font-size:15px}
+.vgh-grid{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.vgh-cell{display:flex;min-width:0}
+/* --tint and --edge are the realm colour mixed down; the plain values first are for WebViews without color-mix. */
+.vgh-card{--realm:var(--cyan);--tint:rgba(140,221,212,.14);--edge:var(--line);
+  display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:100%;min-width:0;min-height:196px;margin:0;padding:14px;
+  text-align:left;font:inherit;color:var(--ivory);border:1px solid var(--edge);border-radius:6px;
+  background:radial-gradient(circle 92px at 52px 52px,var(--tint),transparent 100%),linear-gradient(160deg,var(--tint),transparent 55%),rgba(25,38,42,.92);
+  transition:border-color .2s,box-shadow .2s,transform .12s}
+@supports (color:color-mix(in srgb,red 50%,blue)){
+  .vgh-card,.vgh-sheet{--tint:color-mix(in srgb,var(--realm) 17%,transparent);--edge:color-mix(in srgb,var(--realm) 42%,var(--line))}
+}
+button.vgh-card:hover{border-color:var(--realm);box-shadow:0 0 22px -6px var(--realm)}
+button.vgh-card:focus-visible{outline:2px solid var(--realm);outline-offset:3px;border-color:var(--realm)}
+button.vgh-card:active{border-color:var(--realm);box-shadow:0 6px 26px -6px var(--realm);transform:translateY(-2px)}
+.vgh-card.is-soon{--tint:rgba(145,162,159,.05);background:radial-gradient(circle 92px at 52px 52px,var(--tint),transparent 100%),rgba(17,28,32,.82);border-style:dashed}
+.vgh-icon{position:relative;display:block;width:88px;height:88px;margin:-4px 0 0 -4px;color:var(--realm)}
+.vgh-glyph{display:block;width:100%;height:100%}
+.vgh-glyph svg{display:block;width:100%;height:100%}
+.vgh-icon .vgh-glyph{padding:8px}
+/* With WebGL running the canvas draws the icon in this square instead. */
+.vgh-3d .vgh-icon .vgh-glyph{visibility:hidden}
+.vgh-name{font:600 19px/1.2 var(--display);overflow-wrap:anywhere}
+.vgh-line{font-size:14px;line-height:1.4;color:#c5d2c9}
+.vgh-status{margin-top:auto;padding-top:8px;font:13px/1.3 var(--mono);letter-spacing:.4px;color:var(--realm)}
+.vgh-card.is-start .vgh-status{color:var(--lime);font-weight:700}
+.vgh-card.is-soon .vgh-status{color:#a9b8b4}
+.vgh-barhost{display:block;width:100%}
+.vgh-barhost:empty{display:none}
+/* Progress bars take the realm colour and fill in from the left when they appear. */
+.vgh .vg-bar{height:6px;border-radius:3px;overflow:hidden;background:#2b3a3c}
+.vgh .vg-bar span{background:var(--realm,var(--lime));border-radius:3px;transform-origin:0 50%;animation:vgh-fill .9s cubic-bezier(.2,.7,.2,1) .15s both}
+@keyframes vgh-fill{from{transform:scaleX(0)}to{transform:none}}
+
+/* Drop-down for realms that are not built yet */
+.vgh-more{border:1px solid var(--line);border-radius:6px;background:rgba(17,28,32,.6)}
+.vgh-more>summary{display:flex;align-items:center;gap:12px;min-height:58px;padding:0 16px;cursor:pointer;list-style:none;font:500 18px/1.2 var(--display);color:var(--ivory);border-radius:6px}
+.vgh-more>summary::-webkit-details-marker{display:none}
+.vgh-more>summary:before{content:'';width:9px;height:9px;border-right:2px solid var(--violet);border-bottom:2px solid var(--violet);transform:rotate(-45deg);transition:transform .2s;margin-left:2px}
+.vgh-more[open]>summary:before{transform:rotate(45deg)}
+.vgh-more>summary:hover{background:rgba(29,44,48,.7)}
+.vgh-more>summary:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
+.vgh-more>.vgh-grid{margin:0;padding:4px 16px 16px}
+
+.vgh-foot{display:flex;flex-wrap:wrap;gap:10px;padding-top:20px;border-top:1px solid var(--line)}
+
+/* Details panel: bottom sheet on a phone, side panel from 760px */
+.vgh-scrim{position:absolute;inset:0;z-index:5;display:flex;align-items:flex-end;justify-content:center;background:#091113cf}
+.vgh-sheet{--realm:var(--cyan);--tint:rgba(140,221,212,.14);--edge:#4a6764;width:100%;max-height:88%;overflow:auto;overscroll-behavior:contain;
+  background:linear-gradient(180deg,var(--tint),transparent 190px),#19262a;border:1px solid var(--edge);border-bottom:0;border-radius:12px 12px 0 0;
+  padding:16px 16px max(20px,env(safe-area-inset-bottom,0px));animation:vgh-up .22s ease-out}
+.vgh-sheet-head{display:flex;align-items:center;gap:12px}
+.vgh-sheet-head .vg-eyebrow{flex:1 1 auto;color:var(--realm)}
+.vgh-sheet-icon{width:48px;height:48px;min-width:48px;color:var(--realm)}
+.vgh-sheet.vg-realm h2{font-size:27px;font-weight:600}
+.vgh .vg-learn{font-size:16px}
+.vgh .vg-world,.vgh .vg-lock{font-size:15px}
+.vgh .vg-world{color:#b8c7be}
+.vgh .vg-progress,.vgh .vg-soon{font-size:13px}
+.vgh .vg-progress{color:var(--realm,var(--cyan))}
+.vgh .vg-soon{color:#a9b8b4}
+.vgh .vg-part-text strong{font-size:17px}
+.vgh .vg-primary,.vgh .vg-secondary{font-size:14px}
+.vgh .vg-primary:active,.vgh .vg-secondary:active{transform:translateY(1px)}
+.vgh-sheet .vg-actions{margin-top:4px}
+.vgh-sheet .vg-actions>*{flex:1 1 auto}
+@keyframes vgh-up{from{transform:translateY(28px)}to{transform:none}}
+@keyframes vgh-side{from{transform:translateX(28px)}to{transform:none}}
+
+@media(max-width:420px){
+  .vgh .vgh-cta{align-self:stretch}
+}
+@media(min-width:700px){
+  .vgh-scroll{padding-left:max(32px,env(safe-area-inset-left,0px));padding-right:max(32px,env(safe-area-inset-right,0px));padding-top:max(24px,env(safe-area-inset-top,0px))}
+  .vgh-page,.vgh-main{gap:36px}
+  .vgh-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+  .vgh-card{min-height:220px;padding:18px;background:radial-gradient(circle 110px at 64px 64px,var(--tint),transparent 100%),linear-gradient(160deg,var(--tint),transparent 55%),rgba(25,38,42,.92)}
+  .vgh-icon{width:104px;height:104px}
+  .vgh-name{font-size:20px}
+}
+@media(min-width:760px){
+  .vgh-scrim{align-items:stretch;justify-content:flex-end}
+  .vgh-sheet{width:440px;max-height:none;border:0;border-left:1px solid var(--edge);border-radius:0;padding:28px;animation-name:vgh-side}
+  .vgh-sheet .vg-actions>*{flex:0 1 auto}
+}
+@media(min-width:1000px){
+  .vgh-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){
+  .vgh:before,.vgh:after,.vgh .vgh-cta,.vgh .vg-bar span,.vgh-sheet{animation:none}
+  .vgh:before,.vgh:after{opacity:.7}
+  .vgh *{transition:none!important}
+  button.vgh-card:active,.vgh .vg-primary:active,.vgh .vg-secondary:active{transform:none}
+}
